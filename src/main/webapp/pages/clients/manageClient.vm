@@ -1,0 +1,163 @@
+
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+
+<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:800px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+			
+	<!-- BEGIN CONTENT -->
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			
+			<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-building"></i>
+						<a href="#">Clients</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					<li>
+						<a href="#">Manage Clients</a>
+					</li>
+				</ul>
+				
+			</div>
+			<h3 class="page-title">Manage Clients</h3>
+			<!-- END PAGE HEADER-->
+			
+			<div class="clearfix">
+			</div>
+			<div class="row">
+				<div class="col-md-12 col-sm-12">
+					<!-- BEGIN EXAMPLE TABLE PORTLET-->
+					<div class="portlet box blue">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-table"></i>Clients
+							</div>
+							<div class="actions">
+								<!--<a class="btn btn-default btn-sm" href="javascript:;">-->
+								<a href="#portlet-config" class="btn btn-default btn-sm" data-toggle="modal" onclick="addEditClient(0);">
+								<i class="fa fa-plus"></i>
+								Add New
+								</a>								
+							</div>							
+						</div>
+						<div class="portlet-body">
+							<table class="table table-striped table-hover table-bordered" id="sample_editable_1">
+							<thead>
+							<tr>
+								<th width="5%">ID</th>
+								<th width="20%">Name</th>
+								<!--<th width="15%">TAN No.</th>-->
+								<th width="20%">Email</th>
+								<th width="15%">City</th>
+								<th width="12%">Status</th>
+								<th style="text-align:left; padding-left:20px">Action</th>
+							</tr>
+							</thead>
+							<tbody>
+							#foreach($client in $clientList)
+							<tr>
+								<td>$!client.clientId</td>
+								<td>$!client.clientName</td>
+								<!--<td>$!client.tanNumber</td>-->
+								<td>$!client.clientEmail</td>
+								<td>$!client.cityObj.cityName</td>
+								<td>#if($!client.isActive == 0) <span class="label label-sm label-danger"> Inactive </span>
+									 #else <span class="label label-sm label-success">Active</span> #end</td>
+								<td style="text-align:left; padding-left:20px">
+								<a href="#portlet-config" data-toggle="modal" title="Edit Client" onclick="addEditClient($!client.clientId);">
+									<i class="fa fa-edit"></i></a> &nbsp; &nbsp; &nbsp;
+								#if($!client.isActive == 1)
+									<a href="service?clientId=$!client.clientId" title="Client Services">
+									<i class="fa fa-cogs"></i></a> &nbsp; &nbsp; &nbsp;
+								#end
+								
+								<a href="javascript:void(0)" onclick="downloadRC($!client.clientId)" title="Download RateCard"><i class="fa fa-download"></i></a>
+									&nbsp; &nbsp; &nbsp;
+								<a href="javascript:void(0)" onclick="uploadRC($!client.clientId)" title="Upload RateCard"><i class="fa fa-upload"></i></a>
+								 	&nbsp; &nbsp; &nbsp;
+								#if($!client.clientId > 1)
+									<a href="clientEasyfixerMapping?clientId=$!client.clientId" title="Easyfixer Mapping">
+									<i class="fa fa-user-md "></i></a> &nbsp; &nbsp; 
+								#end
+								</td>
+							</tr>
+							#end
+							
+							</tbody>
+							</table>
+							<form id="rcFrm"  action="downloadClientRateCard" method="post">
+								<input type="hidden" name="clientId"  id="clientIdDownload" value="" />
+							</form>
+							<form id="rcFrmUpload"  action="uploadRcExcelFile" method="post">
+								<input type="hidden" name="clientId"  id="clientIdUpload" value="" />
+							</form>
+						</div>
+					</div>
+					<!-- END EXAMPLE TABLE PORTLET-->
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<!-- END CONTENT -->
+
+#parse("pages/common/Footer.vm")
+
+<script type="text/javascript" src="/lib_easyfix/assets/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="/lib_easyfix/assets/global/plugins/jquery-validation/js/additional-methods.min.js"></script>
+<script src="/lib_easyfix/assets/admin/pages/scripts/table-editable.js"></script>
+
+<script>
+jQuery(document).ready(function() {       
+   Metronic.init(); // init metronic core components
+   Layout.init(); // init current layout
+   TableEditable.init();
+});
+
+function addEditClient(clientId){
+	jQuery("#modal-body-id").html("<center>Please wait...</center> ");
+	
+	 jQuery.ajax({
+		type	: "POST",
+		url		: "addEditClient?clientId="+clientId, 
+		success	: function(data){
+			jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	});  
+	 
+}
+
+function downloadRC(value){
+	if(value!="")
+	{
+		$("#clientIdDownload").val(value);
+		$("#rcFrm").submit();
+	}
+}
+function uploadRC(value){
+	if(value!="")
+	{
+		$("#clientIdUpload").val(value);
+		$("#rcFrmUpload").submit();
+	}
+}
+
+
+</script>
+

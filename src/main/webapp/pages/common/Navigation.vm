@@ -1,0 +1,128 @@
+#set($menuList=$session.getAttribute("menuList"))
+#set($roleId = $session.getAttribute("role"))
+
+#set($actmenu = $request.getAttribute("actMenu"))
+#set($actparent = $request.getAttribute("actParent"))
+#set($actsecparent = $request.getAttribute("actParent2"))
+
+#if($actmenu == "Home")
+	#set($home = "active open")
+#end
+
+
+<!-- BEGIN SIDEBAR -->
+	<div class="page-sidebar-wrapper">
+		<!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+		<!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+		<div class="page-sidebar navbar-collapse collapse">
+			<!-- BEGIN SIDEBAR MENU -->
+			<!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
+			<!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
+			<!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
+			<!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+			<!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
+			<!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+			<ul class="page-sidebar-menu " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
+				<!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
+				<li class="sidebar-toggler-wrapper">
+					<!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+					<div class="sidebar-toggler">
+					</div>
+					<!-- END SIDEBAR TOGGLER BUTTON -->
+				</li>
+				
+				#set($totmenu = $menuList.size())
+				#set($i = 1)
+				#set($j = 1)
+				
+				
+				
+				#foreach($menu in $!menuList)
+					#set($actopen = "") 
+					#set($open = "")
+						
+						#if($menu.menuId == 1)						
+							<li class="start $home ">
+								#if(#$roleId == 10)
+									<a href="clientDashboard">
+								#else	
+									<a href="home">
+								#end
+								<i class="fa fa-home"></i>
+								<span class="title">Home</span>
+								#if($home!="")
+									<span class="selected"></span>	
+								#end				
+								</a>
+							</li>
+						#else			
+							#if($!actparent == $!menu.menuName) 
+								#set($actopen = "active open") 
+								#set($open = "open")
+							#end
+							#if($!menu.hasChild == 1 && $!menu.menuDepth == 1) 		<!-- First Level -->
+								<li class="$actopen" >
+									<a href="javascript:;">
+									<i class="fa $!menu.icons"></i>
+									<span class="title">$!menu.menuName</span>
+									#if($actopen != "")
+											<span class="selected"></span>	
+										#end
+										<span class="arrow $open"></span>
+									</a>
+									
+									<ul class="sub-menu">
+									#foreach($submenu in $!menuList)
+										#if($submenu.parentMenu == $menu.menuId)
+											#if($!actsecparent == $!submenu.menuName) 
+												#set($actopen = "active open") 
+												#set($open = "open")
+											#else
+												#set($actopen = "") 
+												#set($open = "")
+											#end
+											#if($!submenu.hasChild == 1 && $!submenu.menuDepth == 2) 		<!-- Second Level -->
+												<li class="$actopen" >
+													<a href="javascript:;">
+													<i class="fa $!submenu.icons"></i>
+													<span class="title">$!submenu.menuName</span>
+													#if($actopen != "")
+														<span class="selected"></span>	
+													#end
+														<span class="arrow $open"></span></a>	
+																									
+												<ul class="sub-menu">
+												#foreach($sub_submenu in $!menuList)
+													#if($sub_submenu.parentMenu == $submenu.menuId)
+														<li #if($!actmenu == $!sub_submenu.menuName) class="active" #end >
+															<a href="$!sub_submenu.menuUrl">
+															<i class="fa $!sub_submenu.icons"></i>$!sub_submenu.menuName</a>
+														</li>
+													#end
+												#end
+												</ul>
+											#else
+												<li #if($!actmenu == $!submenu.menuName) class="active" #end >
+													<a href="$!submenu.menuUrl">
+													<i class="fa $!submenu.icons"></i>$!submenu.menuName</a>	
+												</li>													
+											#end										
+										#end
+									#end	
+									</ul>	
+								</li>				
+							
+							#end
+						#end
+					
+				#end
+								
+				
+			</ul>
+			<!-- END SIDEBAR MENU -->
+		</div>
+	</div>
+	<!-- END SIDEBAR -->
+	
+	
+	

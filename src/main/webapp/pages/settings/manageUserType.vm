@@ -1,0 +1,120 @@
+
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+
+<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:600px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+			
+	<!-- BEGIN CONTENT -->
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			
+			<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-gear"></i>
+						<a href="#">Settings</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					<li>
+						<a href="#">Manage User Type</a>  
+					</li>
+				</ul>
+				
+			</div>
+			<h3 class="page-title">Manage User Type</h3>
+			<!-- END PAGE HEADER-->
+			
+			<div class="clearfix">
+			</div>
+			<div class="row">
+				<div class="col-md-12 col-sm-12">
+					<!-- BEGIN EXAMPLE TABLE PORTLET-->
+					<div class="portlet box blue">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-table"></i>User Type
+							</div>
+							<div class="actions">
+								<a href="#portlet-config" class="btn btn-default btn-sm" data-toggle="modal" onclick="addEditUserType(0);">
+								<i class="fa fa-plus"></i>
+								Add New
+								</a>								
+							</div>							
+						</div>
+						<div class="portlet-body">
+							<table class="table table-striped table-hover table-bordered" id="sample_editable_1">
+							<thead>
+							<tr>
+								<th width="25%">User Type</th>
+								<th width="50%">Menu Access</th>
+								<th width="15%" style="text-align:center">Status</th>
+								<th class="text-center">Action</th>
+							</tr>
+							</thead>
+							<tbody>
+							#foreach($userType in $roleList)
+							<tr>
+								<td>$!userType.roleName</td>
+								<td>$!userType.menuName</td>
+								<td style="text-align:center">#if($!userType.roleStatus == 0) <span class="label label-sm label-danger"> Inactive </span>
+									#else <span class="label label-sm label-success">Active</span> #end</td>
+								<td class="text-center"><a href="#portlet-config" data-toggle="modal" onclick="addEditUserType($!userType.roleId);">
+								<i class="fa fa-edit"></i></a></td>
+							</tr>
+							#end							
+							</tbody>
+							
+							</table>
+						</div>
+					</div>
+					<!-- END EXAMPLE TABLE PORTLET-->
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<!-- END CONTENT -->
+	
+#parse("pages/common/Footer.vm")
+<script type="text/javascript" src="/lib_easyfix/assets/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="/lib_easyfix/assets/global/plugins/jquery-validation/js/additional-methods.min.js"></script>
+<script src="/lib_easyfix/assets/admin/pages/scripts/table-editable.js"></script>
+
+<script>
+jQuery(document).ready(function() {       
+	Metronic.init(); // init metronic core components
+	Layout.init(); // init current layout
+	TableEditable.init();
+  
+});
+
+function addEditUserType(roleId){
+	jQuery("#modal-body-id").html("<center>Please wait...</center> ");
+	
+	 jQuery.ajax({
+		type	: "POST",
+		url		: "addEditUserType?roleId="+roleId, 
+		success	: function(data){
+			jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	});  
+
+	
+}
+
+</script>
+

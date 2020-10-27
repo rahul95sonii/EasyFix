@@ -1,0 +1,135 @@
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-calendar"></i>Download Date Range
+					
+				</div>					
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+		
+</div>
+<div class="portlet-body form">
+	<form class="form-horizontal" role="form" id="job_formId" method="post" action="">
+	<input type="hidden" id="changeDateJobId" value="$!jobsObj.jobId" />
+	<div class="form-body" style="height:auto">
+		
+		<div class="form-group" id="job-reqest-date-divId" style="margin:30px 0px;">
+			<label class="control-label col-md-4" id="job-reqest-date-label-id">Select Date Range:</label>
+			<div class="col-md-8">
+				<div class="input-group" id="defaultrange">
+					<input type="text" class="form-control input-medium" id="dateRange" >
+					<span class="input-group-btn" style="float:left">
+					<button class="btn default date-range-toggle" type="button"><i class="fa fa-calendar"></i></button>
+					</span>								
+				</div>
+				<span class="help-block" style="display:none">
+			</div>							
+		</div>
+		
+		<div class="form-actions text-right">
+			<div class="row">
+				<div class="col-md-offset-2 col-md-9">
+					<button type="button" id="downloadBtn" class="btn green" onclick="return downloadFile();" >Download</button>
+					<button type="button" id="cancelDateBtn" data-dismiss="modal" class="btn red">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	</form>
+</div>
+
+<script src="/lib_easyfix/assets/admin/pages/scripts/components-pickers.js"></script>
+
+<script>
+
+$(document).ready(function () {		
+// For Date Time Picker
+	   var curDate = new Date();
+		var twoMonthAgo = curDate - 1000 * 60 * 60 * 24 * 120;	
+		var eightDayAgo = curDate - 1000 * 60 * 60 * 24 * 8;	
+		var d1 = new Date(twoMonthAgo);
+		var d2 = new Date(eightDayAgo);
+		
+		var minD =  d1.getDate()+"/"+d1.getMonth()+"/"+d1.getFullYear();
+		var maxD =  d2.getDate()+"/"+(d2.getMonth()+1)+"/"+d2.getFullYear();
+		
+			
+		$('#defaultrange').daterangepicker({
+			opens: (Metronic.isRTL() ? 'left' : 'right'),
+		    format: 'DD/MM/YYYY',
+		    separator: ' to ',
+		    startDate: moment().subtract('days', 29),
+		    endDate: moment().subtract('days', 8),				
+			minDate: minD,
+	        maxDate: maxD,	        
+	       },
+	        function (start, end) {
+	            $('#defaultrange input').val(start.format('DD MMM, YYYY') + ' -- ' + end.format('DD MMM, YYYY'));
+	        }
+	     );
+	
+	});
+
+
+function downloadFile() {
+
+	if($("#dateRange").val() == "")
+	{
+		bootbox.alert("Please select date range!");
+		return false;
+	}
+	else {
+		var tempRange = $("#dateRange").val();
+		var startDate = "";
+		var endDate = "";
+		
+	
+		if(tempRange != "") {			
+			var dateRange = tempRange.split("--");
+			startDate = dateRange[0].trim();
+			endDate = dateRange[1].trim();	
+		}
+		window.location="downloadLoggingHour?startDate="+startDate+"&endDate="+endDate;
+		$("#cancelDateBtn").trigger("click");
+	}
+}
+
+
+
+
+	
+$('#changeDateBtn').click(function () {
+	
+	if(blankValMetronicLabel("requestDateTime","job-reqest-date-divId","job-reqest-date-label-id"))
+				return false;
+	jQuery.ajax({
+	   			type: "POST",
+		   		url:  "updateDate?dtflag="+flg+"&oldDate="+oldDate,
+		   		contentType: false,
+			    processData: false,
+			    data: function() {
+				        var data = new FormData();			
+				         data.append("jobId",$("#changeDateJobId").val());
+				         data.append("requestedDateTime",$("#requestDateTime").val());
+				         data.append("comments",$("#comment").val());				         	                      
+				        	
+				        return data;
+				  }(),
+		   		success: function(data) {
+		   			$("#changeDateDiv").html(data);
+		   			$("#cancelDateBtn").trigger( "click" );
+										        
+	   			},
+	   			error: function(data) {
+	   				bootbox.alert("Date change entry failed");
+	   			}
+		});
+	
+		return false;
+
+
+});
+	
+	
+	
+</script>

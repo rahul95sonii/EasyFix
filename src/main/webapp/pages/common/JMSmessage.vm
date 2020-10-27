@@ -1,0 +1,47 @@
+#set($userMobile = $request.getAttribute("userMobile"))
+#set($userId=$session.getAttribute("userId"))
+
+<style>
+.jquery-notific8-message {
+    font-size: 1em;
+}
+</style>
+
+<input id="notific8_heading" type="hidden" value="$!exotelCallDetails.type"/>
+<input id="notific8_sticky" class="hidden" type="checkbox" value="0" />
+<input id="notific8_life" type="hidden" value="10000" />
+<input id="notific8_theme" type="hidden" value="lime">
+<input id="notific8_pos_hor" type="hidden" value="bottom" />
+<input id="notific8_pos_ver" type="hidden" value="right">
+<button type="button" id="notific8_show" class="btn blue hidden" >..</button>
+<input id="notific8_no" type="hidden" value="$!exotelCallDetails.fromNumber" />
+<input id="notific8_text" type="hidden" value="<a href='#exotel-portlet-config' style='color:#FFF' data-toggle='modal' onclick='exotelCallBooking($!exotelCallDetails.fromNumber)'>$!exotelCallDetails.fromNumber </a>" />
+
+<input id="uMobile" type="hidden" value="$!userMobile" />
+<input id="exotelUid" type="hidden" value="$!exotelCallDetails.agentNumber" />
+<input id="callSid" type="hidden" value="$!exotelCallDetails.callSid">
+
+
+<script>
+
+jQuery(document).ready(function() {       
+   // initiate layout and plugins
+   	Metronic.init(); // init metronic core components
+ 	UINotific8.init();
+ 	   
+});
+
+
+
+var uMobile = $("#uMobile").val();
+var exotelUid = $("#exotelUid").val();
+
+if(uMobile == exotelUid) {
+
+	$("#notific8_show").trigger("click");
+	
+}
+
+</script>
+
+	

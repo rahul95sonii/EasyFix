@@ -1,0 +1,9 @@
+#set($jobId = $request.getAttribute("jobId")) 
+#set($changedDesc = $request.getAttribute("changedDesc")) 
+#set($status = $request.getAttribute("status")) 
+
+
+$!changedDesc
+ &nbsp; &nbsp; 
+ <a href="#sub-portlet-config" class="btn btn btn-xs blue" data-toggle="modal" onclick="setJobDesc($!jobId,'$!changedDesc');">
+<i class="fa fa-envelope-o"></i> Change </a>

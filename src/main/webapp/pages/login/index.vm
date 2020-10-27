@@ -1,0 +1,50 @@
+
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+
+<!-- BEGIN CONTENT -->
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+			<!-- static -->
+			<div id="pawan-modal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="500">
+				
+			</div>
+			<!-- /.modal -->
+			<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+			
+						
+			<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-home"></i>
+						<a href="#">Home</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					
+				</ul>
+			</div>
+			<!-- END PAGE HEADER-->			
+			<div class="clearfix"></div>
+			
+		</div>
+	</div>
+	<!-- END CONTENT -->
+
+#parse("pages/common/Footer.vm")
+
+#if($userObj.roleId == 10) 
+	<script> window.location.href="clientDashboard"; </script>
+#else
+	<script> window.location.href="home"; </script>
+#end
+
+<script>
+jQuery(document).ready(function() {       
+   Metronic.init(); // init metronic core components
+	Layout.init(); // init current layout
+});
+
+</script>
+

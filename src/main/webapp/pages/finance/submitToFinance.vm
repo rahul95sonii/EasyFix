@@ -1,0 +1,179 @@
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+
+<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:1000px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+	
+	
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			
+			
+			<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-building"></i>
+						<a href="#">EasyFixers</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					
+					<li>
+						<a href="#">Easyfixer Recharge</a>
+					</li>
+				</ul>
+			</div>
+			<h3 class="page-title">Recharge Easyfixer Account</h3>
+			<!-- END PAGE HEADER-->
+			
+			<div class="clearfix">
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="portlet box blue">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-list"></i>Collected Amount List for Approval
+							</div>
+							<div class="actions">							
+								<a href="#portlet-config" data-toggle="modal" id="approvalLink" class="btn btn-default btn-sm" title="Last 30 Days Collection Approved List" onclick="approvalList()">
+									<i class="fa fa-list"></i> Approved List </a>				
+							</div>
+						</div>
+				
+					<div class="portlet-body">
+						<table class="table table-striped table-hover table-bordered" id="sample_editable_1">
+							<thead>
+								<tr>
+									<th width="7%" class="text-center">ID</th>
+									<th width="18%">Name</th>
+									<th width="10%">Mobile No.</th>
+									<th width="10%">City</th>
+									<th width="15%">NDM Name</th>
+									<th width="12%" class="text-right" style="padding-right:20px">Current Balance</th>
+									<th width="12%" class="text-right" style="padding-right:20px">Collected</th>
+									<th width="12%" class="text-center">Recharge Date</th>
+									<th width="12%" class="text-center">Mode</th>
+									<th width="12%" class="text-center">Reference#</th>
+									<th class="text-center">Approve</th>
+								</tr>
+								</thead>
+								<tbody>
+								
+								#foreach($nr in $NDMRechargeList)
+									
+								<tr>
+									<td class="text-center">$!nr.efr.easyfixerId</td>
+									<td>$!nr.efr.easyfixerName</td>
+									<td>$!nr.efr.easyfixerNo</td>
+									<td>$!nr.efr.cityObj.cityName</td>
+									<td>$!nr.ndm.userName</td>
+									<td class="text-right" style="padding-right:20px; #if($!nr.efr.currentBalance <= 300) color:red; #end "> $!nr.efr.currentBalance </td>
+									<td class="text-right" style="padding-right:20px;"> #if($!nr.recharge_type == 1) - #end $!nr.recharge_amount</td>
+									<td class="text-center">$!nr.recharge_date</td>
+									<td class="text-center">$!nr.paymentMode</td>
+									<td class="text-center">$!nr.referenceId </td>
+									<td class="text-center">
+										<a href="javascript:void(0);" title="Approve By Finance" onclick="efrTransUpdate($!nr.recharge_id,$!nr.efr.easyfixerId,'$!nr.recharge_amount',$!nr.recharge_type,'$!nr.ndm.userName');">
+										<i class="fa fa-check-square-o"></i></a>
+										
+									</td>
+								</tr>
+								#end							
+							</tbody>
+						</table>
+						
+					</div>									
+				</div>
+			</div>	
+			
+		</div>
+			
+	</div>
+	<!-- END CONTENT -->
+
+#parse("pages/common/Footer.vm")
+
+<script>
+
+function efrTransUpdate(rechargeId, easyfixerId,rechargeAmount,rechargeType,ndmId) {
+
+//	bootbox.confirm("Are you sure want to approve?", function(result) {
+	var conf = confirm("Are you sure want to approve?");
+	
+	if(conf) {
+	
+	Metronic.blockUI({
+        target: '#sample_editable_1',
+        animate: true,
+        overlayColor: 'grey'
+    });
+		var comment = "Recharge by NDM : "+ndmId;
+	
+  		jQuery.ajax({
+   			type: "POST",
+	   		url:  "approveRecharge?rechargeId="+rechargeId+"&efrId="+easyfixerId+"&efrAmount="+rechargeAmount+
+	   				"&efrTransType="+rechargeType+"&efrTransDesc="+comment,
+	   		
+	   		success: function(data) {
+	   		
+	   			window.location="updateRecharge";
+	   			
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Job entry failed");
+   			}
+		});
+
+		return false;
+		}
+//	});
+	
+}
+
+function approvalList() {
+	jQuery("#modal-body-id").html("<center>Please wait...</center> ");
+	
+	jQuery.ajax({
+		type: "POST",
+   		url:  "approveRechargeList",
+   		   		
+   		success: function(data) {	   		
+   			jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	});
+	return false;
+	
+}
+
+
+
+
+jQuery(document).ready(function() {       
+   		Metronic.init(); // init metronic core components
+		Layout.init(); // init current layout
+		
+$('#sample_editable_1').DataTable( { 
+	"columnDefs": [ {
+      		"targets": [ 8 ],
+    		"orderable": false	} ],
+    "order": [[ 0, "asc" ]] } );
+   		
+});
+
+</script>
+

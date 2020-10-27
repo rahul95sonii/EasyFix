@@ -1,0 +1,4 @@
+#set($msg = $request.getAttribute("msg"))
+#if($!msg || $msg!="")
+	$!msg
+#end

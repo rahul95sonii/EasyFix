@@ -1,0 +1,178 @@
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+
+<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:1000px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+	
+	
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			
+			
+			<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-building"></i>
+						<a href="#">EasyFixers</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					
+					<li>
+						<a href="#">Servicemen Payout</a>
+					</li>
+				</ul>
+			</div>
+			<h3 class="page-title">Servicemen Payout</h3>
+			<!-- END PAGE HEADER-->
+			
+			<div class="clearfix">
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="portlet box blue">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-calendar"></i>Filter Parameter
+							</div>
+							<div class="actions">
+								<a href="#" id="downloadLink"  class="btn btn-default btn-sm" onclick="downloadServicePayout();">
+									<i class="fa fa-download"></i>
+									Download
+								</a>		
+														
+							</div>
+						</div>
+				
+					<div class="portlet-body">
+						
+						<table class="table">
+							<tbody>
+								<tr>
+									<td width="10%" style="border:0;  padding:15px; text-align:center"><b>City :</b></td>
+									<td width="25%" style="border:0">
+											<select class="form-control select2_category input-medium" id="cityId" data-required="1" data-placeholder="Select City" onchange="showBtn(this.value);"  >
+												<option value=""></option>							
+													#foreach($!city in $cityList)
+														<option value="$!city.cityId">$!city.cityName</option>
+													#end
+											</select>
+									</td>
+									
+									<td style="text-align:left; padding:10px 0 0 20px; border:0">
+											<a onclick="showList()" class="btn blue btn-sm" type="button" id="Search" href="#">
+													<i class="fa fa-search"></i> Search	</a>											
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						
+						<div id="showListDiv"></div>
+						
+					</div>									
+				</div>
+			</div>	
+			
+		</div>
+			
+	</div>
+	<!-- END CONTENT -->
+
+#parse("pages/common/Footer.vm")
+
+<script>
+
+function showBtn(val) {
+	if(val == "")
+		$("#rListId").hide();
+	else
+		$("#rListId").show();
+}
+
+function showList() {
+	var cityId = $("#cityId").val();
+	
+	if(cityId == "")
+	{
+		bootbox.alert("Please select city");
+		return false;
+	}
+	if(cityId == "")
+		cityId = 0;
+		
+	Metronic.blockUI({
+        target: '#showListDiv',
+        animate: true,
+        overlayColor: 'grey'
+    });
+	
+
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "getServicemenPayoutList?cityId="+cityId,
+	   		success: function(data) {
+	   			jQuery("#showListDiv").html(data);
+	   			$("#downloadLink").removeAttr("disabled");
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Job entry failed");
+   			}
+	});
+
+	return false;
+	
+}
+
+function rechargeList()
+{
+	var ndmId = $("#ndmId").val();
+	
+	 jQuery.ajax({
+		type	: "POST",
+		url		: "rechargeListNdm?ndmId="+ndmId, 
+		success	: function(data){
+			//alert(data);
+		    jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	}); 
+
+	return false;
+	
+}
+
+
+function downloadServicePayout() {
+	var cityId = $("#cityId").val();
+	window.location="efrPayoutSheet";
+
+}
+
+
+jQuery(document).ready(function() {       
+   		Metronic.init(); // init metronic core components
+		Layout.init(); // init current layout
+		
+		
+		$('#cityId').select2({
+            placeholder: "Select an option",
+            allowClear: true
+        });
+   		
+});
+
+</script>
+

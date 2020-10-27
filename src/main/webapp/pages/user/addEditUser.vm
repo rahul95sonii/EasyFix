@@ -1,0 +1,148 @@
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-reorder"></i>#if($!userObj.userId == 0) Add #else Edit #end User
+				</div>					
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+</div>
+	
+		<div class="portlet-body form">
+			<form name="user" action="" class="form-horizontal">
+				<div class="form-body">
+					<input type="hidden" id="userId" value="$!userObj.userId" />
+					<!--
+					<div class="form-group">
+						<label class="control-label col-md-3">User Code</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" value = "$!userObj.userCode" readonly />
+						</div>
+					</div>
+					-->
+					<div class="form-group">
+						<label class="control-label col-md-3">User Name</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" value = "$!userObj.userName" readonly />
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="control-label col-md-3">User Email</label>
+						<div class="col-md-8">
+							<input type="text" class="form-control" value = "$!userObj.officialEmail" readonly/>
+						</div>
+					</div>
+					
+					<div class="form-group" id="roleId-divId">
+						<label class="control-label col-md-3" id="roleId-labelId">User Role<span class="required"> * </span></label>
+						<div class="col-md-8">
+							<select class="form-control select2_category" id="roleId" data-required="1" data-placeholder="Select...">
+								<option value=""></option>
+								#foreach($!role in $roleList)
+									<option value="$!role.roleId" #if($!role.roleId == $!userObj.roleId)  selected="selected" #end >$!role.roleName</option>
+								#end
+							</select>	
+							<span class="help-block" style="display:none"></span>						
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="control-label col-md-3">Manages City </label>
+						<div class="col-md-8">
+							<select class="form-control select2_category" id="cityId" data-required="1" data-placeholder="Select city for job manage" multiple>
+								<option value="0">All Cities</option>
+								#foreach($!city in $cityList)
+									<option value="$!city.cityId">$!city.cityName</option>
+								#end
+							</select>							
+						</div>
+					</div>
+					
+					#if($!userObj.userId == 0)
+					<input type="hidden" id="userStatus" value="1" />
+					#else
+						<div class="form-group">
+							<label class="control-label col-md-3">Status</label>
+							<div class="col-md-8">
+								<select class="form-control bs-select"  id="userStatus">
+									<option value="1" #if($!userObj.userStatus == 1) selected #end>Active</option>
+									<option value="0" #if($!userObj.userStatus == 0) selected #end>Inactive</option>
+								</select>
+							</div>
+						</div>
+					#end							
+				</div>
+					
+					<div class="form-actions right">
+					<div class="col-md-offset-3 col-md-9">
+						<button type="submit" id="addEditUserBtn" class="btn green">Submit</button>
+						<button type="button" data-dismiss="modal" class="btn red">Cancel</button>
+					</div>
+				</div>
+			</form>
+		</div>		
+	
+</div>
+<input type="hidden" id="cityArray" value="$!userObj.manageCities" />
+
+<script src="pages/js/validate-user.js"></script>
+<script>
+
+// script for select multiple city 
+
+	var temp = $("#cityArray").val();	
+	var arr = temp.split(',');
+	for(var i=0; i<arr.length; i++)
+	{
+		$('#cityId option[value="'+arr[i].trim()+'"]').attr('selected', 'selected');
+	}
+// End
+
+
+	
+$('#addEditUserBtn').click(function () {
+
+	var roleId = $("#roleId").val();
+	var clientId = 0;
+	if(blankValMetronicLabel("roleId","roleId-divId","roleId-labelId"))
+				return false;
+	
+
+	Metronic.blockUI({
+        target: '#modal-body-id',
+        animate: true,
+        overlayColor: 'grey'
+    });
+ 	jQuery.ajax({
+   			type: "POST",
+	   		url:  "addUpdateUser",
+	   		contentType: false,
+		    processData: false,
+		    data: function() {
+			        var data = new FormData();
+			        data.append("userId",$("#userId").val());
+			        data.append("roleId",$("#roleId").val());
+			        data.append("manageCities",$("#cityId").val());
+			        data.append("userStatus",$("#userStatus").val());
+			        return data;
+			  }(),
+	   		success: function(data) {
+					window.location.href="user"; 
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Audit entry failed");
+   			}
+	});
+
+	return false;
+
+});
+
+
+$(document).ready(function () {
+	ComponentsDropdowns.init();	 
+	
+});
+
+</script>

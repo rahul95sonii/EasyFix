@@ -1,0 +1,211 @@
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+
+<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:1000px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+	
+	
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			
+			
+			<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-building"></i>
+						<a href="#">EasyFixers</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					
+					<li>
+						<a href="#">NDM Collection</a>
+					</li>
+				</ul>
+			</div>
+			<h3 class="page-title">NDM Collection</h3>
+			<!-- END PAGE HEADER-->
+			
+			<div class="clearfix">
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="portlet box blue">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-calendar"></i>Filter Parameter
+							</div>
+							<div class="actions">
+							<!--	<a href="#" id="downloadLink" disabled class="btn btn-default btn-sm" onclick="downloadClientTracking('cityTracking')">
+									<i class="fa fa-download"></i>
+									Download
+								</a>	-->		
+								
+								<a href="#portlet-config" data-toggle="modal" id="rListId" title="Last 30 Days Recharge List" class="btn btn-default btn-sm" onclick="rechargeList();">		
+									<i class="fa fa-list"></i> &nbsp; Recharge List	</a>
+															
+							</div>
+						</div>
+				
+					<div class="portlet-body">
+						<input type="hidden" value="$!userObj.userId" id="userId" />
+						<input type="hidden" value="$!userObj.roleId" id="roleId" />
+						<table class="table">
+							<tbody>
+								<tr>
+									<td width="25%" style="border:0"><b>Easyfixer Name :</b> <br>
+										<input type="text" id="efrName" value="" class="form-control" data-placeholder="Enter Easyfixer Name" />
+									</td>
+									
+									<td width="25%" style="border:0"><b>Easyfixer Mobile No. :</b> <br>
+										<input type="text" id="efrNo" value="" class="form-control" data-placeholder="Enter Easyfixer No." />
+									</td>
+									<td width="25%" style="border:0"><b>NDM Name :</b> <br>
+										#if($!userObj.roleId == 12 || $!userObj.roleId == 13)
+											<input type="hidden" id="ndmId" value="$!userObj.userId" class="form-control" />
+											<input type="text" value="$!userObj.userName" class="form-control" disabled />
+										#else
+											<select class="form-control select2_category input-medium" id="ndmId" data-required="1" data-placeholder="Select NDM" onchange="showBtn(this.value);"  >
+												<option value=""></option>							
+													#foreach($!ndm in $NDMList)
+														<option value="$!ndm.userId" #if($userObj.userId == $!ndm.userId) selected #end >$!ndm.userName</option>
+													#end
+											</select>
+										#end
+									</td>
+									
+									<td style="text-align:left; padding:27px 0 0 20px; border:0">
+											<a onclick="showList()" class="btn blue btn-sm" type="button" id="Search" href="#">
+													<i class="fa fa-search"></i> Search	</a>											
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						
+						<div id="showListDiv"></div>
+						
+					</div>									
+				</div>
+			</div>	
+			
+		</div>
+			
+	</div>
+	<!-- END CONTENT -->
+
+#parse("pages/common/Footer.vm")
+
+<script>
+
+if($!userObj.roleId != 12 && $!userObj.roleId != 13)
+	$("#rListId").hide();
+	
+function showBtn(val) {
+	if(val == "")
+		$("#rListId").hide();
+	else
+		$("#rListId").show();
+}
+
+function showList() {
+	var efrName = $("#efrName").val();
+	var efrNo = $("#efrNo").val();
+	var ndmId = $("#ndmId").val();
+	if(ndmId == "")
+		ndmId = 0;
+		
+	Metronic.blockUI({
+        target: '#showListDiv',
+        animate: true,
+        overlayColor: 'grey'
+    });
+	
+
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "ndmEasyfixerList",
+	   		contentType: false,
+		    processData: false,
+		    data: function() {
+			        var data = new FormData();	
+			         data.append("efr.easyfixerName", efrName);
+			         data.append("efr.easyfixerNo", efrNo);
+			         data.append("efr.ndmId", ndmId);
+			        
+			        return data;
+			  }(),
+	   		success: function(data) {
+	   			jQuery("#showListDiv").html(data);
+	   			//$("#downloadLink").removeAttr("disabled");
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Job entry failed");
+   			}
+	});
+
+	return false;
+	
+}
+
+function rechargeList()
+{
+	var ndmId = $("#ndmId").val();
+	
+	 jQuery.ajax({
+		type	: "POST",
+		url		: "rechargeListNdm?ndmId="+ndmId, 
+		success	: function(data){
+			//alert(data);
+		    jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	}); 
+
+	return false;
+	
+}
+
+
+function downloadClientTracking(flag) {
+	window.location="downloadTracking?track="+flag;
+
+}
+
+
+jQuery(document).ready(function() {       
+   		Metronic.init(); // init metronic core components
+		Layout.init(); // init current layout
+		
+		
+	var roleId = $("#roleId").val();
+	if(roleId == 12 || roleId == 13)
+	{
+		showList();		
+	}
+	else
+	{
+		$('#ndmId').select2({
+            placeholder: "Select an option",
+            allowClear: true
+        });
+	}
+		
+		
+   		
+});
+
+</script>
+

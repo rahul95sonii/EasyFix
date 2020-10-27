@@ -1,0 +1,20 @@
+<label class="control-label col-md-4" id="collected-by-label-id">Collected By:<span class="required">* </span></label>
+	<div class="col-md-8">
+		#if($!jobsObj.clientObj.collectedBy == 0)
+			<select class="form-control select2_category input-large" id="collectedBy">
+				<option value="">-- Select --</option>
+				<option value="1">Serviceman</option>
+				<option value="2">Easyfix</option>	
+						
+			</select>
+		#else
+			<input id="collectedBy" type="hidden" class="form-control input-medium" value="$!jobsObj.clientObj.collectedBy">
+			<p class="form-control-static">
+				 #if($!jobsObj.clientObj.collectedBy == 1) Serviceman
+				 #elseif($!jobsObj.clientObj.collectedBy == 2) Easyfix
+				
+				 #end
+			</p>
+		#end
+		<span class="help-block" style="display:none">
+	</div>

@@ -1,0 +1,7 @@
+#set($msg = $request.getAttribute("msg"))
+<div  class="Metronic-alerts alert alert-danger fade in"><i class="fa-lg fa fa-warning"></i>
+
+#if($!msg || $msg!="")
+	$!msg 
+#end
+</div>

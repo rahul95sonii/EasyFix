@@ -1,0 +1,20 @@
+#set($mapStatus = $request.getAttribute("status"))
+#set($clientId = $request.getAttribute("clientId"))
+#set($efrId = $request.getAttribute("efrId"))
+#set($divId = $request.getAttribute("divId"))
+#set($serviceType = $request.getAttribute("serviceType"))
+
+$mapStatus
+
+#if($mapStatus == 1)
+	<span class="label label-sm label-success">Mapped</span>
+	
+	
+	
+#else
+	<span class="label label-sm label-danger">Un-Mapped</span>
+	
+#end	
+	
+	
+

@@ -1,0 +1,471 @@
+#set($totalSum = $request.getAttribute("totalSum"))
+#set($star = $request.getAttribute("star"))
+
+#set($loc = $request.getAttribute("loc"))
+
+<input type="hidden" id="loc" value="$loc" />
+
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-calendar"></i>Modify Job
+				</div>					
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+		
+</div>
+		<div class="portlet-body form">
+			<form class="form-horizontal" role="form" id="job_formId" method="post" action="">
+			<input type="hidden" id="checkInJobId" value="$!jobsObj.jobId" />
+			
+				<div class="form-body" style="height:420px; overflow-y: scroll; overflow-x: hidden;">
+					<h4 class="form-section" style="margin:10px 0px 0px">Job Info</h4>
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Job Id:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.jobId
+								</p>
+							</div>							
+						</div>
+						<!--/span-->
+						
+						<!--/span-->
+					</div>
+					<!--/row-->
+					
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Client:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									  $!jobsObj.clientObj.clientName
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Service Type:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									  $!jobsObj.serviceTypeObj.serviceTypeName
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+					</div>
+					<!--/row-->
+										
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Easyfixer:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									$!jobsObj.easyfixterObj.easyfixerName
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Contact No.:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.easyfixterObj.easyfixerNo
+									 &nbsp; &nbsp; 
+									 <a href="#sub-portlet-config" class="btn btn btn-xs blue" data-toggle="modal" onclick="showCrmSmsList($!jobsObj.easyfixterObj.easyfixerNo,$!jobsObj.jobId);">
+									<i class="fa fa-envelope-o"></i> SMS </a>
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+					</div>
+					<!--/row-->
+					
+	<!--			<div class="row">
+						<div class="col-md-12" id="job-chekin-date-divId">
+							<label class="control-label col-md-2" id="job-chekin-date-label-id">Check In:</label>
+							<div class="input-group date form_datetime input-large">
+								<input type="text" id="checkInDateTime" name="checkInDateTime" class="form-control" readonly >
+								<span class="input-group-btn">
+								<button class="btn default date-set" type="button" name="jdtin"><i class="fa fa-calendar"></i></button>
+								</span>
+							</div>
+							<span class="help-block" style="display:none">
+						</div>						
+					</div> -->
+					<!--/row-->
+					<h4 class="form-section" style="margin:10px 0px 0px">Selected Services</h4>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="portlet-body" id="serviceDivId">
+							<input type="hidden" id="jobService" value="$!jobsObj.clientServiceIds" />
+								<div class="table-scrollable">
+									<div id="servicelabelId" style="display:none;">Amount</div>
+									<table class="table table-hover">
+									<tbody>
+										<tr style="background-color:#EEE">
+											<td><b>Services</b></td>
+											<td width="20%" style="padding-left:20px;"><b>Charge</b></td>	
+											<td width="20%" ><b>Amount</b></td>
+											<td width="20%" ><b>EF</b></td>
+											<td width="20%" ><b>EFR</b></td>
+											<td width="20%" ><b>CL</b></td>
+											<td><b>Action</b></td>
+										</tr>
+										#set($i=0)										
+										#foreach($service in $jobServiceList)
+											<input type="text" id="servId$i" value="$!service.jobServiceId" />
+											<tr>
+												<td style="padding-top:15px">$!service.serviceName </td>
+												<td><input type="text" class="form-control input-xsmall" id="serve$i" value="$!service.totalCharge" #if($!service.getJobChargeType() == 1) readonly #end onchange="addtotal(this.value)" onfocus="chk(this.value)"/>
+													<span class="help-block" style="display:none">
+												</td>	
+												<td><input type="text" class="form-control input-xsmall" id="serveModified$i"   onchange="addtotal(this.value)" onfocus="chk(this.value)"/>
+												<span class="help-block" style="display:none">
+												<td><input type="text" class="form-control input-xsmall" id="serveEF$i"   onchange="addtotal(this.value)" onfocus="chk(this.value)"/>
+												<td><input type="text" class="form-control input-xsmall" id="serveEFR$i"   onchange="addtotal(this.value)" onfocus="chk(this.value)"/>
+												<td><input type="text" class="form-control input-xsmall" id="serveCL$i"   onchange="addtotal(this.value)" onfocus="chk(this.value)"/>
+												<td><a  class="btn purple" onclick="modifyJobServiceFromInvoice($!jobsObj.jobId,$!service.jobServiceId,$i);">
+												 modify</a>
+												</td>
+											</td>	
+											</tr>
+											#set($i=$i+1)
+										#end
+										<tr>
+											<td style="text-align:right;padding-top:15px"><b>Total: </b></td>
+											<td><input type="text" id="totalsum" class="form-control input-small" value="$totalSum" readonly /></td>								
+										</tr>
+									</tbody>
+									</table>
+								</div>
+							</div>
+							<!--
+							<div class="control-label">
+							 	<a href="#sub-portlet-config" class="btn btn btn-xs blue" data-toggle="modal" onclick="addEditJobService($!jobsObj.jobId,$!jobsObj.fkClientId,$!jobsObj.fkServiceTypeId,'$totalSum');">
+								<i class="fa fa-plus-square"></i> / <i class="fa fa-minus-square"></i> Services	</a>								
+							</div>
+							-->
+						</div>
+									
+					</div>
+					<!--/row-->
+					<h4 class="form-section" style="margin:10px 0px 0px">Customer Info</h4>
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Name:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.customerObj.customerName
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Contact No.:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.customerObj.customerMobNo
+									 &nbsp; &nbsp; 
+									 <a href="#sub-portlet-config" class="btn btn btn-xs blue" data-toggle="modal" onclick="showCrmSmsList($!jobsObj.customerObj.customerMobNo,$!jobsObj.jobId);">
+									<i class="fa fa-envelope-o"></i> SMS </a>
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Address:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									$!jobsObj.addressObj.address
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">City:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.addressObj.cityObj.cityName
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+					</div>
+					<!--/row-->
+					<h4 class="form-section" style="margin:20px 0px 0px">Remarks</h4>
+					<div class="row">
+						<span class="help-block" style="display:none; margin-left:50px"></span>
+							<div class="portlet box">						
+								<div class="portlet-body" style="padding-top:0px;" id="checkInRemarkDiv">										
+																	
+								</div>							
+							</div>						
+					</div>
+					<!--/row-->
+					
+				</div>
+				<div class="form-actions">
+					<div class="row">
+						<div class="col-md-7">
+							<!-- <a href="#sub-portlet-config" data-toggle="modal" class="btn red" onclick="cancelJob($!jobsObj.jobId,2);">
+								<i class="fa fa-times"></i> Cancel Job</a>
+								&nbsp; -->
+							<!-- <a href="#sub-portlet-config" data-toggle="modal" class="btn purple" onclick="addComment($!jobsObj.jobId,2);">
+								<i class="fa fa-edit"></i> Add Remarks</a> -->
+							&nbsp; 
+							<!-- <a href="#sub-portlet-config" data-toggle="modal" class="btn blue" onclick="reScheduleJob($!jobsObj.jobId);">
+								<i class="fa fa-calendar"></i> Re-Schedule</a>
+								&nbsp; 
+							<a href="#sub-portlet-config" data-toggle="modal" class="btn blue" onclick="approveJob($!jobsObj.jobId);">
+								<i class="fa fa-calendar"></i> Approval</a>-->
+							
+								
+						</div>
+						<div class="col-md-5 text-right"> 
+							<!-- <button type="button" id="checkInJobBtn" class="btn green" >CheckIn</button> -->
+							<button type="button" id = "invoicedJobClose" data-dismiss="modal" class="btn red" id="cancelChekInBtn">Close</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+<input type="hidden" id="pevVal" value="" />
+
+
+<script>
+function chk(a) {
+	if(a == "" || isNaN(a)==1) a = 0;
+	$("#pevVal").val(a);
+}
+function modifyJobServiceFromInvoice(jobId,jobServiceId,counter){
+	$( "#invoicedJobClose" ).trigger( "click" );
+	alert(jobId);
+	alert(jobServiceId);
+	alert(counter);
+	var modifiedAmount = $("#serveModified"+counter).val();
+	var modifiedEF = $("#serveEF"+counter).val();
+	var modifiedEFR = $("#serveEFR"+counter).val();
+	var modifiedCL = $("#serveCL"+counter).val();
+	
+	alert(modifiedAmount);
+	alert(modifiedEF);
+	alert(modifiedEFR);
+	alert(modifiedCL);
+
+	jQuery.ajax({
+		type	: "POST",
+		url		: "modifyJobServiceFromInvoice?jobId="+jobId+"&jobServiceId="+jobServiceId+"&modificationAmount="+modifiedAmount+"&modificationEF="+modifiedEF+"&modificationEFR="+modifiedEFR+"&modificationCL="+modifiedCL, 
+		success	: function(data){
+			alert(data);
+			jQuery("#clientInvoiceJobServiceModificationDiv").html(" ");
+		    jQuery("#clientInvoiceJobServiceModificationDiv").html(data);
+		}
+	});
+	return true;
+}
+function addComment(jobId,flag){ //flag chceckin:2,checkout: 3, schedule :1
+	jQuery("#sub-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "addJobComment?jobId="+jobId+"&commentedOn="+flag, 
+		success	: function(data){
+			jQuery("#sub-modal-body-id").html(" ");
+		    jQuery("#sub-modal-body-id").html(data);
+		}
+	});
+} 
+	   
+  // For Date Time Picker
+  
+
+  /*
+	   $(".form_datetime").datetimepicker({
+	   		autoclose: true,
+	    	isRTL: Metronic.isRTL(),
+	    	format: "dd MM yyyy - hh:ii",
+	    	startDate: from[0],
+	       	pickerPosition: (Metronic.isRTL() ? "top-right" : "top-left")
+	    });
+	*/   
+	   function addEditJobService(jobId,clientId,serviceTypeId,total){
+		   var jobServic = $("#jobService").val();
+		   	jQuery.ajax({  		
+		   		type: "POST",
+		      		url: "addEditJobService?jobId="+jobId+"&fkClientId="+clientId+"&fkServiceTypeId="+serviceTypeId+"&clientServiceIds="+jobServic+"&total="+total+"&flag=checkin",
+		      		success: function(data) 
+		      		{  	
+		      			jQuery("#sub-modal-body-id").html(" ");
+		   			jQuery("#sub-modal-body-id").html(data);
+		      		}
+		   	});
+
+		   	return false;	
+		   				
+		   }
+		    
+	/*
+function setJobSchedulingDate(jobId,schedDate){
+	jQuery.ajax({  		
+		type: "POST",
+   		url: "changeDate?jobId="+jobId+"&scheduleDateTime="+schedDate+"&flag=2",
+   		success: function(data) 
+   		{  	
+   			jQuery("#sub-modal-body-id").html(" ");
+			jQuery("#sub-modal-body-id").html(data);
+   		}
+	});
+
+	return false;	
+				
+}
+	
+	
+function addEditJobService(jobId,clientId,serviceTypeId,total){
+var jobServic = $("#jobService").val();
+	jQuery.ajax({  		
+		type: "POST",
+   		url: "addEditJobService?jobId="+jobId+"&fkClientId="+clientId+"&fkServiceTypeId="+serviceTypeId+"&clientServiceIds="+jobServic+"&total="+total+"&flag=checkin",
+   		success: function(data) 
+   		{  	
+   			jQuery("#sub-modal-body-id").html(" ");
+			jQuery("#sub-modal-body-id").html(data);
+   		}
+	});
+
+	return false;	
+				
+}
+	
+function refreshHome ()
+		{
+				Metronic.blockUI({
+        target: '#userJobListDiv',
+        animate: true,
+        overlayColor: 'grey'
+    });
+			jQuery.ajax({
+			type	: "POST",
+			url		: "userOwnerJob", 
+			success	: function(data){
+			    $('#userJobListDiv').fadeOut('slow');
+			    $("#userJobListDiv").html(data);
+			    $('#userJobListDiv').fadeIn('slow');
+			}
+		});
+		}
+
+
+$('#checkInJobBtn').click(function () {
+
+	var servString = "";
+	
+	for(var i=0; i < $jobServiceList.size(); i++)
+	{
+		if(isNumericDecimalMetronicLabel("serve"+i,"serviceDivId","servicelabelId"))
+					return false;
+	
+		if(blankZeroValMetronicLabel("serve"+i,"serviceDivId","servicelabelId"))
+					return false;
+					
+		var servId = $("#servId"+i).val();
+		var servAmount = $("#serve"+i).val();
+		
+		if(servString == "")
+			servString = servId+"#"+servAmount;
+		else
+			servString = servString+"~"+servId+"#"+servAmount;
+	}
+			
+		Metronic.blockUI({
+	        target: '#schedule-modal-body-id',
+	        animate: true,
+	        overlayColor: 'grey'
+	    });
+	
+		jQuery.ajax({
+	   			type: "POST",
+		   		url:  "saveCheckInJob",
+		   		contentType: false,
+			    processData: false,
+			    data:function() {
+				        var data = new FormData();
+				        data.append("jobId",$("#checkInJobId").val());
+				        data.append("clientServices",servString);	        
+				        return data;
+				  }(),
+		   		success: function(data) {
+		   			if($("#loc").val() == 'job')
+		   			{
+		   				$( "#cancelChekInBtn" ).trigger( "click" );
+		   				showJobList();
+		   			}
+		   			else	
+		   			{
+		   				//window.location.href=$("#loc").val();
+		   				$( "#cancelChekInBtn" ).trigger( "click" );
+		   					refreshHome ();
+		   			}
+						
+										        
+	   			},
+	   			error: function(data) {
+	   				bootbox.alert("CheckIn entry failed");
+	   			}
+			});
+	
+			return false;
+		
+});
+
+
+function addtotal(val){
+	if(val == "" || isNaN(val)==1) val = 0;
+	var total = parseFloat($("#totalsum").val());
+	var pvrv = parseFloat($("#pevVal").val());
+	var temp = total - pvrv;
+	$("#totalsum").val(parseFloat(val) + temp);
+}
+	
+	
+
+
+
+
+function reScheduleJob(jobId){
+	$( "#cancelChekInBtn" ).trigger( "click" );
+	jQuery("#sub-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "reScheduleJob?jobId="+jobId, 
+		success	: function(data){
+			jQuery("#sub-modal-body-id").html(" ");
+		    jQuery("#sub-modal-body-id").html(data);
+		}
+	});  
+	}
+	
+	function approveJob(jobId){
+	$( "#cancelChekInBtn" ).trigger( "click" );
+	jQuery("#sub-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "approveJob?jobId="+jobId, 
+		success	: function(data){
+			jQuery("#sub-modal-body-id").html(" ");
+		    jQuery("#sub-modal-body-id").html(data);
+		}
+	});  
+
+}
+*/
+
+
+</script>	
+
+
+

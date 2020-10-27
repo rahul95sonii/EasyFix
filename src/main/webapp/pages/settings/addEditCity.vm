@@ -1,0 +1,87 @@
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-reorder"></i>#if($!cityObj.cityId == 0) Add #else Edit #end City
+				</div>					
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+		
+
+		<div class="portlet-body form">
+	<!--    <form name="cityfrm" class="form-horizontal" id="city_formId" action="addUpdateCity" method="post">  -->
+			<form name="cityfrm" class="form-horizontal" id="city_formId" action="addCity" method="post">
+			
+				<div class="form-body">
+					<input type="hidden" name="cityId"  id="cityId" value="$!cityObj.cityId" /><br>
+					
+					<div class="form-group">
+						<label class="control-label col-md-4">City Name <span class="required">
+						* </span>
+						</label>
+						<div class="col-md-8">
+							<input type="text" name="cityName" id="cityName" data-required="1" class="form-control" value="$!cityObj.cityName"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-4">Max Distance <span class="required">*
+						 </span>
+						</label>
+						<div class="col-md-8">
+							<input type="text" name="maxDistance" id="maxDistance" data-required="1" class="form-control" value="$!cityObj.maxDistance"/>
+						</div>
+					</div>
+					<div class="form-group">
+							<label class="control-label col-md-4">Display</label>
+							<div class="col-md-8">
+								<select class="form-control bs-select" name="display" id="display">
+									<option value="1" #if($!cityObj.display == 1) selected #end>Display To All</option>
+									<option value="0" #if($!cityObj.display == 0) selected #end>Display Only To CRM</option>
+								</select>
+							</div>
+						</div>
+					#if($!cityObj.cityId == 0)
+					<input type="hidden" name="cityStatus" value="1" />
+					#else
+						
+						<div class="form-group">
+							<label class="control-label col-md-4">Status</label>
+							<div class="col-md-8">
+								<select class="form-control bs-select" name="cityStatus" id="cityStatus">
+									<option value="1" #if($!cityObj.cityStatus == 1) selected #end>Active</option>
+									<option value="0" #if($!cityObj.cityStatus == 0) selected #end>Inactive</option>
+								</select>
+							</div>
+						</div>
+					#end
+												
+				</div>
+				<div class="form-actions right">
+					<div class="col-md-offset-3 col-md-9">
+						<button type="submit" id="addEditCityBtn" class="btn green">Submit</button>
+						<button type="button" data-dismiss="modal" class="btn red">Cancel</button>
+					</div>
+				</div>
+			
+			</form>
+		</div>		
+	
+</div>
+<script src="pages/js/validate-city.js"></script>
+<script>
+
+$(document).ready(function () {
+	ComponentsDropdowns.init();
+
+    $('#addEditCityBtn').click(function () {
+        if ($("#city_formId").valid()) {
+		        Metronic.blockUI({
+			        target: '#modal-body-id',
+			        animate: true,
+			        overlayColor: 'grey'
+			    });
+        }
+    });
+
+});
+
+</script>

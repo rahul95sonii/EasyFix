@@ -1,0 +1,63 @@
+
+<div class="portlet box blue">
+	<div class="portlet-title">
+			<div class="caption">
+				<i class="fa fa-list"></i>Last 30 Days Approved Recharge List
+			</div>
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+	</div>		
+	
+		<div class="portlet-body form">
+			<input type="hidden" value="$!efrId" id="efrId" />
+			<form name="transaction" action="" method="post" class="form-horizontal" id="transaction_formId">
+				<div class="form-body" >
+					
+						<table class="table table-striped table-hover table-bordered" id="sample_editable_3">
+							<thead>
+								<tr>
+									<th width="10%" class="text-center">Id</th>
+									<th width="30%">Name [ Number ]</th>
+									<th width="15%" class="text-right" style="padding-right:20px;">Collected Amount</th>
+									<th width="15%">Collected Date</th>
+									<th width="15%">NDM Name</th>
+									<th width="15%">Approved Date</th>
+									<th width="12%">Mode</th>
+									<th width="12%">Reference#</th>
+								</tr>
+								</thead>
+								<tbody>
+								#set($i = 1)
+								#foreach($efr in $NDMRechargeList)									
+									<tr>
+										<td class="text-center">$!efr.efrId</td>
+										<td>$!efr.efr.easyfixerName [$!efr.efr.easyfixerNo]</td>							
+										<td class="text-right" style="padding-right:20px;">#if($!efr.recharge_type == 1) - #else + #end $!efr.recharge_amount</td>
+										<td>$!efr.recharge_date</td>
+										<td>$!efr.ndm.userName</td>
+										<td>$!efr.approvalDate</td>
+										<td>$!efr.paymentMode</td>
+										<td>$!efr.referenceId </td>
+									</tr>
+									#set($i= $i+1)
+								#end							
+							</tbody>
+						</table>
+					
+				</div>
+				
+			</form>
+		</div>
+		
+</div>
+
+<script>
+jQuery(document).ready(function() {       
+		
+$('#sample_editable_3').DataTable( { 
+	"columnDefs": [ {
+      		"targets": [ 5,6,7 ],
+    		"orderable": false	} ],
+   	"order": [[ 0, "asc" ]] } );
+   		
+});
+</script>

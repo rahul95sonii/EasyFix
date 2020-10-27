@@ -1,0 +1,126 @@
+#set ($jobList = $invoiceObj.invociedJobs)
+<div class="clientInvoiceJobServiceModificationDiv">
+</div>
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-calendar"></i>Invoiced Job
+				</div>					
+			<br><button type="button"  class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+		
+</div>
+<div >
+
+	<table class="table table-striped table-hover table-bordered" id="sample_editable_10">
+		<thead>
+			<tr>
+				<th width="5%">Job Id</th>
+				<th width="10%">Customer</th>
+				<th width="10%">Client</th>
+				<th width="5%">Ref.Id</th>
+				<th width="20%">Service</th>
+				<!--<th width="10%">Created On</th>-->
+				<th width="10%">Requested On</th>
+				<th width="10%">Easyfixer</th>
+				<th width="10%"> Status</th>
+				<th width="10%"> Owner</th>
+				<th width="10%" class="text-center">Action</th>
+			</tr>
+			</thead>
+			<tbody>
+			#foreach($jobs in $jobList)
+			<tr>
+				<td>$!jobs.jobId</td>
+				<td>$!jobs.customerObj.customerName [ $!jobs.customerObj.customerMobNo ]</td>
+				<td>$!jobs.clientObj.clientName</td>
+				<td>$!jobs.clientRefId</td>
+				<td>$!jobs.clientServices</td>
+				<!--<td>$!jobs.createdDateTime</td>-->
+				<td>$!jobs.requestedDateTime</td>
+				<td>#if($!jobs.easyfixterObj.easyfixerName) $!jobs.easyfixterObj.easyfixerName [ $!jobs.easyfixterObj.easyfixerNo ] #end</td>
+				<td>#if($!jobs.jobStatus == 0)
+						Booked
+					#elseif($!jobs.jobStatus == 1)
+						Scheduled
+					#elseif($!jobs.jobStatus == 2)
+						Checked In
+					#elseif($!jobs.jobStatus == 3)
+						Checked Out
+					#elseif($!jobs.jobStatus == 4)
+						Feedback
+					#elseif($!jobs.jobStatus == 5)
+						Completed
+					#elseif ($!jobs.jobStatus == 6)
+						Canceled on $!jobs.cancelDateTime
+					#elseif ($!jobs.jobStatus == 7)
+						Enquiry
+					#elseif ($!jobs.jobStatus == 8)
+						Pause Job
+					#elseif ($!jobs.jobStatus == 9)
+						Call Later
+					#elseif ($!jobs.jobStatus == 10)
+						App Checkout Verification
+					#end
+					</td>
+				<td>$!jobs.empName</td>
+				<td class="text-center"><!-- <a href="#portlet-config" data-toggle="modal" onclick="editjob($!jobs.jobId);">
+				<i class="fa fa-edit"></i></a> -->
+				<a href="#address-portlet-config" data-toggle="modal" title="View Details" onclick="modifyJob($!jobs.jobId);">
+				<i class="fa fa-search"></i></a> &nbsp;  &nbsp;
+			<!--	
+				#if($!jobs.jobStatus == 0)
+					<a href="#portlet-config-schedule" data-toggle="modal" title="Schedule" onclick="scheduleJob($!jobs.jobId,'');">
+					<i class="fa fa-calendar"></i></a>		
+				#elseif($!jobs.jobStatus == 1)
+					<a href="#portlet-config-schedule" data-toggle="modal" title="CheckIn" onclick="checkInJob($!jobs.jobId);">
+					<i class="fa fa-check-square-o"></i></a>
+				#elseif($!jobs.jobStatus == 2 || $!jobs.jobStatus == 10)
+					<a href="#portlet-config-schedule" data-toggle="modal" title="CheckOut" onclick="checkOutJob($!jobs.jobId);">
+					<i class="fa fa-shopping-cart"></i></a>
+				#elseif($!jobs.jobStatus == 3)
+					<a href="#portlet-config-schedule" data-toggle="modal" title="Feedback" onclick="feedbackJob($!jobs.jobId);">
+					<i class="fa fa-wechat"></i></a>
+				#elseif($!jobs.jobStatus == 4)
+					Feedback
+				#elseif($!jobs.jobStatus == 5)
+					
+				#elseif ($!jobs.jobStatus == 6)
+					
+				#end
+			-->	
+				&nbsp;  &nbsp;
+				#if( $jobs.jobDocs)
+				#set($jid = $!jobs.jobId+".zip")
+			
+					<a href="http://core.easyfix.in/easydoc/app/$jid" target="_blank" title="Download Image"><i class="fa fa-download"></i></a>						
+					#end
+					</td>
+			</tr>
+			#end							
+		</tbody>
+	</table>
+</div>
+
+<script>
+jQuery(document).ready(function() { 
+	$('#sample_editable_10').DataTable( { "order": [[ 0, "desc" ]] } );
+});
+
+
+function modifyJob(jobId){
+	jQuery("#address-modal-id").html("<center>Please wait...</center> ");
+	
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "clientInvocieList?jobId="+jobId+"&loc=home", 
+		success	: function(data){
+			
+			jQuery("#address-modal-id").html(" ");
+		    jQuery("#address-modal-id").html(data);
+		}
+	});  
+
+}
+
+</script>

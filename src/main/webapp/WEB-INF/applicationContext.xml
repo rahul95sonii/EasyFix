@@ -1,0 +1,454 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+	 
+	<bean id="propertyBean"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+				<value>WEB-INF/database.properties</value>
+		</property>
+	</bean>
+
+	<!--  <bean id="sessionFactory" 
+    class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+ 
+    <property name="dataSource">
+      <ref bean="dataSource"/>
+    </property>
+ 
+    <property name="hibernateProperties">
+       <props>
+         <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+         <prop key="hibernate.show_sql">true</prop>
+       </props>
+    </property>
+ 
+    <property name="mappingResources">
+		<list>
+          <value>hibernate/City.hbm.xml</value>
+		</list>
+    </property>	
+ 
+</bean>
+	-->
+
+
+<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+  <property name="jndiName" value="java:comp/env/jdbc/UsersDB"/>
+  <property name="lookupOnStartup" value="true"/>
+  <property name="proxyInterface" value="javax.sql.DataSource"/>
+</bean>
+
+<!-- <bean id="dataSource" 
+ 		class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="poolPreparedStatements"><value>true</value></property>
+		<property name="initialSize"><value>50</value></property>
+		<property name="maxActive"><value>500</value></property>
+        <property name="maxIdle"><value>20</value></property> 
+        </bean>-->
+		
+		
+
+	
+
+	<!-- <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">  
+      <property name="dataSource" ref="dataSource"></property>  
+    </bean> -->
+    
+<!-- Begin Dao Bean -->	
+	<bean id="userDao" class="com.easyfix.user.dao.UserDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id = "clientDao" class = "com.easyfix.clients.dao.ClientDaoImpl">
+    	<property name = "dataSource" ref = "dataSource" />
+    	<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="customerDao" class="com.easyfix.customers.dao.CustomerDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="cityDao" class="com.easyfix.settings.dao.CityDaoImpl">
+	     <property name="sessionFactory" ref="sessionFactory" />
+		 <property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="skillDao" class="com.easyfix.settings.dao.SkillDaoImpl">
+	     <property name="sessionFactory" ref="sessionFactory" />
+		 <property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="retailRateCardDao" class="com.easyfix.settings.dao.RetailRateCardDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="clientRateCardDao" class="com.easyfix.settings.dao.ClientRateCardDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="serviceTypeDao" class="com.easyfix.settings.dao.ServiceTypeDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id = "easyfixerDao" class = "com.easyfix.easyfixers.dao.EasyfixerDaoImpl">
+    	<property name = "dataSource" ref = "dataSource" />
+    	<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id = "documentTypeDao" class = "com.easyfix.settings.dao.DocumentTypeDaoImpl">
+    	<property name = "dataSource" ref = "dataSource" />
+	</bean>
+	<bean id = "jobDao" class = "com.easyfix.Jobs.dao.JobDaoImpl">
+    	<property name = "dataSource" ref = "dataSource" />
+    	<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id = "financeDao" class = "com.easyfix.finance.dao.FinanceDaoImpl">
+    	<property name = "dataSource" ref = "dataSource" />
+	</bean>
+	<bean id = "easyfixerRatingParametersDao" class = "com.easyfix.util.utilityFunction.dao.EasyfixerRatingParametersDaoImpl">
+    	<property name = "dataSource" ref = "dataSource" />
+	</bean>
+	<bean id = "activeUserJobListDao" class = "com.easyfix.util.utilityFunction.dao.ActiveUserJobListDaoImpl">
+    	<property name = "dataSource" ref = "dataSource" />
+    	<property name = "jobService" ref = "jobService" />
+	</bean>
+
+	<bean id="homeDao" class="com.easyfix.home.dao.HomeDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="completedJobsReportDao" class="com.easyfix.reports.dao.CompletedJobsReportDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="easyfixerReportDao" class="com.easyfix.reports.dao.EasyfixerReportDaoImpl">
+		<property name="dataSource" ref="dataSource" />		
+	</bean>
+	
+	<bean id="invoiceDao" class="com.easyfix.invoice.dao.InvoiceDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="invoiceDaoHibernate" class="com.easyfix.invoice.dao.InvoiceDaoImplHibernate">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<bean id="contextRefreshedEventDao" class="com.easyfix.util.utilityFunction.dao.ContextRefreshedEventDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="exotelLoggingDao" class="com.easyfix.util.JmsSenderAndReceiver.dao.ExotelLoggingDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="jobImageDao" class="com.easyfix.Jobs.dao.JobImageDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+
+	
+<!-- End Dao Bean -->	
+<!-- Begin Service Bean -->	
+	<bean id="userService" class="com.easyfix.user.delegate.UserServiceImpl">
+    	<property name="userDao" ref="userDao" />
+	</bean>
+	<bean id = "clientService" class = "com.easyfix.clients.delegate.ClientServiceImpl">
+    	<property name = "clientDao" ref = "clientDao" />
+	</bean>
+	<bean id="customerService" class="com.easyfix.customers.delegate.CustomerServiceImpl">
+    	<property name="customerDao" ref="customerDao" />	
+	</bean>
+	<bean id="cityService" class="com.easyfix.settings.delegate.CityServiceImpl">
+    	<property name="cityDao" ref="cityDao" />	
+	</bean>
+	<bean id="skillService" class="com.easyfix.settings.delegate.SkillServiceImpl">
+    	<property name="skillDao" ref="skillDao" />	
+	</bean>
+	<bean id="retailRateCardService" class="com.easyfix.settings.delegate.RetailRateCardServiceImpl">
+    	<property name="retailRateCardDao" ref="retailRateCardDao" />	
+	</bean>
+	<bean id="clientRateCardService" class="com.easyfix.settings.delegate.ClientRateCardServiceImpl">
+    	<property name="clientRateCardDao" ref="clientRateCardDao" />	
+	</bean>
+	<bean id="serviceTypeService" class="com.easyfix.settings.delegate.ServiceTypeServiceImpl">
+    	<property name="serviceTypeDao" ref="serviceTypeDao" />	
+	</bean>
+	<bean id = "easyfixerService" class = "com.easyfix.easyfixers.delegate.EasyfixerServiceImpl">
+    	<property name = "easyfixerDao" ref = "easyfixerDao" />
+	</bean>
+	<bean id="documentTypeService" class="com.easyfix.settings.delegate.DocumentTypeServiceImpl">
+    	<property name="documentTypeDao" ref="documentTypeDao" />	
+	</bean>
+	<bean id="jobService" class="com.easyfix.Jobs.delegate.JobServiceImpl">
+    	<property name="jobDao" ref="jobDao" />	
+    	<property name="jobImageDao" ref="jobImageDao" />	
+    	<property name="latLong" ref="latLong" />
+    	<property name="CalculateEasyfixerRating" ref="CalculateEasyfixerRating" />	
+    	<property name="easyfixerRatingParametersService" ref="easyfixerRatingParametersService" />
+    	
+	</bean>
+	<bean id="easyfixerRatingParametersService" class="com.easyfix.util.utilityFunction.delegate.EasyfixerRatingParametersServiceImpl">
+    	<property name="easyfixerRatingParametersDao" ref="easyfixerRatingParametersDao" />	
+	</bean>
+
+	<bean id="financeService" class="com.easyfix.finance.delegate.FinanceServiceImpl">
+    	<property name="financeDao" ref="financeDao" />	
+	</bean>
+
+	<bean id="activeUserJobListService" class="com.easyfix.util.utilityFunction.delegate.ActiveUserJobListServiceImpl">
+    	<property name="activeUserJobListDao" ref="activeUserJobListDao" />	
+	</bean>
+
+	<bean id="homeService" class="com.easyfix.home.delegate.HomeServiceImpl">
+		<property name="homeDao" ref="homeDao" />
+	</bean>
+
+	<bean id="completedJobsReportService" class="com.easyfix.reports.delegate.CompletedJobsReportServiceImpl">
+		<property name="completedJobsReportDao" ref="completedJobsReportDao" />
+	</bean>
+	<bean id="easyfixerReportService" class="com.easyfix.reports.delegate.EasyfixerReportServiceImpl">
+		<property name="easyfixerReporDao" ref="easyfixerReportDao" />
+	</bean>
+	<bean id="trackingService" class="com.easyfix.tracking.delegate.TarckingServiceImpl">		
+	</bean>
+	
+	<bean id="invoiceService" class="com.easyfix.invoice.delegate.InvoiceServiceImpl">
+		<property name="invoiceDao" ref="invoiceDao" />
+		<property name="invoiceDaoHibernate" ref="invoiceDaoHibernate" />
+		<property name="jobService" ref="jobService" />
+		
+		
+	</bean>
+	
+	<bean id="contextRefreshedEventService" class="com.easyfix.util.utilityFunction.delegate.ContextRefreshedEventServiceImpl">
+		<property name="contextRefreshedEventDao" ref="contextRefreshedEventDao" />
+	</bean>
+	<bean id="exotelLoggingService" class="com.easyfix.util.JmsSenderAndReceiver.service.ExotelLoggingServiceImpl">
+		<property name="exotelLoggingDao" ref="exotelLoggingDao" />
+	</bean>
+	
+	
+	
+	
+<!-- End Service Bean -->	
+<!-- Begin Action Beans -->		
+	<bean id="userAction"  class="com.easyfix.user.action.UserAction" >
+		<property name="userService" ref="userService" />	
+		<property name="cityService" ref="cityService" />
+		<property name="clientService" ref="clientService" />	
+		
+	</bean>	
+	<bean id="LoginAction"  class="com.easyfix.user.action.UserAction" >
+		<property name="userService" ref="userService" />		
+	</bean>
+	<bean id = "clientAction" class = "com.easyfix.clients.action.ClientAction">
+    	<property name = "clientService" ref = "clientService" />
+    	<property name="cityService" ref="cityService" />
+	</bean>
+	<bean id="clientServiceAction" class = "com.easyfix.clients.action.ClientServiceAction">
+    	<property name = "clientService" ref = "clientService" />
+    	<property name="cityService" ref="cityService" />
+    	<property name="clientRateCardService" ref="clientRateCardService" />	
+		<property name="serviceTypeService" ref="serviceTypeService" />	
+	</bean>
+	<bean id="customerAction"  class="com.easyfix.customers.action.CustomerAction" >
+		<property name="customerService" ref="customerService" />
+	</bean>
+	<bean id="cityAction"  class="com.easyfix.settings.action.CityAction" >
+		<property name="cityService" ref="cityService" />		
+	</bean>
+	<bean id="skillAction"  class="com.easyfix.settings.action.SkillAction" >
+		<property name="skillService" ref="skillService" />		
+	</bean>
+	<bean id="retailRateCardAction"  class="com.easyfix.settings.action.RetailRateCardAction" >
+		<property name="retailRateCardService" ref="retailRateCardService" />	
+		<property name="serviceTypeService" ref="serviceTypeService" />	
+	</bean>	
+	<bean id="clientRateCardAction"  class="com.easyfix.settings.action.ClientRateCardAction" >
+		<property name="clientRateCardService" ref="clientRateCardService" />	
+		<property name="serviceTypeService" ref="serviceTypeService" />	
+	</bean>	
+	<bean id="serviceTypeAction"  class="com.easyfix.settings.action.ServiceTypeAction" >
+		<property name="serviceTypeService" ref="serviceTypeService" />		
+	</bean>
+	<bean id = "easyfixerAction" class = "com.easyfix.easyfixers.action.EasyfixerAction">
+    	<property name = "easyfixerService" ref = "easyfixerService" />
+    	<property name="documentTypeService" ref="documentTypeService" />
+    	<property name="clientService" ref = "clientService" />
+    	<property name="userService" ref="userService" />  	
+    	<property name="jobService" ref="jobService" />  
+	</bean>
+	<bean id = "userTypeAction" class = "com.easyfix.settings.action.UserTypeAction">
+    	<property name = "userService" ref = "userService" />
+	</bean>
+	<bean id="documentTypeAction"  class="com.easyfix.settings.action.DocumentTypeAction" >
+		<property name="documentTypeService" ref="documentTypeService" />		
+	</bean>
+	
+	<bean id="jobAction" class="com.easyfix.Jobs.action.JobAction">
+		<property name="jobService" ref="jobService" />
+		<property name="customerService" ref="customerService" />
+		<property name="clientService" ref = "clientService" />
+		<property name="serviceTypeService" ref="serviceTypeService" />
+		<property name="cityService" ref="cityService" />
+		<property name="activeUserJobListDao" ref="activeUserJobListDao" />
+		<property name = "userService" ref = "userService" />
+		<property name="easyfixerService" ref="easyfixerService" />	
+		<property name="latLong" ref="latLong" />
+		
+	</bean>
+	<bean id="financeAction" class="com.easyfix.finance.action.FinanceAction">
+		<property name="financeService" ref="financeService" />
+		<property name="easyfixerService" ref="easyfixerService" />	
+		<property name = "userService" ref = "userService" />
+	</bean>
+	
+	<bean id="EasyfixerFinanceAction" class="com.easyfix.finance.action.EasyfixerFinanceAction">
+		<property name="financeService" ref="financeService" />
+		<property name="easyfixerService" ref="easyfixerService" />	
+		<property name = "userService" ref = "userService" />
+	</bean>
+	
+	<bean id="homeAction" class="com.easyfix.home.action.HomeAction">
+		<property name="homeService" ref="homeService" />
+		<property name="jobService" ref="jobService" />
+		<property name="customerService" ref="customerService" />
+		<property name="serviceTypeService" ref="serviceTypeService" />
+		<property name="cityService" ref="cityService" />
+		<property name="clientService" ref = "clientService" />
+		
+	</bean>
+	
+	<bean id="GeocodeLatLongAction"  class="com.easyfix.util.GeocodeLatLongAction" >
+		<property name="latLong" ref="latLong" />		
+	</bean>
+	<bean id="paramAction"  class="com.easyfix.util.utilityFunction.action.EasyfixerRatingParametersAction" scope="prototype" >
+		<property name="easyfixerRatingParametersService" ref="easyfixerRatingParametersService" />		
+	</bean>
+	<bean id="activeUserJobListAction"  class="com.easyfix.util.utilityFunction.action.activeUserJobListAction" >
+		<property name="activeUserJobListService" ref="activeUserJobListService" />		
+	</bean>
+	<bean id="ExotelAction"  class="com.easyfix.util.utilityFunction.action.ExotelAction" >
+		
+	</bean>
+	<bean id="completedJobsReportAction"  class="com.easyfix.reports.action.CompletedJobsReportAction" >
+		<property name="completedJobsReportService" ref="completedJobsReportService" />		
+	</bean>
+	<bean id="easyfixerReportAction"  class="com.easyfix.reports.action.EasyfixerReportAction" >
+		<property name="easyfixerReportService" ref="easyfixerReportService" />	
+		<property name="clientService" ref="clientService" />	
+	</bean>
+	
+	<bean id="trackingAction" class="com.easyfix.tracking.action.TrackingAction">
+		<property name="trackingService" ref="trackingService" />	
+		<property name = "userService" ref = "userService" />
+	</bean>
+	
+	<bean id="InvoiceAction" class="com.easyfix.invoice.action.InvoiceAction">
+		<property name="invoiceService" ref="invoiceService" />	
+		<property name="jobService" ref="jobService" />
+	</bean>
+	
+			
+	<!-- End Action Beans -->
+	<bean id="latLong"  class="com.easyfix.geocode.latlong.LatlongImp" >	
+	    	<property name="GoogleMapDistance" ref="GoogleMapDistance" />
+	</bean>
+	<bean id="GoogleMapDistance"  class="com.easyfix.geocode.distance.GoogleMapDistance" >		
+	</bean>
+	<bean id="CalculateEasyfixerRating"  class="com.easyfix.util.scheduling.CalculateEasyfixerRatingImpl" >		
+	</bean>
+	
+
+
+  <!-- Activemq connection factory -->
+  <bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory"> 
+     	<constructor-arg index="0" value="tcp://localhost:61616" />
+   		</bean>
+ 
+  <!-- Pooled Spring connection factory -->
+   
+  <bean id="connectionFactory"
+    class="org.springframework.jms.connection.CachingConnectionFactory">
+    <constructor-arg ref="amqConnectionFactory" />
+  </bean>
+
+  <!-- Default Destination Queue Definition -->
+<!--   <bean id="defaultDestination" class="org.apache.activemq.command.ActiveMQQueue">
+    <constructor-arg index="0" value="Send2Recv" />
+  </bean> -->
+  <bean id="exotelTopicDestination" class="org.apache.activemq.command.ActiveMQTopic">
+    <constructor-arg  value="exotel" />
+  </bean>
+ 
+  <!-- JmsTemplate Definition -->
+  <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+    <property name="connectionFactory" ref="connectionFactory" />
+     <property name="defaultDestination" ref="exotelTopicDestination" />
+     <property name="pubSubDomain" value="true" />
+  </bean>
+
+
+  
+  <!-- JMS Receive，Define MessageListenerContainer                  -->
+    <bean id = "messageListenerContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+    <property name="connectionFactory" ref="connectionFactory"/>
+    <property name="destination" ref="exotelTopicDestination"/>
+    <property name="messageListener" ref="basicJMSchat"/>
+  </bean> 
+  
+	<bean id="DemoMain" class="com.easyfix.util.JmsSenderAndReceiver.DemoMainAction">
+		<property name="jmsMessageSender" ref="jmsMessageSender" />
+		<property name="exotelLoggingService" ref="exotelLoggingService" />
+	</bean>
+
+	<bean id="jmsMessageSender" class="com.easyfix.util.JmsSenderAndReceiver.JmsMessageSender">
+		<property name="jmsTemplate" ref="jmsTemplate" />
+	</bean>
+
+	
+	<bean id="basicJMSchat" class="com.easyfix.util.JmsSenderAndReceiver.BasicJMSchat">
+		<property name="jmsTemplate" ref="jmsTemplate" />
+		<property name="userService" ref="userService" />
+		<property name="exotelLoggingService" ref="exotelLoggingService" />
+	</bean>
+	
+		<bean id="contextRefreshedListener" class="com.easyfix.util.ContextRefreshedListener">
+			<property name="contextRefreshedEventService" ref="contextRefreshedEventService" />
+		</bean>
+
+		
+		
+		
+	<bean id="sessionFactory"
+    class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+
+    <property name="dataSource">
+      <ref bean="dataSource"/>
+    </property>
+    <property name="packagesToScan">
+        <list>
+            <value>com.easyfix.Jobs.model</value>
+            <value>com.easyfix.clients.model</value>
+             <value>com.easyfix.settings.model</value>
+        </list>
+    </property>
+    <property name="hibernateProperties">
+       <props>
+         <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+         <prop key="hibernate.show_sql">true</prop>
+         <prop key="hibernate.format_sql">true</prop>
+         <prop key="hibernate.use_sql_comments">true</prop>
+       </props>
+    </property>
+
+    <property name="mappingResources">
+		<list>
+          <value>com/easyfix/invoice/hibernate/Invoice.hbm.xml</value>
+          
+		</list>
+    </property>
+
+</bean>	
+		
+</beans>
+
+ 
+	
+ 

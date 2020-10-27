@@ -1,0 +1,112 @@
+<div style="border-top:2px solid #60aee4; padding-top:10px;">
+
+	<table class="table table-striped table-hover table-bordered" id="sample_editable_1">
+		<thead>
+			<tr>
+				<th>User</th>
+				<th class="text-center">Booked</th>
+				<th class="text-center">Scheduled</th>
+				<th class="text-center">CheckIn</th>
+				<th class="text-center">CheckOut</th>
+				<th class="text-center">FeedBack</th>
+				<th class="text-center">Cancelled</th>
+				<th class="text-center">Inquiry</th>
+				<th class="text-center">Missed calls</th>
+			</tr>
+			</thead>
+			<tbody>
+			#set($totalCreated = 0)
+			#set($totalScheduled = 0)
+			#set($totalCheckedIn = 0)
+			#set($totalCheckedOut = 0)
+			#set($totalFeedback = 0)
+			#set($totalCanceled = 0)
+			#set($totalEnquiry = 0)
+			#foreach($cal in $userJobTrackerList)
+				#set($totalCreated = $totalCreated + $!cal.jobCreatedBy)
+				#set($totalScheduled = $totalScheduled + $!cal.jobScheduledBy)
+				#set($totalCheckedIn = $totalCheckedIn + $!cal.jobCheckInBy)
+				#set($totalCheckedOut = $totalCheckedOut + $!cal.jobCheckOutBy)
+				#set($totalFeedback = $totalFeedback + $!cal.jobFeedbackBy)
+				#set($totalCanceled = $totalCanceled + $!cal.jobCanceledBy)
+				#set($totalEnquiry = $totalEnquiry + $!cal.jobEnquiryCount)
+			<tr>
+				<td>$!cal.userName</td>
+				<td class="text-center">$!cal.jobCreatedBy</td>
+				<td class="text-center">$!cal.jobScheduledBy</td>
+				<td class="text-center">$!cal.jobCheckInBy</td>
+				<td class="text-center">$!cal.jobCheckOutBy</td>
+				<td class="text-center">$!cal.jobFeedbackBy</td>
+				<td class="text-center">$!cal.jobCanceledBy</td>
+				<td class="text-center">$!cal.jobEnquiryCount</td>
+				<td class="text-center">--</td>
+			</tr>
+			#end							
+		</tbody>
+	</table>
+	
+	
+	<div class="alert-warning" style="border-top:2px solid #60aee4; padding-top:10px;">
+		<div class="row">
+			<div class="col-md-4">
+				<label class="control-label col-md-6">Total Created :</label>
+				<div class="col-md-6">$totalCreated</div>							
+			</div>
+			
+			<div class="col-md-4">
+				<label class="control-label col-md-6">Total Scheduled :</label>
+				<div class="col-md-6">$totalScheduled</div>							
+			</div>
+			
+			<div class="col-md-4">
+				<label class="control-label col-md-6">Total CheckedIn :</label>
+				<div class="col-md-6">$totalCheckedIn</div>							
+			</div>
+			
+		</div>
+		
+		<div class="row">
+			<div class="col-md-4">
+				<label class="control-label col-md-6">Total CheckedOut :</label>
+				<div class="col-md-6">$totalCheckedOut</div>							
+			</div>
+			
+			<div class="col-md-4">
+				<label class="control-label col-md-6">Total Feedback :</label>
+				<div class="col-md-6">$totalFeedback</div>							
+			</div>
+			
+			<div class="col-md-4">
+				<label class="control-label col-md-6">Total Canceled :</label>
+				<div class="col-md-6">$totalCanceled</div>							
+			</div>
+			
+		</div>
+		
+		<div class="row">
+			<div class="col-md-4">
+				<label class="control-label col-md-6">Total Enquiry :</label>
+				<div class="col-md-6">$totalEnquiry</div>							
+			</div>
+			
+			<div class="col-md-4">
+				<label class="control-label col-md-6"></label>
+				<div class="col-md-6"></div>							
+			</div>
+			
+			<div class="col-md-4">
+				<label class="control-label col-md-6"></label>
+				<div class="col-md-6"></div>							
+			</div>
+			
+		</div>
+		
+	</div> 
+	
+</div>
+
+<script>
+jQuery(document).ready(function() { 
+	$('#sample_editable_1').DataTable( { "order": [[ 0, "desc" ]] } );
+});
+</script>

@@ -1,0 +1,161 @@
+
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+
+
+<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:750px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+	
+	
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+
+	<div class="page-content-wrapper" id = "clientInvoiceDiv">
+		<div class="page-content">
+			
+			
+			<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-building"></i>
+						<a href="#">Setting</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					<li>
+						<a href="#">Invoice Generation</a>
+					</li>
+				</ul>
+			</div>
+			<h3 class="page-title">Invoice Generation</h3>
+			<!-- END PAGE HEADER-->
+			
+			<div class="clientInvoiceGenerationDiv">
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="portlet box blue">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-calendar"></i>Filter Parameter
+							</div>
+							
+						</div>
+												
+					<div class="portlet-body">
+						
+							
+					 <button type="submit" id="generateClientInvoice" class="btn green">Generate Client Invoice</button> <br/>  <br/> <br/> 
+					<!--	<button type="submit" id="downloadClientInvoice" class="btn red"><i class="fa fa-download"></i>download Client Invoice</button> <br/> <br/> <br/>
+					-->
+						
+						<a href="#portlet-config" class="btn yellow" data-toggle="modal" onclick="deleteJobaftercheckout();">
+								<i class="fa fa-plus"></i>
+								Delete CheckOuted Jobs
+								</a>
+						
+						</div>
+						
+														
+				</div>
+			</div>	
+			
+		</div>
+			
+	</div>
+	<!-- END CONTENT -->
+
+#parse("pages/common/Footer.vm")
+
+<script>
+jQuery(document).ready(function() {       
+   		Metronic.init(); // init metronic core components
+		Layout.init(); // init current layout
+   		
+		//ComponentsDropdowns.init();
+	
+});
+
+function deleteJobaftercheckout(){
+	
+	
+	jQuery("#modal-body-id").html("<center>Please wait...</center> ");
+	 jQuery.ajax({
+		type	: "POST",
+		url		: "deleteJobAfterCheckout",
+		success	: function(data){
+			jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	});  
+}
+    
+
+    $('#generateClientInvoice').click(function () {
+       alert(1);
+        $( "#generateClientInvoice" ).hide();
+        $( "#downloadClientInvoice" ).hide();
+        
+      Metronic.blockUI({
+		        target: '#clientInvoiceDiv',
+		        animate: true,
+		        overlayColor: 'grey'
+			});
+      window.location.href="generateClientInvoice";
+       jQuery.ajax({  		
+		type: "POST",
+		//async: false,
+   		url: "generateAllInvoices",
+   		success: function(data) 
+   		{  	
+   		$("#clientInvoiceGenerationDiv").html("");
+		$("#clientInvoiceGenerationDiv").html(data);
+   		
+
+   			
+   		}
+	});
+
+	return false;
+    });
+
+$('#downloadClientInvoice').click(function () {
+       alert(1);
+        $( "#generateClientInvoice" ).hide();
+        $( "#downloadClientInvoice" ).hide();
+        
+      Metronic.blockUI({
+		        target: '#clientInvoiceDiv',
+		        animate: true,
+		        overlayColor: 'grey'
+			});
+       jQuery.ajax({  		
+		type: "POST",
+   		url: "zipAndDownloadAllInvoices",
+   		success: function(data) 
+   		{  	
+   		$("#clientInvoiceGenerationDiv").html("");
+		$("#clientInvoiceGenerationDiv").html(data);
+   		window.location.href="http://uat.easyfix.in/easydoc/invoice.zip";
+   			
+   		}
+	});
+
+	return false;
+    });
+    
+    
+
+
+
+</script>
+

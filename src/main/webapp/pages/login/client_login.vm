@@ -1,0 +1,319 @@
+#set($msg=$request.getParameter("msg"))
+<!DOCTYPE html>
+<!-- 
+Template Name: Metronic - Responsive Admin Dashboard Template build with Twitter Bootstrap 3.3.5
+Version: 4.1.0
+Author: KeenThemes
+Website: http://www.keenthemes.com/
+Contact: support@keenthemes.com
+Follow: www.twitter.com/keenthemes
+Like: www.facebook.com/keenthemes
+Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469?ref=keenthemes
+License: You must have a valid license purchased only from themeforest(the above link) in order to legally use the theme for your project.
+-->
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+<meta charset="utf-8"/>
+<title>$!title</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<meta content="" name="description"/>
+<meta content="" name="author"/>
+<!-- BEGIN GLOBAL MANDATORY STYLES -->
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
+<link href="/lib_easyfix/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+<link href="/lib_easyfix/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css"/>
+<link href="/lib_easyfix/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="/lib_easyfix/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+<!-- END GLOBAL MANDATORY STYLES -->
+<!-- BEGIN PAGE LEVEL STYLES -->
+<link href="/lib_easyfix/assets/global/plugins/select2/select2.css" rel="stylesheet" type="text/css"/>
+<link href="/lib_easyfix/assets/admin/pages/css/login3.css" rel="stylesheet" type="text/css"/>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME STYLES -->
+<link href="/lib_easyfix/assets/global/css/components.css" id="style_components" rel="stylesheet" type="text/css"/>
+<link href="/lib_easyfix/assets/global/css/plugins.css" rel="stylesheet" type="text/css"/>
+<link href="/lib_easyfix/assets/admin/layout/css/layout.css" rel="stylesheet" type="text/css"/>
+<link href="/lib_easyfix/assets/admin/layout/css/themes/darkblue.css" rel="stylesheet" type="text/css" id="style_color"/>
+<link href="/lib_easyfix/assets/admin/layout/css/custom.css" rel="stylesheet" type="text/css"/>
+<!-- END THEME STYLES -->
+<link rel="shortcut icon" href="/lib_easyfix/assets/admin/layout/img/favicon.png"/>
+
+
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="login">
+
+#if($!msg == 'ReLogin' || $!msg == 'Logout' || $!msg == 'SessionOut')
+	#if($!msg == 'Logout')
+	<div class="alert alert-success text-center" id="msg-div" style="position:absolute; width:100%; margin-top:20px;">
+		You have successfully logout.
+	</div>
+	#end
+	#if($!msg == 'ReLogin')
+	<div class="alert alert-danger text-center" id="msg-div" style="position:absolute; width:100%; margin-top:20px;">
+		Invalid Authentication! Please login with EasyFix google account.
+	</div>
+	#end
+	#if($!msg == 'SessionOut')
+	<div class="alert alert-danger text-center" id="msg-div" style="position:absolute; width:100%; margin-top:20px;">
+		Session TimeOut! Please Re-login.
+	</div>
+	#end
+	
+	<iframe name='myIFrame' src="https://www.google.com/accounts/Logout" id="myIFrame" style='display:none'></iframe>
+#end;
+
+
+<!-- BEGIN LOGO -->
+<div class="logo">
+	<a href="index.html">
+	<img src="/lib_easyfix/assets/admin/layout/img/logo.png" alt=""/>
+	</a>
+</div>
+<!-- END LOGO -->
+<!-- BEGIN LOGIN -->
+<div class="content">
+	<!-- BEGIN LOGIN FORM -->
+	<form class="login-form" action="index.html" method="post">
+		<h3 class="form-title">Sign In</h3>
+		<div class="alert alert-danger display-hide">
+			<button class="close" data-close="alert"></button>
+			<span>
+			Enter any username and password. </span>
+		</div>
+		<div class="form-group">
+			<!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+			<label class="control-label visible-ie8 visible-ie9">Username</label>
+			<input class="form-control form-control-solid placeholder-no-fix" type="text" autocomplete="off" placeholder="Username" name="username"/>
+		</div>
+		<div class="form-group">
+			<label class="control-label visible-ie8 visible-ie9">Password</label>
+			<input class="form-control form-control-solid placeholder-no-fix" type="password" autocomplete="off" placeholder="Password" name="password"/>
+		</div>
+		<div class="form-actions">
+			<button type="submit" class="btn btn-success uppercase">Login</button>
+			<label class="rememberme check">
+			<input type="checkbox" name="remember" value="1"/>Remember </label>
+			<a href="javascript:;" id="forget-password" class="forget-password">Forgot Password?</a>
+		</div>
+		
+		<div class="create-account">
+			<p>
+				<a href="javascript:;" id="register-btn" class="uppercase">Create an account</a>
+			</p>
+		</div>
+	</form>
+	<!-- END LOGIN FORM -->
+	<!-- BEGIN FORGOT PASSWORD FORM -->
+	<form class="forget-form" action="index.html" method="post">
+		<h3>Forget Password ?</h3>
+		<p>
+			 Enter your e-mail address below to reset your password.
+		</p>
+		<div class="form-group">
+			<input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Email" name="email"/>
+		</div>
+		<div class="form-actions">
+			<button type="button" id="back-btn" class="btn btn-default">Back</button>
+			<button type="submit" class="btn btn-success uppercase pull-right">Submit</button>
+		</div>
+	</form>
+	<!-- END FORGOT PASSWORD FORM -->
+	<!-- BEGIN REGISTRATION FORM -->
+	<form class="register-form" action="" id="clientSignUpFrm" method="post">
+		<h3>Sign Up</h3>
+		<p class="hint">
+			 Enter your personal details below:
+		</p>
+		<div class="form-group" id="fullname-divId">
+			<label class="control-label visible-ie8 visible-ie9" id="fullname-labelId">Full Name</label>
+			<input class="form-control placeholder-no-fix" type="text" placeholder="Full Name" id="fullname"/>
+			<span class="help-block" style="display:none">
+		</div>
+		<div class="form-group" id="contact-divId">
+			<label class="control-label visible-ie8 visible-ie9" id="contact-labelId" maxlength="10" onkeypress="CheckNumeric(event);">Contact</label>
+			<input class="form-control placeholder-no-fix" type="text" placeholder="Contact" id="contact"/>
+			<span class="help-block" style="display:none">
+		</div>
+		<div class="form-group" id="email-divId">
+			<label class="control-label visible-ie8 visible-ie9" id="email-labelId">Email</label>
+			<input class="form-control placeholder-no-fix" type="text" placeholder="Email" id="email"/>
+			<span class="help-block" style="display:none">
+		</div>
+		<div class="form-group" id="address-divId">
+			<label class="control-label visible-ie8 visible-ie9" id="address-labelId">Address</label>
+			<input class="form-control placeholder-no-fix" type="text" placeholder="Address" id="address"/>
+			<span class="help-block" style="display:none">
+		</div>
+		<div class="form-group" id="city-divId">
+			<label class="control-label visible-ie8 visible-ie9" id="city-labelId">City/Town</label>
+			<input class="form-control placeholder-no-fix" type="text" placeholder="City/Town" id="city"/>
+			<span class="help-block" style="display:none">
+		</div>
+		
+		<p class="hint">
+			 Enter your account details below:
+		</p>
+		<div class="form-group" id="username-divId">
+			<label class="control-label visible-ie8 visible-ie9" id="username-labelId">Username</label>
+			<input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Username" id="username"/>
+			<span class="help-block" style="display:none">
+		</div>
+		<div class="form-group" id="register_password-divId">
+			<label class="control-label visible-ie8 visible-ie9" id="register_password-labelId">Password</label>
+			<input class="form-control placeholder-no-fix" type="password" autocomplete="off" id="register_password" placeholder="Password"/>
+			<span class="help-block" style="display:none">
+		</div>
+		<div class="form-group" id="rpassword-divId">
+			<label class="control-label visible-ie8 visible-ie9" id="rpassword-labelId">Re-type Your Password</label>
+			<input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="Re-type Your Password" id="rpassword"/>
+			<span class="help-block" style="display:none">
+		</div>
+		<div class="form-group margin-top-20 margin-bottom-20">
+			<label class="check">
+			<input type="checkbox" name="tnc"/> I agree to the <a href="javascript:;">
+			Terms of Service </a>
+			& <a href="javascript:;">
+			Privacy Policy </a>
+			</label>
+			<div id="register_tnc_error">
+			</div>
+		</div>
+		<div class="form-actions">
+			<button type="button" id="register-back-btn" class="btn btn-default">Back</button>
+			<button type="submit" id="register-submit-btn" class="btn btn-success uppercase pull-right">Submit</button>
+		</div>
+	</form>
+	<!-- END REGISTRATION FORM -->
+</div>
+<!-- BEGIN COPYRIGHT -->
+<div class="copyright">
+	 2015 &copy; Easyfix.
+</div>
+<!-- END COPYRIGHT -->
+<!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
+<!-- BEGIN CORE PLUGINS -->
+<!--[if lt IE 9]>
+<script src="/lib_easyfix/assets/global/plugins/respond.min.js"></script>
+<script src="/lib_easyfix/assets/global/plugins/excanvas.min.js"></script> 
+<![endif]-->
+<script src="/lib_easyfix/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="/lib_easyfix/assets/global/plugins/jquery-migrate.min.js" type="text/javascript"></script>
+<script src="/lib_easyfix/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="/lib_easyfix/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="/lib_easyfix/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+<script src="/lib_easyfix/assets/global/plugins/jquery.cokie.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script src="/lib_easyfix/assets/global/plugins/jquery-validation/js/jquery.validate.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/lib_easyfix/assets/global/plugins/select2/select2.min.js"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="/lib_easyfix/assets/global/scripts/metronic.js" type="text/javascript"></script>
+<script src="/lib_easyfix/assets/admin/layout/scripts/layout.js" type="text/javascript"></script>
+<script src="/lib_easyfix/assets/admin/layout/scripts/demo.js" type="text/javascript"></script>
+<script src="/lib_easyfix/assets/admin/pages/scripts/login.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<script>
+jQuery(document).ready(function() {     
+  Metronic.init(); // init metronic core components
+  Layout.init(); // init current layout
+  Login.init();
+  Demo.init();
+});
+
+$("#msg-div").show().delay(5000).fadeOut(); 
+
+
+
+$("#register-submit-btn").click(function() {
+
+	if(blankValMetronicLabel("fullname","fullname-divId","fullname-labelId"))
+				return false;
+	if(blankValMetronicLabel("contact","contact-divId","contact-labelId"))
+				return false;
+	if(blankValMetronicLabel("email","email-divId","email-labelId"))
+				return false;
+	if(validEmailMetronic("email","email-divId"))
+				return false;
+	if(blankValMetronicLabel("address","address-divId","address-labelId"))
+				return false;
+	if(blankValMetronicLabel("city","city-divId","city-labelId"))
+				return false;
+	if(blankValMetronicLabel("username","username-divId","username-labelId"))
+				return false;
+	if(blankValMetronicLabel("register_password","register_password-divId","register_password-labelId"))
+				return false;
+	if(blankValMetronicLabel("rpassword","rpassword-divId","rpassword-labelId"))
+				return false;
+		
+		return false;
+				
+	Metronic.blockUI({
+        target: '#clientSignUpFrm',
+        animate: true,
+        overlayColor: 'grey'
+    });
+    
+    jQuary.ajax({
+    	type : "POST",
+    	Url : "",
+    	contentType : false,
+    	processData : false,
+    	data : function() {
+    		var data = new FormData();
+    		data.append("userName", $("#fullname").val());
+    		data.append("contact", $("#contact").val());
+    		data.append("officialEmail", $("#email").val());
+    		data.append("address", $("#address").val());
+    		data.append("city", $("#city").val());
+    		data.append("userName", $("#username").val());
+    		data.append("password", $("#register_password").val());
+    		data.append("city", $("#rpassword").val());
+    		return data,
+    	}(),
+    	success : function(data) {
+    		
+    	},
+		error: function(data) {
+			bootbox.alert("Customer entry failed");
+		}
+    });
+
+
+});
+
+
+
+function CheckNumeric(e) { 
+      if (window.event) // IE 
+        {
+          if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8) {
+             event.returnValue = false;
+             return false;
+ 
+            }
+         }
+       else { // Fire Fox
+           if ((e.which < 48 || e.which > 57) & e.which != 8) {
+              e.preventDefault();
+              return false;
+ 
+            }
+        }
+     }
+
+
+</script>
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

@@ -1,0 +1,127 @@
+<div class="portlet box blue">
+	<div class="portlet-title">
+			<div class="caption">
+				<i class="fa fa-reorder"></i> Easyfixers Mapping with $!clientObj.clientName
+			</div>					
+		<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+	</div>
+		
+
+	<div class="portlet-body form">
+	
+		<form name="client" action="" method="post" class="form-horizontal" id="client_formId">
+			<div class="form-body">
+			<input type="hidden" name="clientId"  id="clientId" value="$!clientObj.clientId" />
+									
+				<div class="form-group" id="clientName-divId">
+				 <label class="col-md-4 control-label" id="clientName-labelId">Client Name<span class="required">* </span></label>
+					<div class="col-md-8">
+					  <input type="text" class="form-control input-large" value="$!clientObj.clientName" readonly>
+					 </div>
+				</div>
+				<div class="form-group" id="clientServiceType-divId">
+				 <label class="col-md-4 control-label" id="clientServiceType-labelId">Select Service Type<span class="required">* </span></label>
+					<div class="col-md-8">
+						<select class="form-control select2_category input-large" id="serviceTypeId">
+							<option value="">Select a Service Type</option>
+							#foreach($serviceType in $serviceTypeList)
+							<option value="$serviceType.serviceTypeId">$serviceType.serviceTypeName</option>
+							#end
+						</select>						
+						<span class="help-block" style="display:none"></span>
+					</div>
+				</div>	
+				
+				<div class="form-group" id="easyfixer-divId">
+					<label class="col-md-4 control-label" id="easyfixer-labelId">Select Easyfixer<span class="required">* </span></label>
+					<div class="col-md-8">
+						<select class="form-control select2_category input-large" id="easyfixerId"  data-placeholder="Select Multiple Easyfixer from List" multiple >
+						</select>						
+						<span class="help-block" style="display:none"></span>						
+					</div>
+				</div>
+			
+					
+			
+			<div class="form-actions right">
+				<div class="col-md-offset-2 col-md-9">
+					<button type="button" id="addEditClientBtn" class="btn green">Submit</button>
+					<button type="button" data-dismiss="modal" class="btn red">Cancel</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script>
+
+
+
+
+$( "#serviceTypeId" ).change(function() {
+
+	var clientId = $("#clientId").val();
+	var serviceTypeId = $("#serviceTypeId").val();
+
+	 jQuery.ajax({
+		type	: "POST",
+		url		: "getEasyfixerListForMap?clientId="+clientId+"&serviceTypeId="+serviceTypeId, 
+		success	: function(data){
+		    jQuery("#easyfixerId").html(data);
+		}
+	}); 	
+});
+
+
+
+
+ 
+
+$('#addEditClientBtn').click(function () {
+
+
+
+	if(isComboSelectedMetronicLabel("serviceTypeId","clientServiceType-divId","clientServiceType-labelId"))
+				return false;
+	if(isComboSelectedMetronicLabel("easyfixerId","easyfixer-divId","easyfixer-labelId"))
+				return false;
+	
+	Metronic.blockUI({
+        target: '#modal-body-id',
+        animate: true,
+        overlayColor: 'grey'
+    });
+ 	jQuery.ajax({
+   			type: "POST",
+	   		url:  "saveMappedEasyfixer",
+	   		contentType: false,
+		    processData: false,
+		    data: function() {
+			        var data = new FormData();
+			        data.append("clientId",$("#clientId").val());
+			        data.append("serviceTypeId",$("#serviceTypeId").val());
+			        data.append("easyfixerIds",$("#easyfixerId").val());
+			        return data;
+			  }(),
+	   		success: function(data) {
+					window.location.href="clientEasyfixerMapping?clientId="+$("#clientId").val(); 
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Easyfixer Mapping failed");
+   			}
+	});
+
+	return false;
+
+});
+
+
+
+
+	$(document).ready(function () {
+			ComponentsDropdowns.init();
+		});		
+
+
+</script>

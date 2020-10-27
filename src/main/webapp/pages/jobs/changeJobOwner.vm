@@ -1,0 +1,188 @@
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+
+<div class="page-content-wrapper">
+	<div class="page-content">
+		
+		
+		<!-- BEGIN PAGE HEADER-->
+		<div class="page-bar">
+			<ul class="page-breadcrumb">
+				<li>
+					<i class="fa fa-paper-plane"></i>
+					<a href="#">Jobs</a>
+					<i class="fa fa-angle-right"></i>
+				</li>
+				<li>
+					<a href="#">Change Job Owner</a>
+				</li>
+			</ul>
+		</div>
+		<h3 class="page-title">Change Job Owner</h3>
+		<!-- END PAGE HEADER-->
+		
+		<div class="clearfix"></div>
+		
+		
+			<div class="portlet box blue">
+				<div class="portlet-title">
+						<div class="caption">
+							<i class="fa fa-edit"></i>Change Job Owner				
+						</div>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin-top:15px"></button>
+				</div>		
+				
+					<div class="portlet-body form">
+						<input type="hidden" id="jobId" value="$!jobsObj.jobId" />
+						
+						<form name="comment" action="" method="post" class="form-horizontal" id="comment_formId">
+							<div class="form-body" style="border-bottom:1px solid #3598dc" >											
+								<div class="form-group" id="owner-divId">
+							 	<label class="col-md-3 control-label" id="owner-lableId">New Job Owner<span class="required">* </span></label>			 	
+									<div class="col-md-9">
+								  		<select class="form-control select2_category input-large" id="ownerId" data-placeholder="Select Owner" >
+											<option value=""></option>
+											#foreach($user in $!userlist)
+												<option value="$!user.userId" #if($!jobsObj.jobOwner == $!user.userId) selected #end >$!user.userName</option>
+											#end			
+										</select>
+								  		<span class="help-block" style="display:none"></span>
+									</div>
+								</div>	
+								<div class="form-group" id="reason-divId">
+							 	<label class="col-md-3 control-label" id="reason-lableId">Reason<span class="required">* </span></label>			 	
+									<div class="col-md-9">
+								  		<textarea class="form-control input-large" id="reason" rows="3" placeholder="Write Owner Change Reason..." ></textarea>
+										<span class="help-block" style="display:none"></span>
+									</div>
+								</div>	
+							</div>
+							<div id="selectError" class="alert alert-danger text-center" style="display:none;">
+								Please select jobs from below list</div>
+							<div class="dataTables_scrollBody" style=" overflow-y: auto; overflow-x: hidden; height: 350px;">
+								<table class="table table-striped table-bordered table-hover" id="changeJobOwner">
+									<thead>
+										<tr>
+											<th width="8%" class="table-checkbox">
+												<input type="checkbox" class="group-checkable" data-set="#changeJobOwner .checkboxes"/>
+											</th>
+											<th width="8%">JobId1</th>
+											<th width="8%">City</th>
+											<th>Customer</th>
+											<th>Job Description</th>
+											<th width="15%">Client</th>
+											<th width="15%">Owner</th>
+											<th width="10%">Status</th>
+										</tr>
+										</thead>
+										<tbody>
+										#foreach($jobs in $jobList)
+											<tr class="odd gradeX">
+												<td><input type="checkbox" class="checkboxes chk" value="$!jobs.jobId"/></td>
+												<td>$!jobs.jobId</td>
+												<td>$!jobs.addressObj.cityObj.cityName</td>
+												<td>$!jobs.customerObj.customerName [$!jobs.customerObj.customerMobNo]</td>
+												<td><div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 250px;">$!jobs.jobDesc</div></td>
+												<td>$!jobs.clientObj.clientName</td>
+												<td>$!jobs.empName</td>
+												<td>#if($!jobs.jobStatus == 0)
+														Booked
+													#elseif($!jobs.jobStatus == 1)
+														Scheduled
+													#elseif($!jobs.jobStatus == 2)
+														Checked In
+													#elseif($!jobs.jobStatus == 3)
+														Checked Out
+													#elseif($!jobs.jobStatus == 4)
+														Feedback
+													#elseif ($!jobs.jobStatus == 8)
+														Pause Job
+													#end</td>
+											</tr>
+										#end
+										
+										</tbody>
+									</table>
+								</div>
+							<div class="form-actions right">
+								<div class="col-md-offset-3 col-md-9">
+									<button type="button" id="ownerJobBtn" class="btn green">Submit</button>
+									<!--<button type="button" data-dismiss="modal" id="ownerCancelBtn" class="btn red">Cancel</button>-->
+								</div>
+							</div>
+								
+						</form>
+					</div>
+					
+			</div>
+	</div>
+</div>
+#parse("pages/common/Footer.vm")
+
+
+<script src="pages/metronic_js/changeJobOwnerTable.js"></script>
+
+
+<script language="javascript" type="text/javascript">
+
+$('#ownerJobBtn').click(function () {
+	
+	if(isComboSelectedMetronicLabel("ownerId","owner-divId","owner-lableId"))
+				return false;
+	if(blankValMetronicLabel("reason","reason-divId","reason-lableId"))
+				return false;	
+				
+	
+	var ownerId = $("#ownerId").val();
+	var chkArray = [];
+	$(".chk:checked").each(function() {
+		chkArray.push($(this).val());
+	});
+	var selected = "";
+	selected = chkArray.join(',');	
+	
+	if(selected == "")
+		$("#selectError").show();
+	else
+		$("#selectError").hide();
+	
+	
+		jQuery.ajax({
+	   			type: "POST",
+		   		url:  "updateJobOwner",
+		   		contentType: false,
+			    processData: false,
+			    data:function() {
+				        var data = new FormData();
+				        data.append("ownerJobIds",selected);
+				        data.append("jobOwner",ownerId); 				          
+				        data.append("OwnerChangeReason",$("#reason").val());
+				        
+				        return data;
+				  }(),
+		   		success: function(data) {
+		   			window.location.href="changeJobOwner";
+										        
+	   			},
+	   			error: function(data) {
+	   				bootbox.alert("Job owner change failed");
+	   			}
+		});
+	
+		return false;
+	
+});
+
+$(document).ready(function () {
+	Metronic.init(); // init metronic core components
+	Layout.init(); // init current layout
+	TableManagedCheckBox.init();
+
+	$('#ownerId').select2({
+           allowClear: true
+        });
+});
+
+
+
+</script>

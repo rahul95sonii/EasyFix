@@ -1,0 +1,126 @@
+#set($flagDate = $request.getAttribute("flagDate"))
+
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-calendar"></i>Change #if($flagDate == 1) Requested Date #end
+					#if($flagDate == 2) Scheduled Date #end
+				</div>					
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+		
+</div>
+<div class="portlet-body form">
+	<form class="form-horizontal" role="form" id="job_formId" method="post" action="">
+	<input type="hidden" id="changeDateJobId" value="$!jobsObj.jobId" />
+	<div class="form-body" style="height:auto">
+		<div class="form-group">
+			<label class="control-label col-md-4">Old Date Time:</label>
+			<div class="col-md-8">
+				<p class="form-control-static">#if($flagDate == 1) $!jobsObj.requestedDateTime 
+					<input type="hidden" id="reqDate" value="$!jobsObj.requestedDateTime" />
+				#end
+				#if($flagDate == 2) $!jobsObj.scheduleDateTime 
+					<input type="hidden" id="reqDate" value="$!jobsObj.scheduleDateTime" />
+				#end
+				</p>				
+			</div>							
+		</div>
+		<div class="form-group" id="job-reqest-date-divId">
+			<label class="control-label col-md-4" id="job-reqest-date-label-id">New Date Time:</label>
+			<div class="col-md-8">
+				<div class="input-group date form_datetime input-large">
+					<input type="text" id="requestDateTime" value="" readonly class="form-control">
+					<span class="input-group-btn">
+					<button class="btn default date-set" type="button" name="jdtin"><i class="fa fa-calendar"></i></button>
+					</span>
+				</div>
+				<span class="help-block" style="display:none">
+			</div>							
+		</div>
+		<!--<div class="form-group" id="comment-divId">
+			<label class="control-label col-md-4" id="comment-label-id">Change Reason:</label>
+			<div class="col-md-8">
+					<textarea id="comment" class="form-control input-large"></textarea>
+				<span class="help-block" style="display:none">
+			</div>							
+		</div>-->
+		<div class="form-actions text-right">
+			<div class="row">
+				<div class="col-md-offset-2 col-md-9">
+					<button type="button" id="changeDateBtn" class="btn green" >Update</button>
+					<button type="button" id="cancelDateBtn" data-dismiss="modal" class="btn red">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	</form>
+</div>
+
+<input type="hidden" id="dateflag" value="$flagDate" />
+
+<script>
+
+var fromdate = new Date($("#reqDate").val());
+var dd = fromdate.getDate();
+var mm = fromdate.getMonth()+1; //January is 0!
+var yyyy = fromdate.getFullYear();
+
+var formatedDate = yyyy+"-"+mm+"-"+dd;
+
+
+
+$(document).ready(function () {		
+// For Date Time Picker
+	   $(".form_datetime").datetimepicker({
+	   		autoclose: true,
+	    	isRTL: Metronic.isRTL(),
+	    	format: "dd MM yyyy - hh:ii",
+	    	startDate: formatedDate,
+	       	pickerPosition: (Metronic.isRTL() ? "bottom-right" : "bottom-left")
+	    });
+	
+	});
+	
+$('#changeDateBtn').click(function () {
+
+	if(blankValMetronicLabel("requestDateTime","job-reqest-date-divId","job-reqest-date-label-id"))
+				return false;
+	/*if(blankValMetronicLabel("comment","comment-divId","comment-label-id"))
+				return false;*/
+	
+		var flg = $("#dateflag").val();
+		var oldDate = $("#reqDate").val();
+		
+	
+		jQuery.ajax({
+	   			type: "POST",
+		   		url:  "updateDate?dtflag="+flg+"&oldDate="+oldDate,
+		   		contentType: false,
+			    processData: false,
+			    data: function() {
+				        var data = new FormData();			
+				         data.append("jobId",$("#changeDateJobId").val());
+				         data.append("requestedDateTime",$("#requestDateTime").val());
+				         data.append("comments","");				         	                      
+				        	
+				        return data;
+				  }(),
+		   		success: function(data) {
+		   			$("#changeDateDiv").html(data);
+		   			$("#cancelDateBtn").trigger( "click" );
+										        
+	   			},
+	   			error: function(data) {
+	   				bootbox.alert("Date change entry failed");
+	   			}
+		});
+	
+		return false;
+
+
+});
+	
+	
+	
+</script>

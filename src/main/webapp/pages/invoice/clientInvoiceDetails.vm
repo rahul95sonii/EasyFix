@@ -1,0 +1,47 @@
+<div style="border-top:2px solid #60aee4; padding-top:10px;">
+	<table class="table table-striped table-hover table-bordered" id="sample_editable_10">
+		<thead>
+			<tr>
+				<th width="20%">Client</th>
+				<th width="20%">Billing Cycle</th>
+				<th width="15%" class="text-right" style="padding-right:20px">Current Dues</th>
+				<th width="15%" class="text-right" style="padding-right:20px">Previous Dues</th>
+				<th width="10%" class="text-right" style="padding-right:20px">Total Amount</th>
+				<th class="text-center">Action</th>
+			</tr>
+			</thead>
+			<tbody>
+			
+			#foreach($inv in $invoiceList)
+				
+			<tr>
+				<td>$!inv.client.clientName</td>
+				<td>$!inv.billingStartDate -- $!inv.billingEndDate</td>
+				<td class="text-right" style="padding-right:20px">$!inv.curentDues</td>
+				<td class="text-right" style="padding-right:20px">$!inv.previousDues</td>
+				<td class="text-right" style="padding-right:20px">$!inv.totalBillingAmount</td>
+				<td class="text-center">
+				<!--<a href="#" title="View Details"><i class="fa fa-check-square-o"></i></a> &nbsp; &nbsp; &nbsp; &nbsp; 
+				<a href="#" title="Previous Invoice"><i class="fa fa-folder-open-o"></i></a> &nbsp; &nbsp; &nbsp; &nbsp;-->
+				#if($!inv.totalBillingAmount > 0) 
+					<a href="http://uat.easyfix.in/easydoc/client_invoice/$!inv.invoiceFileName" target="_blank" title="Download Excel"><i class="fa fa-file-excel-o"></i></a>
+					&nbsp; &nbsp; &nbsp; &nbsp; 
+					<a href="#" title="Download PDF"><i class="fa fa-file-pdf-o"></i></a>
+				#end
+				</td>
+			</tr>
+			#end										
+		</tbody>
+	</table>	
+</div>
+
+<script>
+
+jQuery(document).ready(function() { 
+	$('#sample_editable_10').DataTable( {
+	"columnDefs": [ {
+      		"targets": [ 5 ],
+      		"orderable": false	} ],
+    "order": [[ 0, "desc" ]] } );
+});
+</script>

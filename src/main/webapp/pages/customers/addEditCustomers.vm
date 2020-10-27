@@ -1,0 +1,183 @@
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-reorder"></i>#if($!customerObj.customerId == 0) Add #else Edit #end Customer
+				</div>					
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+		<div class="portlet-body form">
+			<form class="form-horizontal" id="customer_formId" name="customer" action="" method="post">
+				<div class="form-body" style="height:430px; overflow-y: scroll; overflow-x: hidden;">
+					<div class="form-group" id="mob-div-id">
+						<label class="col-md-4 control-label" id="mob-lable-id">Mobile Number<span class="required">* </span></label>
+						<div class="col-md-8">
+						  	<input type="text" id="customerMobNo" value="$!customerObj.customerMobNo" maxlength="10"  class="form-control input-medium" onchange="getCustomerAjax(this.value)">
+							<span class="help-block" style="display:none">
+						</div>
+					</div>
+					
+						<div id="existCustDiv"> </div>
+				</div>	
+				
+				<div class="form-actions right">
+						<div class="col-md-offset-3 col-md-9">
+							<button type="submit" id="addEditCustomerBtn" class="btn green" disabled>Submit</button>
+							<button type="button" data-dismiss="modal" class="btn default">Cancel</button>
+						</div>
+				</div>			
+			</form>
+		</div>
+</div>		
+
+
+<script language="javascript" type="text/javascript">
+
+$(document).ready(function () {	
+	ComponentsDropdowns.init();  
+});   
+
+if($("#customerMobNo").val()!="")
+{
+	 getCustomerAjax($("#customerMobNo").val());
+}
+
+
+function getCustomerAjax(mobNo){
+	if(isNumericMetronicLabel('customerMobNo','mob-div-id','mob-lable-id'))
+	{
+		return false;
+	}
+	else
+	{
+		Metronic.blockUI({
+	        target: '#existCustDiv',
+	        animate: true,
+	        overlayColor: 'grey'
+		});
+		jQuery.ajax({  		
+			type: "POST",
+	   		url: "getCustomerDetails?customerMobNo="+mobNo,
+	   		success: function(data) 
+	   		{  	
+	   			$("#existCustDiv").html(data);
+	   			$("#addEditCustomerBtn").removeAttr("disabled");
+	   		}
+		});
+
+		return false;	
+	}		
+}
+
+
+
+
+        function CheckNumeric(e) {
+ 
+            if (window.event) // IE 
+            {
+                if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8) {
+                    event.returnValue = false;
+                    return false;
+ 
+                }
+            }
+            else { // Fire Fox
+                if ((e.which < 48 || e.which > 57) & e.which != 8) {
+                    e.preventDefault();
+                    return false;
+ 
+                }
+            }
+        }
+        
+ 
+ 
+ 
+ $('#addEditCustomerBtn').click(function () {
+
+	if(blankValMetronicLabel("customerMobNo","mob-div-id","mob-lable-id"))
+				return false;
+	if(blankValMetronicLabel("cusName","name-div-id","name-lableId"))
+				return false;
+/*	if(blankValMetronicLabel("email","email-div-id","email-lableId"))
+				return false;
+	if(validEmailMetronic("email","email-div-id"))
+				return false; */
+	if($("#customerId").val() == "") 
+	{
+		if(blankValMetronicLabel("address","add-divId","add-lableId"))
+					return false;
+		if(isComboSelectedMetronicLabel("cityId","city-divId","city-lableId"))
+					return false;
+		if(blankValMetronicLabel("customerPin","pin-divId","pin-lableId"))
+					return false;
+		if(blankValMetronicLabel("coord","geo-divId","geo-lableId"))
+				return false;	
+	}
+	
+	Metronic.blockUI({
+        target: '#modal-body-id',
+        animate: true,
+        overlayColor: 'grey'
+    });
+
+	
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "addUpdateCustomer",
+	   		contentType: false,
+		    processData: false,
+		    data: function() {
+			        var data = new FormData();			
+			         data.append("customerId",$("#customerId").val());
+			         data.append("customerMobNo",$("#customerMobNo").val());
+			         data.append("customerName",$("#cusName").val());
+			         data.append("customerEmail",$("#email").val());
+			        if($("#customerId").val() == "") 
+			        {
+		         	 data.append("addressObj.address",$("#address").val());
+			         data.append("addressObj.cityObj.cityId",$("#cityId").val());
+			         data.append("addressObj.pinCode",$("#customerPin").val());
+			         data.append("addressObj.gpsLocation",$("#coord").val());
+			        }
+				     	
+			        return data;
+			  }(),
+	   		success: function(data) {
+	   			window.location.href="customer"; 	   			
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Customer entry failed");
+   			}
+	});
+
+	return false;
+
+});
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+        
+        
+ function selectAddressAjax(id)
+{
+	//var conf = confirm("Are you sure selected address is correct address?");
+	//if(conf)
+	{
+		var add = $("#add"+id).val();
+		var loc = $("#loc"+id).val();
+		
+		$("#coord").val(loc);
+		$( "#cancelAddChoseBtn" ).trigger( "click" );
+	}
+}       
+        
+     
+</script>

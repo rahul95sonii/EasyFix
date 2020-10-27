@@ -1,0 +1,514 @@
+#set($totalSum = $request.getAttribute("totalSum"))
+#set($loc = $request.getAttribute("loc"))
+
+<input type="hidden" id="loc" value="$loc" />
+
+
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-calendar"></i>Job Details
+				</div>					
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+		
+</div>
+		<div class="portlet-body form">
+			<form class="form-horizontal" role="form" id="job_formId" method="post" action="">
+			<input type="hidden" id="detailsJobId" value="$!jobsObj.jobId" />
+			<input type="hidden" id="easyfixerId" value="$!jobsObj.fkEasyfixterId" />
+			
+				<div class="form-body" style="height:420px; overflow-y: scroll; overflow-x: hidden;">
+					<h4 class="note note-info" style="margin-bottom:0px">Job Info</h4>
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Job Id:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.jobId
+								</p>
+							</div>							
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Job Description:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									  $!jobsObj.jobDesc
+								</p>
+							</div>							
+						</div>
+						<!--/span-->
+					</div>
+					<!--/row-->
+					<div class="row alert-warning">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Created On:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									  $!jobsObj.createdDateTime
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Requested On:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.requestedDateTime									 
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+					</div>
+					<!--/row-->
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Client:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									  $!jobsObj.clientObj.clientName
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Service Type:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									  $!jobsObj.serviceTypeObj.serviceTypeName
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+					</div>
+					<!--/row-->
+					
+			#if($!jobsObj.jobStatus == 6)
+				<div class="row alert-warning">
+					<div class="col-md-6">
+						<label class="control-label col-md-4">Job Status:</label>
+						<div class="col-md-8">
+							<p class="form-control-static">
+								 #if($!jobsObj.jobStatus == -1) For Confirmation
+								 #elseif($!jobsObj.jobStatus == 0) New Created
+								 #elseif($!jobsObj.jobStatus == 1) Scheduled
+								 #elseif($!jobsObj.jobStatus == 2) CheckedIn	
+								 #elseif($!jobsObj.jobStatus == 3) CheckedOut	
+								 #elseif($!jobsObj.jobStatus == 4) Feedback	
+								 #elseif($!jobsObj.jobStatus == 5) Completed	
+								 #elseif($!jobsObj.jobStatus == 6) Canceled	
+								 #elseif($!jobsObj.jobStatus == 7) Enquiry
+								 #elseif($!jobsObj.jobStatus == 8) Pause
+								 #elseif($!jobsObj.jobStatus == 9) Call Later
+								 #end
+							</p>
+						</div>
+					</div>
+					<!--/span-->												
+				</div>					
+				<!--/row-->
+				<div class="row">
+					<div class="col-md-6">
+						<label class="control-label col-md-4">Cancel Reason: </label>
+						<div class="col-md-8">
+							<p class="form-control-static">
+									$!jobsObj.enumDesc								
+							</p>
+						</div>
+					</div>
+					<!--/span-->
+					<div class="col-md-6">
+						<label class="control-label col-md-4">Comments:</label>
+						<div class="col-md-8">
+							<p class="form-control-static">
+								 $!jobsObj.cancleComment
+							</p>
+						</div>
+					</div>
+					<!--/span-->
+				</div>
+				<!--/row-->
+				<div class="row alert-warning">
+					<div class="col-md-6">
+						<label class="control-label col-md-4">Cancel Stage: </label>
+						<div class="col-md-8">
+							<p class="form-control-static">
+									#if($!jobsObj.canceledOn == 1)
+										On Scheduling
+									#elseif($!jobsObj.canceledOn == 2)
+										On CheckIn
+									#elseif($!jobsObj.canceledOn == 3)
+										On CheckOut
+									#end							
+							</p>
+						</div>
+					</div>
+					<!--/span-->
+					<div class="col-md-6">
+						<label class="control-label col-md-4">Cancel Date:</label>
+						<div class="col-md-8">
+							<p class="form-control-static">
+								 $!jobsObj.cancelDateTime
+							</p>
+						</div>
+					</div>
+					<!--/span-->
+				</div>
+				<!--/row-->	
+				
+			
+			#elseif($!jobsObj.jobStatus == 7)
+				<div class="row alert-warning">
+					<div class="col-md-6">
+						<label class="control-label col-md-4">Job Status:</label>
+						<div class="col-md-8">
+							<p class="form-control-static">
+								 #if($!jobsObj.jobStatus == -1) For Confirmation
+								 #elseif($!jobsObj.jobStatus == 0) New Created
+								 #elseif($!jobsObj.jobStatus == 1) Scheduled
+								 #elseif($!jobsObj.jobStatus == 2) CheckedIn	
+								 #elseif($!jobsObj.jobStatus == 3) CheckedOut	
+								 #elseif($!jobsObj.jobStatus == 4) Feedback	
+								 #elseif($!jobsObj.jobStatus == 5) Completed	
+								 #elseif($!jobsObj.jobStatus == 6) Canceled	
+								 #elseif($!jobsObj.jobStatus == 7) Enquiry
+								 #elseif($!jobsObj.jobStatus == 8) Pause
+								 #elseif($!jobsObj.jobStatus == 9) Call Later
+								 #end
+							</p>
+						</div>
+					</div>
+					<!--/span-->												
+				</div>					
+				<!--/row-->
+				<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Enquiry Reason: </label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									$!jobsObj.enumDesc							
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Comments:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									$!jobsObj.comments
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+					</div>
+					<!--/row-->
+					
+			#else										
+					<div class="row alert-warning">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Easyfixer:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									#if($!jobsObj.easyfixterObj.easyfixerName)
+									 	$!jobsObj.easyfixterObj.easyfixerName
+									 #else
+									 	NA
+									 #end
+									
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Contact No.:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 #if($!jobsObj.easyfixterObj.easyfixerNo)
+									 	$!jobsObj.easyfixterObj.easyfixerNo
+									 	 &nbsp; &nbsp; 
+									 <a href="#sub-portlet-config" class="btn btn btn-xs blue" data-toggle="modal" onclick="showCrmSmsList($!jobsObj.easyfixterObj.easyfixerNo,$!jobsObj.jobId);">
+									<i class="fa fa-envelope-o"></i> SMS </a>
+									 #else
+									 	NA
+									 #end
+									
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+					</div>
+					<!--/row-->
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Scheduled :</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									  $!jobsObj.scheduleDateTime::$!jobsObj.jobScheduledBy.userName
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Checked In :</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.checkInDateTime::$!jobsObj.jobCheckInBy.userName
+								</p>
+							</div>
+						</div>
+						<!--/span-->						
+					</div>					
+					<!--/row-->
+					<div class="row alert-warning">
+						<div class="col-md-6">					
+							<label class="control-label col-md-4">Paid By:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 #if($!jobsObj.paidBy == 1) Client
+									 #elseif($!jobsObj.paidBy == 2) Customer	
+									 #else NA
+									 #end
+								</p>									
+							</div>							
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Collected By:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 #if($!jobsObj.collectedBy == 1) Easyfixer
+									 #elseif($!jobsObj.collectedBy == 2) Easyfix	
+									 #else NA
+									 #end
+								</p>
+							</div>
+						</div>
+						<!--/span-->						
+					</div>					
+					<!--/row-->
+					
+				
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Material Charge:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									  $!jobsObj.materialCharge
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Job Status:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 #if($!jobsObj.jobStatus == -1) For Confirmation
+									 #elseif($!jobsObj.jobStatus == 0) New Created
+									 #elseif($!jobsObj.jobStatus == 1) Scheduled
+									 #elseif($!jobsObj.jobStatus == 2) CheckedIn	
+									 #elseif($!jobsObj.jobStatus == 3) CheckedOut	
+									 #elseif($!jobsObj.jobStatus == 4) Feedback	
+									 #elseif($!jobsObj.jobStatus == 5) Completed	
+									 #elseif($!jobsObj.jobStatus == 6) Canceled	
+									 #elseif($!jobsObj.jobStatus == 7) Enquiry
+									 #elseif($!jobsObj.jobStatus == 8) Pause
+									 #elseif($!jobsObj.jobStatus == 9) Call Later
+									 #end
+								</p>
+							</div>
+						</div>
+						<!--/span-->												
+					</div>					
+					<!--/row-->
+					
+					
+				#end
+				<div class="row alert-warning">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Owner:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									#if($!jobsObj.owner.userName)
+									 	$!jobsObj.owner.userName
+									 #else
+									 	NA
+									 #end
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Owner Change By:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									#if($!jobsObj.ownerChangedByObj.userName)
+									 	$!jobsObj.ownerChangedByObj.userName
+									 #else
+									 	NA
+									 #end
+								</p>
+							</div>
+						</div>
+						<!--/span-->												
+					</div>					
+					<!--/row-->
+						<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">last Owner change Date:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									#if($!jobsObj.ownerChangeDateTime)
+									 	$!jobsObj.ownerChangeDateTime
+									 #else
+									 	NA
+									 #end
+								</p>
+							</div>
+						</div>
+						<!--span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">check Out:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.checkOutDateTime :: $!jobsObj.jobCheckOutBy.userName
+								</p>
+							</div>
+						</div>
+						
+						<!--/span-->												
+					</div>					
+					<!--/row-->
+					<div style="height:20px"></div>
+					<h4 class="note note-info" style="margin-bottom:0px">Selected Services</h4>
+					<div class="row">
+						<div class="col-md-12">							
+							<div class="portlet-body">								
+								<table class="table table-striped table-hover table-bordered">
+								<tbody>
+									<tr style="background-color:#EEE">
+										<td><b>Services</b></td>
+										<td width="20%"><b>Charge</b></td>													
+									</tr>
+									#set($i=0)										
+									#foreach($service in $jobServiceList)
+										<tr>
+											<td>$!service.serviceName </td>
+											<td>$!service.totalCharge</td>													
+										</tr>
+										#set($i=$i+1)
+									#end
+									<tr">
+										<td style="text-align:right;"><b>Total: </b></td>
+										<td>$totalSum</td>								
+									</tr>
+								</tbody>
+								</table>								
+							</div>							
+						</div>
+									
+					</div>
+					<!--/row-->
+					<h4 class="note note-info" style="margin-bottom:0px">Customer Info</h4>
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Name:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.customerObj.customerName
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Contact No.:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.customerObj.customerMobNo
+									 &nbsp; &nbsp; 
+									 <a href="#sub-portlet-config" class="btn btn btn-xs blue" data-toggle="modal" onclick="showCrmSmsList($!jobsObj.customerObj.customerMobNo,$!jobsObj.jobId);">
+									<i class="fa fa-envelope-o"></i> SMS </a>
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+					</div>
+						
+					<div class="row">
+						<div class="col-md-6">
+						<label class="control-label col-md-4">Additional Name:</label>
+						<div class="col-md-8">
+							<p class="form-control-static">
+								 $!jobsObj.additionalName
+							</p>
+						</div>
+					</div>	
+					</div>
+					
+					
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Address:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									$!jobsObj.addressObj.address
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">City:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.addressObj.cityObj.cityName
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+					</div>
+					<!--/row-->
+					<div style="height:20px"></div>
+					<h4 class="note note-info" style="margin-bottom:0px">Remarks</h4>
+					<div class="row">						
+								<div class=" col-md-12" id="checkOutRemarkDiv">										
+																	
+														
+							</div>						
+					</div>
+					<!--/row-->
+					<!--/row-->
+					<div style="height:20px"></div>
+					<h4 class="note note-info" style="margin-bottom:0px">Remarks</h4>
+					<div class="row">						
+								<div class=" col-md-12" id="checkOutImageDiv">										
+																	
+														
+							</div>						
+					</div>
+					<!--/row-->
+					
+				</div>
+				<div class="form-actions">
+					<div class="row">
+						<div class="col-md-6">
+							<a href="#sub-portlet-config" data-toggle="modal" class="btn purple" onclick="addComment($!jobsObj.jobId,$!jobsObj.jobStatus);">
+								<i class="fa fa-edit"></i> Add Remarks</a>
+						</div>
+						<div class="col-md-6 text-right">
+							<button type="button" data-dismiss="modal" class="btn red">Close</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+<script>		
+  
+jobCommentList($!jobsObj.jobId,'checkOutRemarkDiv');
+jobImageList($!jobsObj.jobId,'checkOutImageDiv');
+
+	
+</script>	
+
+
+

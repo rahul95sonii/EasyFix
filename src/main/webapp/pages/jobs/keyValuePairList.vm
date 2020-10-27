@@ -1,0 +1,114 @@
+
+#set($crmSmsList = $request.getAttribute("crmSmsList"))
+#set($mobileNo = $request.getAttribute("mobileNo"))
+#set($jobId = $request.getAttribute("jobId"))
+
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-calendar"></i> Select   
+				</div>					
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+		
+</div>
+
+<form class="form-horizontal" role="form" id="sms_from_id" method="post" action="">
+<input type = "hidden" id="smsMobileNo" value="$!mobileNo">
+<input type = "hidden" id="jobId" value="$!jobId">
+
+					<div class="row" id="smsChooseDiv">
+					<span class="help-block" id="smsErrorId" style="display:none; margin-left:50px;"></span>
+						<div class="portlet box">						
+							<div class="portlet-body" style="padding-top:0px;">										
+								<table class="table">
+								<thead>
+								<tr>
+									<th width="5%" style="padding-left:30px">#</th>
+									<th width="20%" class="text-center">sms id</th>
+									<th >sms</th>
+									<th width="10%" class="text-center">&nbsp;</th>
+								</tr>
+								</thead>
+								<tbody>
+									#set($i=0)
+									#foreach($sms in $crmSmsList)
+										<tr id="row$i" class="odd gradeX">
+											<td style="padding-left:20px">
+												<div class="md-radio">
+													<input type="radio" id="smsradio$i" class="md-radiobtn" name="choosesms" value="$!sms.smsId"  />
+												
+													<label for="smsradio$i">
+													<span></span>
+													<span class="check"></span>
+													<span class="box"></span>
+													</label>
+												</div>
+											</td>
+											<td style="text-align:left;">$!sms.smsId</td>
+											<td>$!sms.sms.replaceAll("<|>",'*')</td>
+											
+											<td class="text-center" id="rej$i">
+											</td>
+										</tr>
+										#set($i=$i+1)
+									#end
+									
+									
+								</tbody>
+								</table>								
+							</div>							
+						</div>						
+					</div>
+					
+		<div class="form-actions text-right">
+			<div class="row">
+				<div class="col-md-offset-2 col-md-9">
+					<button type="button" id="changesmsBtn" class="btn green" >send</button>
+					<button type="button" id="cancelsmsBtn" data-dismiss="modal" class="btn red">Cancel</button>
+				</div>
+			</div>
+		</div>
+					
+
+</form>					
+
+<script>	
+
+$('#changesmsBtn').click(function () {
+
+	if(blankCheckBoxRadioMetronic("choosesms","smsChooseDiv","smsErrorId","sms"))
+				return false;
+				
+			$("#changesmsBtn").hide();
+				
+		jQuery.ajax({
+	   			type: "POST",
+		   		url:  "sendSmsFromCRM",
+		   		contentType: false,
+			    processData: false,
+			    data: function() {
+				        var data = new FormData();			
+				         data.append("mobileNo",$("#smsMobileNo").val());
+				         data.append("smsId",$('input:radio[name=choosesms]:checked').val());
+				          data.append("jobId",$("#jobId").val());
+				        return data;
+				  }(),
+		   		success: function(data) {
+		   			
+		   			$("#cancelsmsBtn").trigger( "click" );
+										        
+	   			},
+	   			error: function(data) {
+	   				bootbox.alert("Date change entry failed");
+	   			}
+		});
+	
+		return false;
+
+
+});
+	
+	
+	
+</script>

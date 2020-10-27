@@ -1,0 +1,6 @@
+CREATE TABLE `tbl_city` (
+  `city_id` int(11) NOT NULL AUTO_INCREMENT,
+  `city_name` varchar(255) DEFAULT NULL,
+  `city_status` tinyint(2) DEFAULT '1' COMMENT '0:Inactive, 1:Active',
+  PRIMARY KEY (`city_id`)
+)

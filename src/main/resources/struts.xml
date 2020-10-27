@@ -1,0 +1,1063 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+ 
+<struts>
+    <constant name="struts.devMode" value="true" />
+	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
+    <constant name="struts.custom.i18n.resources" value="ApplicationResources" />
+    <constant name="struts.action.extension" value=","/>
+ <!--   <constant name="struts.custom.i18n.resources" value="global" /> -->	
+
+    
+
+	<package name="default" extends="struts-default">
+		<interceptors>
+			<interceptor name="authentication" class="com.easyfix.util.interceptors.AuthenticationInterceptor"></interceptor>
+			<interceptor name="authorization" class="com.easyfix.util.interceptors.SecurityInterceptor"></interceptor>
+ 			<interceptor name="menueaccess" class="com.easyfix.util.interceptors.RestrictAccessToUnauthorizedActionInterceptor"></interceptor> 
+			<interceptor-stack name="commonStack">
+			    <interceptor-ref name="defaultStack"/>
+          		<interceptor-ref name="authentication"/>
+          		<interceptor-ref name="authorization"/>
+          		<interceptor-ref name="menueaccess"/> 
+        	    
+       		</interceptor-stack>
+		</interceptors>
+		
+		<global-results>
+              <result name="error" type="velocity">/pages/common/globalerror.vm</result>  
+              <result name="AUTHORIZATIONERROR" type="velocity">/pages/common/sessionError.vm</result>  
+              <result name="FIRSTLOGIN" type="redirectAction">
+		            <param name="actionName">index</param>
+		        </result>         
+                <result name="MENUAUTHENTICATIONERROR" type="redirectAction">
+		            <param name="actionName">logout</param>
+		        </result>  
+              	<result name="CONCURRENTLOGINERROR" type="redirectAction">
+		      		<param name="actionName">index2</param>
+ 				</result>
+          </global-results>
+	    
+		 <global-exception-mappings>
+              <exception-mapping exception="java.lang.Exception" result="error" />              
+          </global-exception-mappings>
+		
+	<!-- Login Section Start -->       
+        <action name="login" class="com.easyfix.login.action.LoginAction" method="login">
+            <interceptor-ref name="defaultStack"/>
+        	<result name="login" type="velocity">/pages/login/login.vm</result>
+        	<result name="invalidlogin" type="velocity">/pages/login/login.vm</result>
+        	<!-- <result name="success" type="velocity">/pages/home/home.vm</result> -->
+            <result name="index" type="redirectAction">
+            	<param name="actionName">index</param>
+            </result>
+        </action>
+        
+        <action name="logout" class="com.easyfix.login.action.LoginAction" method="logout">
+            <result name="relogin" type="redirectAction">
+            	<param name="actionName">login</param>
+            	<param name="msg">${msg}</param>
+            	
+            </result>        
+        </action>
+        
+       <!-- Client Login Section Start -->       
+        <action name="clientLogin" class="com.easyfix.login.action.LoginAction" method="clientLogin">
+            <interceptor-ref name="defaultStack"/>
+        	<result name="cLogin" type="velocity">/pages/login/client_login.vm</result>
+        	<result name="invalidCLogin" type="velocity">/pages/login/client_login.vm</result>            
+        </action>
+        
+        <action name="clientLoginAuthentication" class="com.easyfix.login.action.LoginAction" method="clientLoginAuthentication">
+            <result name="relogin" type="redirectAction">
+            	<param name="actionName">login</param>
+            	<param name="msg">${msg}</param>
+            	
+            </result>        
+        </action> 
+        
+       <!-- Index Section Start -->        
+        
+        <action name="index" class="com.easyfix.login.action.IndexAction" method="index">
+        	<interceptor-ref name="defaultStack"></interceptor-ref>  
+            <result name="FIRSTLOGIN" type="velocity">/pages/login/login.vm</result>
+           <!--   <result name="success" type="velocity">/pages/login/index.vm</result>  --> 
+           <result name="home" type="redirectAction">
+            	<param name="actionName">home</param>
+            </result>
+            <result name="clientLogin" type="redirectAction">
+            	<param name="actionName">clientDashboard</param>
+            </result>         
+        </action>
+        
+        <action name="buildLoginUrl" class="com.easyfix.login.action.GoogleAuthHelper" method="buildLoginUrl">
+            <!-- <result name="success" type="velocity">/pages/login/index.vm</result> -->
+            <result name="redirect" type="redirect">${redirectUrl}</result>
+        </action>
+        
+	<!-- Login Section End --> 
+	<!-- Home Section Start --> 	
+		<action name="home" class="com.easyfix.home.action.HomeAction" method="dashboard">
+			<interceptor-ref name="commonStack"/>  
+			<result name="success" type="velocity">/pages/home/home.vm</result>
+		</action>
+		<action name="userOwnerJob" class="com.easyfix.home.action.HomeAction" method="userOwnerJob">
+			<interceptor-ref name="commonStack"/>  
+			<result name="success" type="velocity">/pages/home/user_job.vm</result>
+		</action>
+		<action name="clientDashboard" class="com.easyfix.home.action.HomeAction" method="clientDashboard">
+			<interceptor-ref name="commonStack"/>  
+			<result name="success" type="velocity">/pages/home/clientDashboard.vm</result>
+		</action>
+		<action name="getClientJobListByFilter" class="com.easyfix.home.action.HomeAction" method="getClientJobListByFilter">
+			<interceptor-ref name="commonStack"/>  
+			<result name="success" type="velocity">/pages/home/clientJobListByFilter.vm</result>
+		</action>
+		<action name="clientJobDetails" class="com.easyfix.home.action.HomeAction" method="clientJobDetails">
+			<interceptor-ref name="commonStack"/>  
+			<result name="success" type="velocity">/pages/home/clientJobDetails.vm</result>
+		</action>
+		<action name="androidAppJob" class="com.easyfix.home.action.HomeAction" method="androidAppJob">
+			<interceptor-ref name="commonStack"/>  
+			<result name="success" type="velocity">/pages/home/appJobs.vm</result>
+		</action>
+	<!-- Home Section End -->  
+ 
+	 <!-- Job Section Start --> 
+	  <action name="sendemailClitoClientUrgentRequest" class="com.easyfix.Jobs.action.JobAction" method="sendemailClitoClientUrgentRequest">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/manageJob.vm</result>
+	        </action>
+	        
+	  
+	        <action name="job" class="com.easyfix.Jobs.action.JobAction" method="manageJob">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/manageJob.vm</result>
+	        </action>
+	        
+	        <action name="getJobListByFilter" class="com.easyfix.Jobs.action.JobAction" method="getJobListByFilter">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/jobListByFilter.vm</result>
+	        </action>	        
+	        
+	        <action name="addEditJob" class="com.easyfix.Jobs.action.JobAction" method="addEditJobs">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/addEditJob.vm</result>
+	        </action>
+	        
+	        <action name="confirmJob" class="com.easyfix.Jobs.action.JobAction" method="confirmJob">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/confirmJob.vm</result>
+	        </action>
+	        <action name="deactivateLeadJob" class="com.easyfix.home.action.HomeAction" method="deactivateLeadJob">
+	            <interceptor-ref name="commonStack" /> 
+	        </action>
+	        
+	        <action name="jobDetails" class="com.easyfix.Jobs.action.JobAction" method="jobDetails">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/jobDetails.vm</result>
+	        </action>
+	        
+	        <action name="getCustomerDetailsForJob" class="com.easyfix.Jobs.action.JobAction" method="getCustomerDetailsForJob">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/existCustomer.vm</result>
+	        </action>
+	        
+	        <action name="getServiceTypeListByClientId" class="com.easyfix.Jobs.action.JobAction" method="getServiceTypeListByClientId">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/clientServiceTypeList.vm</result>
+	        </action>
+	         <action name="getCollectedbyByClientId" class="com.easyfix.Jobs.action.JobAction" method="getCollectedbyByClientId">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/collectedBy.vm</result>
+	        </action>
+	        
+	        <action name="getServiceListByClientIdAndServiceTypeId"  class="com.easyfix.Jobs.action.JobAction" method="getServiceListByClientIdAndServiceTypeId">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/getClientServiceList.vm</result>
+	        </action>
+	        
+	        <action name="addUpdateJob"  class="com.easyfix.Jobs.action.JobAction" method="addUpdateJob">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/common/successMsg.vm</result>
+	        </action>
+	         <action name="scheduleJob" class="com.easyfix.Jobs.action.JobAction" method="scheduleJob">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/scheduleJob.vm</result>
+	        </action>
+	        
+	        <action name="changeDate" class="com.easyfix.Jobs.action.JobAction" method="changeDate">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/changeDate.vm</result>
+	        </action>
+	        
+	        <action name="updateDate" class="com.easyfix.Jobs.action.JobAction" method="updateDate">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/updateDate.vm</result>
+	        </action>
+	        <action name="changeJobDesc" class="com.easyfix.Jobs.action.JobAction" method="changeJobDesc">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/changeJobDesc.vm</result>
+	        </action>
+	        <action name="updateJobDesc" class="com.easyfix.Jobs.action.JobAction" method="updateJobDesc">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/updateJobDesc.vm</result>
+	        </action>
+	        
+	        <action name="addEditJobService" class="com.easyfix.Jobs.action.JobAction" method="addEditJobService">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/addEditJobService.vm</result>
+	        </action>
+	        
+	          <action name="updateJobServicesSchedule" class="com.easyfix.Jobs.action.JobAction" method="updateJobServices">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="redirectAction">
+	            	<param name="actionName">scheduleJob</param>
+	            	<param name="jobId">${jobId}</param>	            	
+	            	<param name="loc">"home"</param>	            	
+	            </result> 
+	        </action>
+	        
+	        <action name="updateJobServicesCheckIn" class="com.easyfix.Jobs.action.JobAction" method="updateJobServices">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="redirectAction">
+	            	<param name="actionName">checkInJob</param>
+	            	<param name="jobId">${jobId}</param>	            	
+	            	<param name="loc">"home"</param>	            	
+	            </result> 
+	        </action>
+	        
+	          <action name="updateJobServicesApproval" class="com.easyfix.Jobs.action.JobAction" method="updateJobServices">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="redirectAction">
+	            	<param name="actionName">approveJob</param>
+	            	<param name="jobId">${jobId}</param>	            	
+	            	<param name="loc">"home"</param>	            	
+	            </result> 
+	        </action>
+	        
+	        <action name="updateJobServicesCheckOut" class="com.easyfix.Jobs.action.JobAction" method="updateJobServices">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="redirectAction">
+	            	<param name="actionName">checkOutJob</param>
+	            	<param name="jobId">${jobId}</param>	            	
+	            	<param name="loc">"home"</param>	            	
+	            </result> 
+	        </action>
+	        
+	        
+	        <action name="saveScheduleJob" class="com.easyfix.Jobs.action.JobAction" method="saveScheduleJob">
+	            <interceptor-ref name="commonStack" /> 
+<!-- 	            <result name="success" type="velocity">/pages/common/successMsg.vm</result> -->
+	        </action>
+	        
+	        <action name="checkInJob" class="com.easyfix.Jobs.action.JobAction" method="checkInJob">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/checkIn.vm</result>
+	        </action>
+	        <action name="saveCheckInJob" class="com.easyfix.Jobs.action.JobAction" method="saveCheckInJob">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/common/successMsg.vm</result>
+	        </action>
+	        
+	        <action name="saveApproveJob" class="com.easyfix.Jobs.action.JobAction" method="saveApproveJob">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/common/successMsg.vm</result>
+	        </action>
+	        
+	        <action name="checkOutJob" class="com.easyfix.Jobs.action.JobAction" method="checkOutJob">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/checkOut.vm</result>
+	        </action>
+	        <action name="saveCheckOutJob" class="com.easyfix.Jobs.action.JobAction" method="saveCheckOutJob">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/common/successMsg.vm</result>
+	        </action>
+	        <action name="addJobComment" class="com.easyfix.Jobs.action.JobAction" method="addJobComment">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/jobComment.vm</result>
+	        </action>
+	        <action name="saveJobComment" class="com.easyfix.Jobs.action.JobAction" method="saveJobComment">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/common/successMsg.vm</result>
+	        </action>
+	        <action name="jobCommentList" class="com.easyfix.Jobs.action.JobAction" method="jobCommentList">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/jobCommentList.vm</result>
+	        </action>
+	        <action name="jobImageList" class="com.easyfix.Jobs.action.JobAction" method="jobImageList">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/jobImageList.vm</result>
+	        </action>
+	        <action name="feedbackJob" class="com.easyfix.Jobs.action.JobAction" method="feedbackJob">
+	            <interceptor-ref name="commonStack" />
+	            <result name="success" type="velocity">/pages/jobs/feedback.vm</result>
+	        </action>
+	        <action name="saveFeedbackJob" class="com.easyfix.Jobs.action.JobAction" method="saveFeedbackJob">
+	            <interceptor-ref name="commonStack" />
+	            <result name="success" type="velocity">/pages/common/successMsg.vm</result>
+	        </action>
+	        <action name="cancelJob" class="com.easyfix.Jobs.action.JobAction" method="cancelJob">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/jobCancel.vm</result>
+	        </action>
+	        <action name="saveCancelJob" class="com.easyfix.Jobs.action.JobAction" method="saveCancelJob">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/common/successMsg.vm</result>
+	        </action>
+	         <action name="changeJobOwner" class="com.easyfix.Jobs.action.JobAction" method="changeJobOwner">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/changeJobOwner.vm</result>
+	        </action>
+	        <action name="updateJobOwner" class="com.easyfix.Jobs.action.JobAction" method="updateJobOwner">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/common/successMsg.vm</result>
+	        </action>
+	        <action name="efrJobRejections" class="com.easyfix.Jobs.action.JobAction" method="efrJobRejections">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/rejectJobByEfr.vm</result>
+	        </action>
+	          <action name="recordEfrJobRejections" class="com.easyfix.Jobs.action.JobAction" method="recordEfrJobRejections">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/common/successMsg.vm</result>
+	        </action>
+	         <action name="uploadJobByExcel" class="com.easyfix.Jobs.action.JobAction" method="uploadJobExcelFile">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/uploadJobsByExcel.vm</result>
+	        </action>
+	        <action name="readExcelForJobUpload" class="com.easyfix.Jobs.action.JobAction" method="readExcelForJobUpload">
+ 	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="redirectAction">
+	            	<param name="actionName">uploadJobByExcel</param>
+	            	<param name="msg">${msg}</param>	            	
+	            </result> 
+	            <!-- <result name="success" type="velocity">/pages/common/successMsg.vm</result> -->
+	        </action>
+
+	        <action name="getCustomerJobHistory" class="com.easyfix.Jobs.action.JobAction" method="getCustomerJobHistory">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/customerJobList.vm</result>
+	        </action>
+	       	
+	       	<action name="inquiryJob" class="com.easyfix.Jobs.action.JobAction" method="inquiryJob">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/jobInquiry.vm</result>
+	        </action>   
+
+	       <action name="pauseJob" class="com.easyfix.Jobs.action.JobAction" method="pauseJob">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/pauseJob.vm</result>
+	        </action>
+	        
+	        <action name="callLater" class="com.easyfix.Jobs.action.JobAction" method="callLater">
+	        	<interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/callLater.vm</result>
+	        </action>
+	        
+	        <action name="confirmCallLaterJob" class="com.easyfix.Jobs.action.JobAction" method="confirmCallLaterJob">
+	        	<interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/jobs/confirmCallLaterJob.vm</result>
+	        </action>
+	        
+	        <action name="addUpdateCallLaterJob" class="com.easyfix.Jobs.action.JobAction" method="addUpdateCallLaterJob">
+	        	<interceptor-ref name="commonStack" /> 
+	        </action>
+	        <action name="getRoadDistance" class="com.easyfix.Jobs.action.JobAction" method="getRoadDistance">
+	        	<interceptor-ref name="commonStack" /> 
+	        	<result name="success" type="velocity">/pages/jobs/roadDistance.vm</result>
+	        </action>
+	         <action name="reScheduleJob" class="com.easyfix.Jobs.action.JobAction" method="reScheduleJob">
+	        	<interceptor-ref name="commonStack" /> 
+	        	<result name="success" type="velocity">/pages/jobs/jobReshedule.vm</result>
+	        </action>
+	         <action name="confirmRescheduleJob" class="com.easyfix.Jobs.action.JobAction" method="confirmRescheduleJob">
+	        	<interceptor-ref name="commonStack" /> 
+	        	
+	        </action>
+	         <action name="requestApproval" class="com.easyfix.Jobs.action.JobAction" method="requestApproval">
+	        	<interceptor-ref name="commonStack" /> 
+	        	<result name="success" type="velocity">/pages/jobs/requestApproval.vm</result>
+	        </action>
+	         <action name="approveJob" class="com.easyfix.Jobs.action.JobAction" method="approveJob">
+	        	<interceptor-ref name="commonStack" /> 
+	        	<result name="success" type="velocity">/pages/jobs/approveJob.vm</result>
+	        </action>
+	        <action name="confirmApprovejob" class="com.easyfix.Jobs.action.JobAction" method="confirmApprovejob">
+	        	<interceptor-ref name="commonStack" /> 
+	        	<result name="success" type="velocity">/pages/common/successMsg.vm</result>
+	        </action>
+	        <action name="cancelCallLateJobAndShowNewBookingPage" class="com.easyfix.Jobs.action.JobAction" method="cancelCallLateJobAndShowNewBookingPage">
+	        	<interceptor-ref name="commonStack" /> 
+	        	<result name="success" type="velocity">/pages/jobs/cancelAndBookNewjob.vm</result>
+	        </action>
+	        <action name="autoJobSchedule" class="com.easyfix.Jobs.action.JobAction" method="autoJobSchedule">
+	        	<interceptor-ref name="commonStack" /> 
+	        </action>
+	        <action name="getCrmSmsList" class="com.easyfix.Jobs.action.JobAction" method="getCrmSmsList">
+	        	<interceptor-ref name="commonStack" /> 
+	        	<result name="success" type="velocity">/pages/jobs/keyValuePairList.vm</result>
+	        </action>
+	        <action name="sendSmsFromCRM" class="com.easyfix.Jobs.action.JobAction" method="sendSmsFromCRM">
+	        	<interceptor-ref name="commonStack" /> 
+	         </action>
+	         <action name="deleteJobAfterCheckout" class="com.easyfix.Jobs.action.JobAction" method="deleteJobAfterCheckout">
+	        	<interceptor-ref name="commonStack" /> 
+	        	<result name="success" type="velocity">/pages/jobs/deleteJob.vm</result>
+	        </action>
+	        <action name="savedeleteJobAfterCheckout" class="com.easyfix.Jobs.action.JobAction" method="savedeleteJobAfterCheckout">
+	        	<interceptor-ref name="commonStack" /> 
+	        	<result name="success" type="velocity">/pages/common/successMsg.vm</result>
+	         </action>
+	         <action name="changeJobStatus" class="com.easyfix.Jobs.action.JobAction" method="changeJobStatus">
+	        	<interceptor-ref name="commonStack" /> 
+	         </action>
+	         <action name="uploadJobImage" class="com.easyfix.Jobs.action.JobAction" method="uploadJobImage">
+	        	<interceptor-ref name="commonStack" /> 
+	        	<result name="success" type="velocity">/pages/common/successMsg.vm</result>
+	         </action>
+
+	       	 <!-- Job Section End -->
+	 
+	 <!-- EasyFixer Section Start --> 
+        <action name="easyfixer" class="com.easyfix.easyfixers.action.EasyfixerAction" method="easyfixer">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/easyfixers/manageEasyFixer.vm</result>
+        </action>
+        
+        <action name="servicemenPayout" class="com.easyfix.easyfixers.action.EasyfixerAction" method="servicemenPayoutMapping">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/easyfixers/easfixerPayoutCriteria.vm</result>
+        </action>
+        
+        <action name="getServicemenPayoutList" class="com.easyfix.easyfixers.action.EasyfixerAction" method="getServicemenPayoutList">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/easyfixers/easyfixerPayoutList.vm</result>
+        </action>
+        
+        <action name="saveServicePayout" class="com.easyfix.easyfixers.action.EasyfixerAction" method="saveServicePayout">
+            <interceptor-ref name="commonStack" /> 
+        </action>
+        
+        <action name="finApprovePayout" class="com.easyfix.easyfixers.action.EasyfixerAction" method="finApprovePayout">
+            <interceptor-ref name="commonStack" /> 
+        </action>
+        
+        <action name="addEditFixer" class="com.easyfix.easyfixers.action.EasyfixerAction" method="addEditEasyfixer">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/easyfixers/addEditEasyfixer.vm</result>
+        </action>
+        
+         <action name="addUpdateEasyFixer"  class="com.easyfix.easyfixers.action.EasyfixerAction" method="addUpdateEasyFixer">
+            <interceptor-ref name="commonStack" /> 
+            <result type="redirectAction">easyfixer</result>
+        </action>
+        
+        <action name="addEditfixerDoc"  class="com.easyfix.easyfixers.action.EasyfixerAction" method="addEditfixerDoc">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/easyfixers/addEditfixerDoc.vm</result>
+        </action>
+        
+        <action name="easyfixerClientMapping"  class="com.easyfix.easyfixers.action.EasyfixerAction" method="manageEasyfixerClientMapping">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/easyfixers/easyfixerClientMapping.vm</result>
+        </action>
+        <action name="addUpdateClientMapping"  class="com.easyfix.easyfixers.action.EasyfixerAction" method="addUpdateClientMapping">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/clients/mapStatus.vm</result>
+        </action>
+        
+        <action name="checkBalance" class="com.easyfix.easyfixers.action.EasyfixerAction" method="checkBalance">
+				<interceptor-ref name="commonStack" />
+	            <result name="success" type="velocity">/pages/easyfixers/checkBalance.vm</result>
+	    </action>
+        <action name="checkBalanceDetails" class="com.easyfix.easyfixers.action.EasyfixerAction" method="checkBalanceDetails">
+				<interceptor-ref name="commonStack" />
+	            <result name="success" type="velocity">/pages/easyfixers/checkBalanceDetails.vm</result>
+	    </action>
+          <action name="resetEfrAppPassword" class="com.easyfix.easyfixers.action.EasyfixerAction" method="resetEfrAppPassword">
+				<interceptor-ref name="commonStack" />
+	            <result name="success" type="velocity">/pages/common/successMsg.vm</result>
+	    </action>
+	    <action name="efrPayoutSheet" class="com.easyfix.easyfixers.action.EasyfixerAction" method="efrPayoutSheet">
+				<interceptor-ref name="commonStack" />
+	            <result name="success" type="velocity">/pages/easyfixers/payoutSheet.vm</result>
+	    </action>
+        <action name="downloadEfrPayoutSheet"
+	            class="com.easyfix.easyfixers.action.EasyfixerAction" method="downloadEfrPayoutSheet">
+ 	            <interceptor-ref name="commonStack" /> 
+				<result name="success" type="stream">
+	  			<param name="contentType">application/octet-stream</param>
+	 			 <param name="inputName">fileInputStream</param>
+	 			 <param name="contentDisposition">attachment;filename=${fileName}</param>
+	 			 <param name="bufferSize">1024</param>
+			</result>
+		</action>
+ 	<!-- EasyFixter Section End --> 
+ 	
+ 		     
+	     <!-- Manage Easyfixer Parameters Section Start -->
+	    <action name="param"  class="com.easyfix.util.utilityFunction.action.EasyfixerRatingParametersAction" method="param">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/settings/manageEasyfixerRating.vm</result>
+        </action>
+        
+        <action name="addEditParam"  class="com.easyfix.util.utilityFunction.action.EasyfixerRatingParametersAction" method="addEditParam">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/settings/manageEasyfixerRating.vm</result>
+        </action>
+        
+         <action name="addUpdateParam" class="com.easyfix.util.utilityFunction.action.EasyfixerRatingParametersAction" method="addUpdateParam">
+            <interceptor-ref name="commonStack" /> 
+            <result type="redirectAction">param</result>
+        </action>
+ 	
+         <!-- Manage Easyfixer Parameters Section ends -->
+         
+ 	<!-- Customer Section Start -->        
+        <action name="customer"  class="com.easyfix.customers.action.CustomerAction" method="customer">
+            <interceptor-ref name="commonStack" /> 
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/customers/manageCustomer.vm</result>
+        </action>
+        
+        <action name="addEditCustomer"  class="com.easyfix.customers.action.CustomerAction" method="addEditCustomer">
+           <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/customers/addEditCustomers.vm</result>
+        </action>
+        
+        <action name="addUpdateCustomer"  class="com.easyfix.customers.action.CustomerAction" method="addUpdateCustomer">
+            <interceptor-ref name="commonStack" /> 
+            <result type="redirectAction">customer</result>
+        </action>
+        
+        <action name="addEditCustAddress"  class="com.easyfix.customers.action.CustomerAction" method="addEditCustAddress">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/customers/addEditCustAddress.vm</result>
+        </action>
+        
+        <action name="addUpdateCustomerAddress"  class="com.easyfix.customers.action.CustomerAction" method="addUpdateCustomerAddress">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/customers/getCustAddressList.vm</result>
+        </action>
+        <action name="getCustomerDetails"  class="com.easyfix.customers.action.CustomerAction" method="getCustomerDetails">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/customers/existCustomer.vm</result>
+        </action>
+        <action name="sendBulkSms"  class="com.easyfix.customers.action.CustomerAction" method="sendBulkSMSToNosIntbl_bulk_sms_nosTable">
+            <interceptor-ref name="commonStack" /> 
+         </action>
+        
+	<!-- Customer Section End --> 
+	
+ 	<!-- Client Section Start -->        
+        <action name="client" class="com.easyfix.clients.action.ClientAction" method="manageClient">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/clients/manageClient.vm</result>
+        </action>
+        
+        <action name="addEditClient" class="com.easyfix.clients.action.ClientAction" method="addEditClient">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/clients/addEditClients.vm</result>
+        </action>
+        <action name="addUpdateClient"  class="com.easyfix.clients.action.ClientAction" method="addUpdateClient">
+            <interceptor-ref name="commonStack" /> 
+            <result type="redirectAction">client</result>
+        </action>
+                        
+        <action name="clientEasyfixerMapping"  class="com.easyfix.clients.action.ClientAction" method="manageClientEasyfixerMapping">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/clients/clientEasyfixerMapping.vm</result>
+        </action>
+        <action name="newEasyfixerMapping"  class="com.easyfix.clients.action.ClientAction" method="newEasyfixerMapping">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/clients/newEasyfixerMapping.vm</result>
+        </action>
+        
+        <action name="getEasyfixerListForMap"  class="com.easyfix.clients.action.ClientAction" method="getEasyfixerListForMap">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/clients/mapEasyfixerList.vm</result>
+        </action>
+        <action name="saveMappedEasyfixer"  class="com.easyfix.clients.action.ClientAction" method="saveMappedEasyfixer">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/common/successMsg.vm</result>
+        </action>
+        <action name="addUpdateMappingStatus"  class="com.easyfix.clients.action.ClientAction" method="addUpdateMappingStatus">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/clients/mapStatus.vm</result>
+        </action>
+        
+       <!--  Client services --> 
+         <action name="service"  class="com.easyfix.clients.action.ClientServiceAction" method="manageService">
+             <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/clients/manageServices.vm</result>
+        </action>
+        
+        <action name="addEditService"  class="com.easyfix.clients.action.ClientServiceAction" method="addEditService">
+             <interceptor-ref name="commonStack" />  
+            <result name="success" type="velocity">/pages/clients/addEditServices.vm</result>
+        </action>
+        <action name="addUpdateClientService" 	class="com.easyfix.clients.action.ClientServiceAction" method="addUpdateClientServices">
+             <interceptor-ref name="commonStack" /> 
+           <result type="redirectAction">client</result>
+       </action>
+       <action name="uploadRcExcelFile" class="com.easyfix.clients.action.ClientServiceAction" method="uploadRcExcelFile">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/clients/uploadRc.vm</result>
+	        </action>
+         <action name="addUpdateClientServicesFromExcel" class="com.easyfix.clients.action.ClientServiceAction" method="addUpdateClientServicesFromExcel">
+             <interceptor-ref name="commonStack" /> 
+             <result name="success" type="redirectAction">
+            	<param name="actionName">uploadRcExcelFile</param>
+            	<param name="msg">${msg}</param>            	
+            </result> 
+           <!-- <result name="success" type="velocity">/pages/common/successMsg.vm</result> -->
+          </action>
+       <action name="downloadClientRateCard"
+	            class="com.easyfix.clients.action.ClientAction" method="downloadClientRateCard">
+ 	            <interceptor-ref name="commonStack" /> 
+				<result name="success" type="stream">
+	  			<param name="contentType">application/octet-stream</param>
+	 			 <param name="inputName">fileInputStream</param>
+	 			 <param name="contentDisposition">attachment;filename=${fileName}</param>
+	 			 <param name="bufferSize">1024</param>
+			</result>
+	      </action>
+        
+	<!-- Client Section End --> 
+	
+	<!-- User Section Start -->         
+	        <action name="user"  class="com.easyfix.user.action.UserAction" method= "user">
+	        	<interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/user/manageUser.vm</result>
+	        </action>
+	        
+	         <action name="addEditUser"  class="com.easyfix.user.action.UserAction" method="addEditUser">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/user/addEditUser.vm</result>
+	        </action>
+	        
+	         
+	        <action name="addUpdateUser"  class="com.easyfix.user.action.UserAction" method="addUpdateUser">
+	            <interceptor-ref name="commonStack" /> 
+	            <result type="redirectAction">user</result>
+	        </action>
+	        <action name="userProductivity"  class="com.easyfix.user.action.UserAction" method="getUserCRMActiveTime">
+	            <interceptor-ref name="commonStack" /> 
+	             <result name="success" type="velocity">/pages/common/successMsg.vm</result>
+	        </action>
+	        
+	<!-- User Section End -->         
+	        
+	<!-- Settings Section Start -->
+	
+		<!-- City Section Start -->
+	
+			<action name="city"  class="com.easyfix.settings.action.CityAction" method="city">
+<!-- 	            <interceptor-ref name="commonStack" />  -->
+	            <result name="success" type="velocity">/pages/settings/manageCity.vm</result>
+	        </action>
+	        
+	        <action name="addEditCity"  class="com.easyfix.settings.action.CityAction" method="addEditCity">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/settings/addEditCity.vm</result>
+	        </action>
+	        
+	         <action name="addUpdateCity" class="com.easyfix.settings.action.CityAction" method="addUpdateCity">
+	            <interceptor-ref name="commonStack" /> 
+	            <result type="redirectAction">city</result>
+	        </action>
+	        
+	        <action name="addCity" class="com.easyfix.settings.action.CityAction" method="addCity">
+	            <interceptor-ref name="commonStack" /> 
+	            <result type="redirectAction">city</result>
+	        </action>
+	        
+	          <action name="getZoneListByCity"  class="com.easyfix.settings.action.CityAction" method="getZoneListByCity">
+	              <result name="success" type="velocity">/pages/settings/zoneCityList.vm</result>
+	        </action>
+	        
+	        
+		<!-- City Section End -->
+	    
+	    <!-- Service Type Section Start -->
+	                
+	        <action name="servicetype"  class="com.easyfix.settings.action.ServiceTypeAction" method="serviceType">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/settings/manageServiceType.vm</result>
+	        </action>
+	        
+	        <action name="addEditServiceType"  class="com.easyfix.settings.action.ServiceTypeAction" method="addEditServiceType">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/settings/addEditServicesType.vm</result>
+	        </action>
+	        
+	        <action name="addUpdateServiceType"  class="com.easyfix.settings.action.ServiceTypeAction" method="addUpdateServiceType">
+	            <interceptor-ref name="commonStack" /> 
+	            <result type="redirectAction">servicetype</result>
+	        </action>
+	        
+	     <!-- Service Type Section End -->    
+	        
+	    <!-- User Type Section Start -->
+	
+			<action name="usertype"  class="com.easyfix.settings.action.UserTypeAction" method="userType">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/settings/manageUserType.vm</result>
+	        </action>
+	        
+	        <action name="addEditUserType"  class="com.easyfix.settings.action.UserTypeAction" method="addEditUserType">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/settings/addEditUserType.vm</result>
+	        </action>
+	        
+	         <action name="addUpdateUserType"  class="com.easyfix.settings.action.UserTypeAction" method="addUpdateUserType">
+	            <interceptor-ref name="commonStack" /> 
+	            <result type="redirectAction">usertype</result>
+	        </action>
+	        
+		<!-- User Type Section End -->
+		
+		<!-- B2B Rate Card Section Start -->
+	                
+	        <action name="clientratecard" class="com.easyfix.settings.action.ClientRateCardAction" method="clientRateCard">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/settings/manageB2BRatecard.vm</result>
+	        </action>
+	        
+	        <action name="addEditClientRateCard" class="com.easyfix.settings.action.ClientRateCardAction" method="addEditClientRateCard">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/settings/addEditB2BRatecard.vm</result>
+	        </action>
+	        
+	        <action name="addUpdateClientRateCard"  class="com.easyfix.settings.action.ClientRateCardAction" method="addUpdateClientRateCard">
+	            <interceptor-ref name="commonStack" /> 
+	            <result type="redirectAction">clientratecard</result>
+	        </action>
+	        <action name="getRateCardList"  class="com.easyfix.settings.action.ClientRateCardAction" method="getRateCardList">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/settings/getRateCardList.vm</result>
+	        </action>
+	        
+	        
+	     <!-- B2B Rate Card Section End -->
+	     
+	     <!-- B2C Rate Card Section Start -->
+	                
+	        <action name="retailratecard"  class="com.easyfix.settings.action.RetailRateCardAction" method="retailRateCard">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/settings/manageB2CRatecard.vm</result>
+	        </action>
+	        
+	        <action name="addEditRetailRateCard"  class="com.easyfix.settings.action.RetailRateCardAction" method="addEditRetailRateCard">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/settings/addEditB2CRatecard.vm</result>
+	        </action>
+	        
+	        <action name="addUpdateRetailRateCard" class="com.easyfix.settings.action.RetailRateCardAction" method="addUpdateRetailRateCard">
+	            <interceptor-ref name="commonStack" /> 
+	            <result type="redirectAction">retailratecard</result>
+	        </action>
+	        
+	     <!-- B2C Rate Card Section End -->
+	     
+	      <!-- Manage Document Type Section Start -->
+	                
+	        <action name="documentType" class="com.easyfix.settings.action.DocumentTypeAction" method="documentType">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/settings/manageDocumentType.vm</result>
+	        </action>
+	        
+	        <action name="addEditDocumentType" class="com.easyfix.settings.action.DocumentTypeAction" method="addEditDocumentType">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/settings/addEditDocumentType.vm</result>
+	        </action>
+	        
+	        <action name="addUpdateDocumentType" class="com.easyfix.settings.action.DocumentTypeAction" method="addUpdateDocumentType">
+	            <interceptor-ref name="commonStack" /> 
+	            <result type="redirectAction">documentType</result>
+	        </action>
+	        
+	     <!-- Manage Document Type Section End -->
+	     
+      	 <!-- Manage skill Section Start -->
+      	 <action name="skill"  class="com.easyfix.settings.action.SkillAction" method="skill">
+            <result name="success" type="velocity">/pages/settings/manageSkill.vm</result>
+        </action>
+        <action name="addEditSkill" class="com.easyfix.settings.action.SkillAction" method="addEditSkill">
+            <interceptor-ref name="commonStack" /> 
+            <result name="success" type="velocity">/pages/settings/addEditSkill.vm</result>
+        </action>
+        <action name="saveAddEditSkill" class="com.easyfix.settings.action.SkillAction" method="saveAddEditSkill">
+            <interceptor-ref name="commonStack" /> 
+            <result type="redirectAction">skill</result>
+        </action>
+	        
+	     <!-- Manage skill Section End -->
+		 <!-- Report Section Starts -->
+		   <action name="completedJobsReport"
+	            class="com.easyfix.reports.action.CompletedJobsReportAction" method="manageCompletedJobsReport">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/reports/report.vm</result>
+	        </action>
+	         <action name="downloadCompletedJobReport"
+	            class="com.easyfix.reports.action.CompletedJobsReportAction" method="downloadCompletedJobReport">
+ 	            <interceptor-ref name="commonStack" /> 
+				<result name="success" type="stream">
+	  			<param name="contentType">application/octet-stream</param>
+	 			 <param name="inputName">fileInputStream</param>
+	 			 <param name="contentDisposition">attachment;filename=${fileName}</param>
+	 			 <param name="bufferSize">1024</param>
+			</result>
+	        </action>
+	         <action name="manageEfrReport"
+	            class="com.easyfix.reports.action.EasyfixerReportAction" method="manageEfrReport">
+				<interceptor-ref name="commonStack" />
+	            <result name="success" type="velocity">/pages/reports/efrReport.vm</result>
+	        </action>
+	        
+		 <action name= "easyfixerReport" 
+		     class = "com.easyfix.reports.action.EasyfixerReportAction" method = "downloadEasyfixerReport">
+	            <interceptor-ref name="commonStack" />
+		     <result name="success" type="stream">
+	  			<param name="contentType">application/octet-stream</param>
+	 			 <param name="inputName">fileInputStream</param>
+	 			 <param name="contentDisposition">attachment;filename=${fileName}</param>
+	 			 <param name="bufferSize">1024</param>
+	 			 </result>
+		 </action>
+		 
+		 
+		  <!-- Report Section Ends  -->
+	    
+
+		 <!-- util Section starts -->
+	         <action name="GeocodeLatLong" class="com.easyfix.util.GeocodeLatLongAction" method="chooseLatlong">
+	          
+	            <result name="success" type="velocity">/pages/common/selectAddress.vm</result>
+	        </action>
+	        
+	        <action name="activeUserJobAssignment"  class="com.easyfix.util.utilityFunction.action.activeUserJobListAction" method="assignJobsToUser">
+	            
+	            <!--  <result name="success" type="velocity">/pages/common/selectAddress.vm</result>-->
+	        </action>
+	         <action name="whiteListing"  class="com.easyfix.util.utilityFunction.action.ExotelAction" method="whiteListing">
+	         	 <interceptor-ref name="commonStack" /> 
+	         	 <result name="success" type="velocity">/pages/exotel/whiteListingRequest.vm</result>  
+	         </action>
+	         <action name="whitelistrequest"  class="com.easyfix.util.utilityFunction.action.ExotelAction" method="makeRequest">
+	         	 <result name="success" type="velocity">/pages/exotel/whiteListingResponse.vm</result>  
+	         </action>
+			
+	        <!--  <action name="sendMsgToJms"  class="com.easyfix.util.JmsSenderAndReceiver.DemoMainAction" method="sendMsgToJms">
+	         	 <result name="success" type="velocity">/pages/reports/efrReport.vm</result>  
+	         </action> -->
+	         
+	         <action name="showPopUpOnScreen"  class="com.easyfix.util.JmsSenderAndReceiver.DemoMainAction" method="showPopUpOnScreen">
+	         	 <result name="success" type="velocity">/pages/common/JMSmessage.vm</result>  
+	         </action>
+	          
+	         <action name="extoelCallBooking"  class="com.easyfix.util.JmsSenderAndReceiver.DemoMainAction" method="extoelCallBooking">
+	         	 <result name="success" type="velocity">/pages/jobs/exotelJob.vm</result>  
+	         </action> 
+	      <!--   <action name="jmsConnector"  class="com.easyfix.util.JmsSenderAndReceiver.DemoMainAction" method="jmsConnector">
+	         	 <result name="success" type="velocity">/pages/common/jmsconnector.vm</result>  
+	         </action>
+	          -->
+	            
+	       <!-- util Section End -->    
+
+	      <!-- Finance Section Start -->
+	                
+	        <action name="easyfixerDebit"  class="com.easyfix.finance.action.FinanceAction" method="easyfixerDebit">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/finance/easyfixerDebitCredit.vm</result>
+	        </action>         
+
+	        <action name="easyfixerCredit" class="com.easyfix.finance.action.FinanceAction" method="easyfixerCredit">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/finance/easyfixerDebitCredit.vm</result>
+	        </action>
+	        
+	        <action name="transactionList"  class="com.easyfix.finance.action.FinanceAction" method="transactionList">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/finance/transactionList.vm</result>
+	        </action>
+	        
+	        <action name="addEditTransaction" class="com.easyfix.finance.action.FinanceAction" method="addEditTransaction">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/finance/addEditTransaction.vm</result>
+	        </action>
+	        
+	        <action name="addUpdateEasyFixerAmount" class="com.easyfix.finance.action.FinanceAction" method="addUpdateEasyFixerAmount">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/home/home.vm</result>
+	        </action>
+	        
+	        <action name="ndmCollection" class="com.easyfix.finance.action.EasyfixerFinanceAction" method="ndmCollection">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/finance/ndmCollection.vm</result>
+	        </action>
+	        
+	        <action name="ndmEasyfixerList" class="com.easyfix.finance.action.EasyfixerFinanceAction" method="ndmEasyfixerList">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/finance/ndmEasyfixerList.vm</result>
+	        </action>
+	        
+	        <action name="efrRechargeAccount" class="com.easyfix.finance.action.EasyfixerFinanceAction" method="efrRechargeAccount">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/finance/efrRechargeAccount.vm</result>
+	        </action>
+	        
+	        <action name="addUpdateRechargeAmount" class="com.easyfix.finance.action.EasyfixerFinanceAction" method="addUpdateRechargeAmount">
+	            <interceptor-ref name="commonStack" />
+	        </action>
+	        
+	        <action name="updateRecharge" class="com.easyfix.finance.action.EasyfixerFinanceAction" method="updateRecharge">
+	            <interceptor-ref name="commonStack" />
+	            <result name="success" type="velocity">/pages/finance/submitToFinance.vm</result>
+	        </action>
+	        
+	        <action name="approveRecharge" class="com.easyfix.finance.action.EasyfixerFinanceAction" method="approveRecharge">
+	            <interceptor-ref name="commonStack" />
+	            <!-- <result name="success" type="velocity">/pages/finance/submitToFinance.vm</result> -->
+	        </action>
+	        
+	        <action name="efrTransactionList" class="com.easyfix.finance.action.EasyfixerFinanceAction" method="efrTransactionList">
+				<interceptor-ref name="commonStack" />
+	            <result name="success" type="velocity">/pages/easyfixers/efrTransactionList.vm</result>
+	   	 	</action>
+	   	 	
+	        <action name="rechargeListNdm" class="com.easyfix.finance.action.EasyfixerFinanceAction" method="rechargeListNdm">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/finance/rechargeListNdm.vm</result>
+	        </action>
+	        
+	        <action name="approveRechargeList" class="com.easyfix.finance.action.EasyfixerFinanceAction" method="approveRechargeList">
+	            <interceptor-ref name="commonStack" /> 
+	            <result name="success" type="velocity">/pages/finance/approveRechargeList.vm</result>
+	        </action>
+	        
+	     <!-- Finance Section End -->  
+	     
+	     <!-- Tracking Section End -->
+	     	<action name="userLoggingHours" class="com.easyfix.tracking.action.TrackingAction" method="userLoggingHours">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/tracking/userLoggingHours.vm</result>
+	     	</action>
+	     	<action name="downloadLoggingHourDate" class="com.easyfix.tracking.action.TrackingAction" method="downloadLoggingHourDate">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/tracking/downloadLoggingHourDate.vm</result>
+	     	</action>
+	     	
+	     	
+	     	<action name="jobTracking" class="com.easyfix.tracking.action.TrackingAction" method="jobTracking">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/tracking/jobTracking.vm</result>
+	     	</action>
+	     	
+	     	<action name="jobTrackingDetails" class="com.easyfix.tracking.action.TrackingAction" method="jobTrackingDetails">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/tracking/jobTrackingDetails.vm</result>
+	     	</action>
+	     	
+	     	<action name="cityAnalysis" class="com.easyfix.tracking.action.TrackingAction" method="cityAnalysis">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/tracking/cityAnalysis.vm</result>
+	     	</action>
+	     	<action name="cityAnalysisDetails" class="com.easyfix.tracking.action.TrackingAction" method="cityAnalysisDetails">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/tracking/cityAnalysisDetails.vm</result>
+	     	</action>
+	     	
+	     	<action name="clientTracking" class="com.easyfix.tracking.action.TrackingAction" method="clientTracking">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/tracking/clientTracking.vm</result>
+	     	</action>
+	     	
+	     	<action name="clientTrackingDetails" class="com.easyfix.tracking.action.TrackingAction" method="clientTrackingDetails">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/tracking/clientTrackingDetails.vm</result>
+	     	</action>
+	     	
+	     	
+	     	<action name="downloadLoggingHour" class="com.easyfix.tracking.action.TrackingAction" method="downloadLoggingHour">
+	     		<interceptor-ref name="commonStack" />
+	     		<!-- <result name="success" type="velocity">/pages/tracking/clientTracking.vm</result> -->
+	     		<result name="success" type="stream">
+	  				<param name="contentType">${type}</param>
+	 			 	<param name="inputName">fileInputStream</param>
+	 			 	<param name="contentDisposition">attachment;filename=${fileName}</param>
+	 			 	<param name="bufferSize">1024</param>
+	 			</result>
+	     	</action>
+	     	
+	     	<action name="downloadTracking" class="com.easyfix.tracking.action.TrackingAction" method="downloadTracking">
+	     		<interceptor-ref name="commonStack" />
+	     		<!-- <result name="success" type="velocity">/pages/tracking/clientTracking.vm</result> -->
+	     		<result name="success" type="stream">
+	  				<param name="contentType">${type}</param>
+	 			 	<param name="inputName">fileInputStream</param>
+	 			 	<param name="contentDisposition">attachment;filename=${fileName}</param>
+	 			 	<param name="bufferSize">1024</param>
+	 			</result>
+	     	</action>	
+	     	
+	     <!-- Tracking Section End -->
+	     <!-- Invoice Section Start -->  
+	     	<action name="clientInvoice" class="com.easyfix.invoice.action.InvoiceAction" method="clientInvoice">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/invoice/clientInvoice.vm</result>
+	     	</action>
+	     	
+	     	<action name="clientInvoiceList" class="com.easyfix.invoice.action.InvoiceAction" method="clientInvoiceList">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/invoice/clientInvoiceDetails.vm</result>
+	     	</action>
+	     	
+	     	<action name="changeInvoiceStatus" class="com.easyfix.invoice.action.InvoiceAction" method="changeInvoiceStatus">
+	     		<interceptor-ref name="commonStack" />
+	     	</action>
+	     	
+	     	<action name="saveInvoicePaidAmount" class="com.easyfix.invoice.action.InvoiceAction" method="saveInvoicePaidAmount">
+	     		<interceptor-ref name="commonStack" />
+	     	</action>
+	     	<action name="generateClientInvoice" class="com.easyfix.invoice.action.InvoiceAction" method="generateClientInvoice">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/invoice/generateClientInvoice.vm</result>
+	     	</action> 
+	     	<action name="generateAllInvoices" class="com.easyfix.invoice.action.InvoiceAction" method="generateAllInvoices">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/invoice/success.vm</result>
+	     	</action>
+	     	<action name="generateInvoiceByClient" class="com.easyfix.invoice.action.InvoiceAction" method="generateInvoiceByClient">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/invoice/success.vm</result>
+	     	</action>
+	     	
+	     	<action name="zipAndDownloadAllInvoices" class="com.easyfix.invoice.action.InvoiceAction" method="zipAndDownloadAllInvoices">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/invoice/success.vm</result>
+	     	</action>
+	     	<action name="clientInvocieDetail" class="com.easyfix.invoice.action.InvoiceAction" method="clientInvocieDetail">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/invoice/invoicedJobs.vm</result>
+	     	</action>
+	     	<action name="clientInvocieList" class="com.easyfix.invoice.action.InvoiceAction" method="clientInvocieList">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/invoice/clientInvoiceList.vm</result>
+	     	</action>
+	     	<action name="modifyJobServiceFromInvoice" class="com.easyfix.invoice.action.InvoiceAction" method="modifyJobServiceFromInvoice">
+	     		<interceptor-ref name="commonStack" />
+	     		<result name="success" type="velocity">/pages/invoice/success.vm</result>
+	     	</action>
+	     	
+	     <!-- Invoice Section End -->
+	        
+	      
+	<!-- Settings Section End -->  
+ <!--  	<bean class="org.apache.struts2.views.velocity.VelocityManager" name="default" optional="true" />-->
+	</package>
+	
+</struts>

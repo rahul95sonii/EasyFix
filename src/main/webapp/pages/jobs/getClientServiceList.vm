@@ -1,0 +1,5 @@
+<option value="">Select Services </option>
+#foreach($clientService in $clientServiceList)
+	<option value="$clientService.clientServiceId">$clientService.clientRateCardObj.clientRateCardName - Rs. $clientService.totalCharge /-	</option>
+#end
+	

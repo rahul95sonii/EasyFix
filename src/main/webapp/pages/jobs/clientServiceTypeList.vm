@@ -1,0 +1,5 @@
+<option value="">Select Service Type</option>
+#foreach($serviceType in $serviceTypeList)
+	<option value="$serviceType.serviceTypeId">$serviceType.serviceTypeName</option>
+#end
+	

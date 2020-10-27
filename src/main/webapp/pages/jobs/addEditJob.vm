@@ -1,0 +1,431 @@
+#set($loc = $request.getAttribute("loc"))
+
+<input type="hidden" id="loc" value="$!loc" />
+
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-reorder"></i>Add Job
+				</div>					
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+		
+</div>
+		<div class="portlet-body form">
+			<form class="form-horizontal" role="form" id="job_formId" method="post" action="">
+				<div class="form-body" style="height:430px; overflow-y: scroll; overflow-x: hidden;">
+					<div class="form-group" id="job-cno-divId" >
+						 <label id="job-cno-label-id" class="col-md-4 control-label">Mobile Number<span class="required">* </span></label>
+							<div class="col-md-8">
+						  		<input id="job-custNo" maxlength="10" type="text" class="form-control input-large" value="" onchange="getCustomerAjax(this.value)">
+								<span class="help-block" style="display:block">Please enter customer mobile number.</span>
+							</div>
+					</div>
+					<div id="existCustDiv"> 
+						
+					</div>
+				</div>
+				<div class="form-actions text-right">
+					<div class="row">
+						<div class="col-md-offset-2 col-md-9">
+							<button type="button" id="callLaterBtn" class="btn blue" disabled onclick="return enquiryCumCallLater('callLater');" >Call Later</button> &nbsp; &nbsp; 
+							<button type="button" id="enquiryBtn" class="btn blue" disabled onclick="return enquiryCumCallLater('enquiry');" >Enquiry</button> &nbsp; &nbsp;
+							<button type="button" id="addEditJobBtn" class="btn green" disabled >Book Call</button>
+							<button type="button" id="cancelButton" data-dismiss="modal" class="btn red">Cancel</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		
+		<input type="hidden" id="enquiryEnumId" value="" />
+		<textarea id="enquiryComment" style="display:none;" ></textarea>
+		<a href="#sub-portlet-config" id="enqReasonBtn" class="hidden" data-toggle="modal" onclick="showInquiryReason();">.</a>
+
+	<script>
+	
+	$('#job-custNo').keypress(function(event){
+    
+	    if (event.keyCode == 10 || event.keyCode == 13) 
+	    {
+	    	var mobNo = $("#job-custNo").val();
+	    	getCustomerAjax(mobNo);
+	    	event.preventDefault();
+	    }   
+	    
+	  });
+	
+	function getCustomerAjax(mobNo){
+	
+		if(isMobileFieldMetronic('job-custNo','job-cno-divId','job-cno-label-id'))
+		{
+			return false;
+		}
+		else
+		{
+			Metronic.blockUI({
+		        target: '#existCustDiv',
+		        animate: true,
+		        overlayColor: 'grey'
+			});
+			jQuery.ajax({  		
+				type: "POST",
+		   		url: "getCustomerDetailsForJob?mobileNo="+mobNo,
+		   		success: function(data) 
+		   		{  	
+		   		    $("#existCustDiv").html("");
+		   			$("#existCustDiv").html(data);
+		   			$("#addEditJobBtn").removeAttr("disabled");
+		   			$("#enquiryBtn").removeAttr("disabled");
+		   			$("#callLaterBtn").removeAttr("disabled");		   			
+		   		}
+			});
+	
+			return false;	
+		}		
+	}
+	
+	
+function refreshHome ()
+		{
+				Metronic.blockUI({
+        target: '#userJobListDiv',
+        animate: true,
+        overlayColor: 'grey'
+    });
+			jQuery.ajax({
+			type	: "POST",
+			url		: "userOwnerJob", 
+			success	: function(data){
+			    $('#userJobListDiv').fadeOut('slow');
+			    $("#userJobListDiv").html(data);
+			    $('#userJobListDiv').fadeIn('slow');
+			}
+		});
+		}
+		
+$('#addEditJobBtn').click(function () {
+
+	var chkId = '';
+	$('.chkNumber:checked').each(function() {
+	  chkId += $(this).val() + ",";
+	});
+	chkId = chkId.slice(0,-1);// Remove last comma
+	$("#clientServices").val(chkId);
+	
+	var addsize = $("#addressListSize").val();
+	var chooseAdd = 0;
+	var collectedBy=	$("#collectedBy").val();
+
+	if(collectedBy==0)
+		return false;
+
+	if(isMobileFieldMetronic("job-custNo","job-cno-divId","job-cno-label-id"))
+				return false;
+	if(blankValMetronicLabel("customerName","job-name-divId","job-name-label-id"))
+				return false;
+/*	if(blankValMetronicLabel("customerEmailId","job-customer-mail-divId","job-customer-mail-label-id"))
+				return false;
+	if(validEmailMetronic("customerEmailId","job-customer-mail-divId"))
+				return false; */
+	if(isComboSelectedMetronicLabel("clientId","job-client-divId","job-client-label-id"))
+				return false;
+	if(isComboSelectedMetronicLabel("collectedBy","collected-by-div-id","collected-by-label-id"))
+				return false;
+	if(isComboSelectedMetronicLabel("client_ref_id","job-client-ref_id-divId","job-client_ref-label-id"))
+		return false;
+	if(isComboSelectedMetronicLabel("serviceTypeId","job-servicetype-divId","job-servicetype-label-id"))
+				return false;
+	if(isComboSelectedMetronicLabel("clientServices","job-service-divId","job-service-label-Id"))
+				return false;
+	if(blankValMetronicLabel("jobDescId","job-service-desc-divId","job-service-desc-label-id"))
+				return false;
+	if(blankValMetronicLabel("requestDateTime","job-reqest-date-divId","job-reqest-date-label-id"))
+				return false;
+	/*if(blankValMetronicLabel("jobSkill","job-skill-upload-divId","job-skill-upload-label-id"))
+		return false;*/
+
+	if(addsize == 0) {
+		if(blankValMetronicLabel("address","add-divId","add-lableId"))
+				return false;
+		if(isComboSelectedMetronicLabel("cityId","city-divId","city-lableId"))
+					return false;
+		if(blankValMetronicLabel("customerPin","custPin-divId","custPin-lableId"))
+					return false;
+		if(blankValMetronicLabel("coord","custGeo-divId","custGeo-lableId"))
+				return false;
+	}
+	else {
+		if(blankCheckBoxRadioMetronic("chooseAddress","custAddressDiv","addressErrorId","address"))
+				return false;
+		chooseAdd = $('input:radio[name=chooseAddress]:checked').val();
+	}
+	
+	var fileName=$("#jobImage").val();
+	
+	if(fileName!=""){
+		var  namePart = fileName.split(".");
+		var extension = namePart[ namePart.length - 1 ];
+		extension=extension.toLowerCase();
+		
+		if(extension =="doc" || extension =="docx" || extension =="xls" || extension =="xlsx" || extension =="pdf" 
+			|| extension =="png" || extension =="jpg" || extension =="jpeg" ||extension =="gif" ){
+			$("#error-file-text").hide();		
+			
+		 }else{			
+			 $("#error-file-text").css( "color", "#b94a48" );
+			 $("#error-file-text").show();			 
+			 return false; 
+		 }
+	}
+
+	Metronic.blockUI({
+        target: '#modal-body-id',
+        animate: true,
+        overlayColor: 'grey'
+    });
+	
+	
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "addUpdateJob",
+	   		contentType: false,
+		    processData: false,
+		    data: function() {
+			        var data = new FormData();			
+			         data.append("mobileNo",$("#job-custNo").val());
+			         data.append("fkCustomerId",$("#customerId").val());
+			         data.append("customerObj.customerName",$("#customerName").val());
+			         data.append("jobsObj.additionalName",$("#additionalName").val());
+			         data.append("customerObj.customerEmail",$("#customerEmailId").val());
+			         data.append("fkClientId",$("#clientId").val());
+			         data.append("collectedBy",$("#collectedBy").val());
+			         data.append("fkServiceTypeId",$("#serviceTypeId").val());
+			         data.append("clientServices",$("#clientServices").val());
+			         data.append("jobDesc",$("#jobDescId").val());
+			         data.append("jobType",$("#jobTypeId").val());
+			         data.append("requestedDateTime",$("#requestDateTime").val());
+			         data.append("clientRefId",$("#client_ref_id").val());
+			         data.append("jobStatus",0);    // 0 for new created
+			         data.append("skillId",$("#jobSkill").val())
+			         if(jQuery("#jobImage").get(0).files[0]!=null){
+			            	data.append("jobImage", jQuery("#jobImage").get(0).files[0]);
+			            }
+			         if(fileName!=null){
+			        	 data.append("jobImageName",fileName);
+			         }
+			         
+			         if(addsize == 0) {
+			         	data.append("addressObj.address",$("#address").val());
+				        data.append("addressObj.cityObj.cityId",$("#cityId").val());
+				        data.append("addressObj.pinCode",$("#customerPin").val());
+				        data.append("addressObj.gpsLocation",$("#coord").val());
+				      }
+				      else {
+			                data.append("fkAddressId",chooseAdd);  
+			          }  			                      
+			        	
+			        return data;
+			  }(),
+	   		success: function(data) {
+	   		$("#customerId").val("");
+	   		$("#cancelButton").trigger("click");
+	   		refreshHome ();
+	   		autoJobSchedule(data);
+	   		//	window.location.href="home";
+	   			
+	   		/*	var redirect = $("#loc").val();
+                if(redirect == "" || redirect == "$loc")
+                        window.location.href="home";
+                else
+                        window.location.href=redirect; */ 			
+	   												        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Job entry failed");
+   			}
+	});
+	return false;
+
+});
+	
+function autoJobSchedule(jobId){
+		var job = jobId.trim();
+			//alert(job);
+			jQuery.ajax({  		
+							type: "POST",
+					   		url: "autoJobSchedule?jobId="+job,
+					   		
+						});
+}
+
+
+//===================== For Enquiry ==================	
+
+function enquiryCumCallLater(flag) 
+{	
+	var enqId = "";
+	var enqComment = "";
+	if(flag == 'enquiry')
+	{
+		enqId = $("#enquiryEnumId").val();
+		if(enqId == ""){
+			$("#enqReasonBtn").trigger("click");
+			return false;
+		}
+		enqComment = $("#enquiryComment").val();
+	}
+	
+	var status = 7; // 7 for enquiry
+	var chkId = '';
+	$('.chkNumber:checked').each(function() {
+	  chkId += $(this).val() + ",";
+	});
+	chkId = chkId.slice(0,-1);// Remove last comma
+	if(chkId=='')
+		$("#clientServices").val(0);
+	else
+		$("#clientServices").val(chkId);
+	
+	var addsize = $("#addressListSize").val();
+	var chooseAdd = 0;
+
+	if(isMobileFieldMetronic("job-custNo","job-cno-divId","job-cno-label-id"))
+				return false;
+	if(blankValMetronicLabel("customerName","job-name-divId","job-name-label-id"))
+				return false;
+	/*if(blankValMetronicLabel("customerEmailId","job-customer-mail-divId","job-customer-mail-label-id"))
+				return false;
+	if(validEmailMetronic("customerEmailId","job-customer-mail-divId"))
+				return false;*/
+	if(isComboSelectedMetronicLabel("clientId","job-client-divId","job-client-label-id"))
+				return false;
+	if(isComboSelectedMetronicLabel("serviceTypeId","job-servicetype-divId","job-servicetype-label-id"))
+				return false;
+	if(flag == 'callLater')
+	{
+		$("#job-reqest-date-label-id").text("Call DateTime");
+		if(blankValMetronicLabel("requestDateTime","job-reqest-date-divId","job-reqest-date-label-id"))
+					return false;
+		status = 9; // 9 for call later
+	}
+
+	if(addsize == 0) {
+		if(blankValMetronicLabel("address","add-divId","add-lableId"))
+				return false;
+		if(isComboSelectedMetronicLabel("cityId","city-divId","city-lableId"))
+					return false;
+		if(blankValMetronicLabel("customerPin","custPin-divId","custPin-lableId"))
+					return false;
+		if(blankValMetronicLabel("coord","custGeo-divId","custGeo-lableId"))
+				return false;
+	}
+	else {
+		if(blankCheckBoxRadioMetronic("chooseAddress","custAddressDiv","addressErrorId","address"))
+				return false;
+		chooseAdd = $('input:radio[name=chooseAddress]:checked').val();
+	}
+	
+	
+	Metronic.blockUI({
+        target: '#modal-body-id',
+        animate: true,
+        overlayColor: 'grey'
+    });
+	
+
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "addUpdateJob",
+	   		contentType: false,
+		    processData: false,
+		    data: function() {
+			        var data = new FormData();			
+			         data.append("mobileNo",$("#job-custNo").val());
+			         data.append("fkCustomerId",$("#customerId").val());
+			         data.append("customerObj.customerName",$("#customerName").val());
+			         data.append("customerObj.customerEmail",$("#customerEmailId").val());
+			         data.append("fkClientId",$("#clientId").val());
+			         data.append("fkServiceTypeId",$("#serviceTypeId").val());
+			         data.append("clientServices",$("#clientServices").val());
+			         data.append("jobDesc",$("#jobDescId").val());
+			         data.append("requestedDateTime",$("#requestDateTime").val());
+			         data.append("jobStatus",status);  
+			         data.append("enumId",enqId);   
+			         data.append("comments",enqComment);
+			         data.append("collectedBy",$("#collectedBy").val());
+			          data.append("clientRefId",$("#client_ref_id").val());
+			         
+			         if(addsize == 0) {
+			         	data.append("addressObj.address",$("#address").val());
+				        data.append("addressObj.cityObj.cityId",$("#cityId").val());
+				        data.append("addressObj.pinCode",$("#customerPin").val());
+				        data.append("addressObj.gpsLocation",$("#coord").val());
+				      }
+				      else {
+			                data.append("fkAddressId",chooseAdd);  
+			          }  			                      
+			        	
+			        return data;
+			  }(),
+	   		success: function(data) {
+	   		
+	   			window.location.href="home";
+	   			
+	   		/*	var redirect = $("#loc").val();
+                if(redirect == "" || redirect == "$loc")
+                        window.location.href="home";
+                else
+                        window.location.href=redirect;	*/
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Job entry failed");
+   			}
+	});
+
+	return false;
+
+}
+	
+	
+function viewJobHistory(customerId)
+{
+	Metronic.blockUI({
+		        target: '#re-schedule-modal-body-id',
+		        animate: true,
+		        overlayColor: 'grey'
+			});
+	jQuery.ajax({  		
+		type: "POST",
+   		url: "getCustomerJobHistory?fkCustomerId="+customerId,
+   		success: function(data) 
+   		{  	
+   			$("#re-schedule-modal-body-id").html(data);   			
+   		}
+	});
+
+	return false;	
+}
+
+function showInquiryReason()
+{
+	jQuery("#sub-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "inquiryJob?enq=job", 
+		success	: function(data){
+			jQuery("#sub-modal-body-id").html(" ");
+		    jQuery("#sub-modal-body-id").html(data);
+		}
+	});
+
+	return false;
+}
+
+
+	
+</script>	
+
+
+

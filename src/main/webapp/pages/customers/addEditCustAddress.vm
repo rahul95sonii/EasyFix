@@ -1,0 +1,125 @@
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-reorder"></i>#if($!customerObj.addressObj.addressId == 0) Add New #else Edit #end Address
+				</div>					
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+		
+</div>
+	<input type="hidden" id="addressId" value="$!customerObj.addressObj.addressId" >
+	<input type="hidden" id="addCustId" value="$!customerObj.customerId" >
+		<div class="portlet-body form">
+			<form class="form-horizontal" role="form" id="address_formId" method="post" action="">
+				<div class="form-body" style="height:auto; ">
+					<div class="form-group" id="add-divId">
+				 	<label class="col-md-4 control-label" id="add-lableId">Address<span class="required">* </span></label>
+						<div class="col-md-8">
+					  		<textarea type="text" class="form-control input-medium" data-required="1" id="address" name="customerAddress">$!customerObj.addressObj.address</textarea>
+							<span class="help-block" style="display:none">
+						</div>
+					</div>
+				
+					<div class="form-group" id="city-divId">
+					<label class="control-label col-md-4" id="city-lableId">City<span class="required"> * </span></label>
+						<div class="col-md-8">
+							<select class="form-control input-medium" id="cityId" data-required="1" name="custmerCityId" data-placeholder="Select City" >
+								<option value="">Select City</option>
+									#foreach($!city in $cityList)
+										<option value="$!city.cityId" #if($!city.cityId == $!customerObj.addressObj.cityObj.cityId) selected #end >$!city.cityName</option>
+									#end
+							</select>
+							<span class="help-block" style="display:none">							
+						</div>
+					</div>
+				
+					<div class="form-group" id="custPin-divId">
+				 	<label class="col-md-4 control-label" id="custPin-lableId">Pincode<span class="required">* </span></label>
+						<div class="col-md-8">
+					  		<input maxlength="6" onkeypress="CheckNumeric(event);" type="text" class="form-control input-medium" data-required="1" id="customerPin" name="customerPin" value="$!customerObj.addressObj.pinCode">
+							<span class="help-block" style="display:none">
+						</div>
+					</div>
+				
+					<div class="form-group" id="custGeo-divId">
+						 <label class="col-md-4 control-label" id="custGeo-lableId">GPS Coordinates<span class="required">* </span></label>
+							<div class="col-md-7">
+								<div class="input-group">
+									<input type="text" class="form-control input-medium" name="customerGps" id="coord" value="$!customerObj.addressObj.gpsLocation" readonly>
+									<span class="input-group-btn">
+									<a id="geoBtnId" class="btn blue btn-sm" data-toggle="modal" onclick="return getGeoLocation();">
+									Get GPS</a>
+									</span>
+								</div>
+								<span class="help-block" style="display:none">
+							</div>				
+					</div>
+				
+					
+				<div class="form-actions text-right">
+					<div class="row">
+						<div class="col-md-offset-2 col-md-9">
+							<button type="button" id="addEditAddressBtn" class="btn green" >Submit</button>
+							<button type="button" id="cancelAddressBtn" data-dismiss="modal" class="btn red">Cancel</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+<script>
+
+
+	
+$('#addEditAddressBtn').click(function () {
+
+	if(blankValMetronicLabel("address","add-divId","add-lableId"))
+				return false;
+	if(isComboSelectedMetronicLabel("cityId","city-divId","city-lableId"))
+				return false;
+	if(blankValMetronicLabel("customerPin","custPin-divId","custPin-lableId"))
+				return false;
+	if(blankValMetronicLabel("coord","custGeo-divId","custGeo-lableId"))
+				return false;
+	var flag = $("#flag").val();
+	
+Metronic.blockUI({
+	        target: '#address_formId',
+	        animate: true,
+	        overlayColor: 'grey'
+	    });
+	    
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "addUpdateCustomerAddress?flag="+flag,
+	   		contentType: false,
+		    processData: false,
+		    data: function() {
+			        var data = new FormData();			        
+			        data.append("addressObj.addressId",$("#addressId").val());
+			        data.append("customerId",$("#addCustId").val());
+			        data.append("addressObj.address",$("#address").val());
+			        data.append("addressObj.cityObj.cityId",$("#cityId").val());
+			        data.append("addressObj.pinCode",$("#customerPin").val());	
+			        data.append("addressObj.gpsLocation",$("#coord").val());
+			        return data;
+			  }(),
+	   		success: function(data) {
+	   				$("#custAddressDiv").html(data);
+					$( "#cancelAddressBtn" ).trigger( "click" ); 
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Audit entry failed");
+   			}
+	});
+
+	return false;
+
+});
+	
+	
+	
+	
+</script>
+

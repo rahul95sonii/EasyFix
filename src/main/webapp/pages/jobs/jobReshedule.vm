@@ -1,0 +1,115 @@
+#set($reschJobId = $request.getAttribute("reschJobId"))
+
+<div class="portlet box blue">
+	<div class="portlet-title">
+			<div class="caption">
+				<i class="fa fa-edit"></i>Reschedule Job
+			</div>
+	</div>		
+	
+		<div class="portlet-body form">
+			<input type="hidden" id="resechdJobId" value="$!reschJobId" />
+			
+			
+			<form name="comment" action="" method="post" class="form-horizontal" id="comment_formId">
+				<div class="form-body" >											
+					<div class="form-group" id="reason-divId">
+				 	<label class="col-md-3 control-label" id="reason-lableId">Reason<span class="required">* </span></label>			 	
+						<div class="col-md-9">
+					  		<select class="form-control select2_category input-large" id="reasonId" data-placeholder="Select Reschedule Reason" >
+								<option value=""></option>
+								#foreach($enum in $enumReasonList)
+									<option value="$!enum.enumId">$!enum.enumDesc</option>
+								#end			
+							</select>
+					  		<span class="help-block" style="display:none"></span>
+						</div>
+					</div>	
+					<div class="form-group" id="desc-divId">
+				 	<label class="col-md-3 control-label" id="desc-lableId">Remarks<span class="required">* </span></label>			 	
+						<div class="col-md-9">
+					  		<textarea class="form-control input-large" id="commentId" rows="3" placeholder="Write Comment..." ></textarea>
+							<span class="help-block" style="display:none"></span>
+						</div>
+					</div>
+				
+			</div>
+			
+				<div class="form-actions right">
+					<div class="col-md-offset-3 col-md-9">
+					<a href="#portlet-config-re-schedule" data-toggle="modal" class="btn blue" id="reschedBtn" onclick="confirmReScheduleJob($!reschJobId);" style="display:none"></a>
+						<button type="button" id="reschedJobBtn" class="btn green">Re-Schedule</button>
+						<button type="button" data-dismiss="modal" id="cancelReschBtn" class="btn red">Cancel</button>
+					</div>
+				</div>
+	
+			</form>
+		</div>
+		
+</div>
+
+
+<script language="javascript" type="text/javascript">
+
+$('#reschedJobBtn').click(function () {
+	
+	if(isComboSelectedMetronicLabel("reasonId","reason-divId","reason-lableId"))
+				return false;
+	if(blankValMetronicLabel("commentId","desc-divId","desc-lableId"))
+				return false;	
+				
+	var resechdJobId = $("#resechdJobId").val();
+	var reasonId = $("#reasonId").val();
+	
+	var conf = confirm("Are you sure want to re-schedule this job?");
+	if(conf) 
+	{
+		jQuery.ajax({
+	   			type: "POST",
+		   		url:  "confirmRescheduleJob",
+		   		contentType: false,
+			    processData: false,
+			    data:function() {
+				        var data = new FormData();
+				        data.append("jobId",resechdJobId);
+				        data.append("enumId",reasonId); 				          
+				        data.append("comments",$("#commentId").val());
+				        
+				        return data;
+				  }(),
+		   		success: function(data) {
+		   			$( "#reschedBtn" ).trigger( "click" );
+										        
+	   			},
+	   			error: function(data) {
+	   				bootbox.alert("Job canceld failed");
+	   			}
+		});
+	
+		return false;
+	}
+
+});
+
+$(document).ready(function () {
+	$('#reasonId').select2({
+           allowClear: true
+        });
+});
+
+
+function confirmReScheduleJob(jobId){
+	$( "#cancelReschBtn" ).trigger( "click" );
+	jQuery("#re-schedule-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "scheduleJob?jobId="+jobId+"&flag=reschedule",
+		success	: function(data){
+			jQuery("#re-schedule-modal-body-id").html(" ");
+		    jQuery("#re-schedule-modal-body-id").html(data);
+		}
+	});  
+
+}
+
+</script>

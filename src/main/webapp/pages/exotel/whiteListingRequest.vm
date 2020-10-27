@@ -1,0 +1,126 @@
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+
+<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:500px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+	$!msg		
+	<!-- BEGIN CONTENT -->
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			
+			<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-gear"></i>
+						<a href="#">Jobs</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					<li>
+						<a href="#">WhiteListing</a>  
+					</li>
+				</ul>
+			</div>
+			<h3 class="page-title">WhiteListing</h3>
+			<!-- END PAGE HEADER-->
+			
+			<div class="clearfix">
+			</div>
+			<div class="row">
+				<div class="col-md-12 col-sm-12">
+					<!-- BEGIN EXAMPLE TABLE PORTLET-->
+					<div class="portlet box blue">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-table"></i>WhiteListing Request
+							</div>						
+						</div>
+						<div class="portlet-body form">
+							<form name="cityfrm" class="form-horizontal">
+								<div class="form-body">
+									<div class="form-group" id="mobile-divId" >
+										<label class="control-label col-md-4" id="mobile-label-id">Mobile Number <span class="required">
+										* </span>
+										</label>
+										<div class="col-md-6">
+											<input type="text" id="mobileNo" data-required="1" class="form-control" value=""/>
+											<span class="help-block" style="display:block">Please enter mobile number.</span>
+										</div>
+									</div>									
+																
+								</div>
+								<div class="row">
+									<div class="col-md-12" id="responseDiv">
+										
+									</div>
+								</div>
+								<div class="form-actions right">
+									<div class="col-md-offset-3 col-md-9">
+										<button type="submit" id="addWhiteListBtn" class="btn green">Submit</button>
+									</div>
+								</div>
+							
+							</form>							
+						</div>	
+					</div>
+					<!-- END EXAMPLE TABLE PORTLET-->
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<!-- END CONTENT -->
+
+#parse("pages/common/Footer.vm")
+
+
+<script>
+jQuery(document).ready(function() {       
+	Metronic.init(); // init metronic core components
+	Layout.init(); // init current layout
+  
+});
+
+$('#addWhiteListBtn').click(function () {
+
+	if(isMobileFieldMetronic('mobileNo','mobile-divId','mobile-label-id'))
+				return false;
+		
+	
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "whitelistrequest",
+	   		contentType: false,
+		    processData: false,
+		    data: function() {
+			        var data = new FormData();			
+			         data.append("mobileNo",$("#mobileNo").val());				     	
+			        return data;
+			  }(),
+	   		success: function(data) {
+	   			$("#responseDiv").html(data);
+	   			$("#mobileNo").val("");
+	   			$("#msgDiv").fadeOut(10000);
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Customer entry failed");
+   			}
+	});
+
+	return false;
+
+});
+</script>
+

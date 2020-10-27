@@ -1,0 +1,160 @@
+<!-- BEGIN QUICK SIDEBAR -->
+	<a href="javascript:;" class="page-quick-sidebar-toggler"><i class="icon-close"></i></a>
+	<div class="page-quick-sidebar-wrapper">
+		<div class="page-quick-sidebar">
+			<div class="nav-justified">
+				<ul class="nav nav-tabs nav-justified">
+					<li class="active">
+						<a href="#quick_sidebar_tab_1" data-toggle="tab">
+						Users <span class="badge badge-danger">2</span>
+						</a>
+					</li>
+					<li>
+						<a href="#quick_sidebar_tab_2" data-toggle="tab">
+						Alerts <span class="badge badge-success">7</span>
+						</a>
+					</li>
+					<li class="dropdown">
+						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+						More<i class="fa fa-angle-down"></i>
+						</a>
+						<ul class="dropdown-menu pull-right" role="menu">
+							<li>
+								<a href="#quick_sidebar_tab_3" data-toggle="tab">
+								<i class="icon-bell"></i> Alerts </a>
+							</li>
+							<li>
+								<a href="#quick_sidebar_tab_3" data-toggle="tab">
+								<i class="icon-info"></i> Notifications </a>
+							</li>
+							<li>
+								<a href="#quick_sidebar_tab_3" data-toggle="tab">
+								<i class="icon-speech"></i> Activities </a>
+							</li>
+							<li class="divider">
+							</li>
+							<li>
+								<a href="#quick_sidebar_tab_3" data-toggle="tab">
+								<i class="icon-settings"></i> Settings </a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				
+			</div>
+		</div>
+	</div>
+	<!-- END QUICK SIDEBAR -->
+		
+</div>
+<!-- END CONTAINER -->
+
+<!-- BEGIN FOOTER -->
+<div class="page-footer">
+	<div class="page-footer-inner">
+		 2016 &copy; <a href="http://www.easyfix.in/" title="Easyfix Website" target="_blank">EasyFix.</a>
+	</div>
+	<div class="scroll-to-top">
+		<i class="icon-arrow-up"></i>
+	</div>
+</div>
+<!-- END FOOTER -->
+
+</body>
+<!-- END BODY -->
+</html>
+
+<script>
+$(window).load(function(){
+		$('.preloader').fadeOut('slow',function(){$(this).remove();});
+	});
+
+
+//===== Active MQ Connector from Exotel =====
+/*	
+if(window.WebSocket) {
+        var client, destination;
+        $('#connect_form').submit(function() {
+          var url = $("#connect_url").val();
+          var login = $("#connect_login").val();
+          var passcode = $("#connect_passcode").val();
+          destination = $("#destination").val();
+
+          client = Stomp.client(url);
+	
+          // this allows to display debug logs directly on the web page
+          client.debug = function(str) {
+
+          };
+          
+          // the client is notified when it is connected to the server.
+          client.connect(login, passcode, function(frame) {
+			 
+            client.debug("connected to Stomp");
+            $('#connect').fadeOut({ duration: 'fast' });
+            $('#connected').fadeIn();
+            client.subscribe(destination, function(message) {
+          //  $("#messages").append("<p>" + message.body + "</p>\n");
+			var quote = JSON.parse(message.body);  
+		if (typeof(quote) != 'undefined' && quote != null){
+		if(	quote.callSid!=null &&  quote.fromNumber !=null && quote.agentNumber!=null){ 
+			  jQuery.ajax({
+		   			type: "POST",
+			   		url:  "showPopUpOnScreen?callSid="+quote.callSid+"&fromNumber="+quote.fromNumber+"&agentNumber="+quote.agentNumber+
+			   				"&type="+quote.type,
+			   		success: function(data) {
+			   			jQuery("#header_inbox_bar").html(" ");
+		    			jQuery("#header_inbox_bar").html(data);
+											        
+		   			}
+				});
+				}// end if(	quote.callSid!=null && ..
+		}//end if (typeof(quote) != 'undefined'....
+				return false;
+			  
+			  
+			  
+			//   $("#messages").append("<p>" + quote.fromNumber + " has called " + quote.agentNumber + "</p>\n");
+
+            });
+          });
+          return false;
+        });
+  
+        $('#disconnect').click(function() {
+          client.disconnect(function() {
+            $('#connected').fadeOut({ duration: 'fast' });
+            $('#connect').fadeIn();
+            $("#messages").html("")
+          });
+          return false;
+        });
+      } 
+      
+ $('#connect_form').submit();
+ 
+ 
+
+function exotelCallBooking(mobNo){
+
+	Metronic.blockUI({
+		        target: '#exotel-modal-body-id',
+		        animate: true,
+		        overlayColor: 'grey'
+			});
+			jQuery.ajax({  		
+				type: "POST",
+		   		url: "extoelCallBooking?mobileNo="+mobNo,
+		   		success: function(data) 
+		   		{  	
+		   			$("#exotel-modal-body-id").html(data);	   			
+		   		}
+			});
+	}
+ 
+ 
+ */
+ 
+ 
+</script>
+

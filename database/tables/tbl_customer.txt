@@ -1,0 +1,13 @@
+CREATE TABLE `tbl_customer` (
+  `customer_id` int(11) NOT NULL AUTO_INCREMENT,
+  `customer_mob_no` int(11) DEFAULT NULL,
+  `customer_name` varchar(255) DEFAULT NULL,
+  `customer_mail` varchar(255) DEFAULT NULL,
+  `customer_address` varchar(255) DEFAULT NULL,
+  `customer_city` varchar(255) DEFAULT NULL,
+  `customer_pincode` int(11) DEFAULT NULL,
+  `insert_date` timestamp NULL DEFAULT NULL,
+  `update_date` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`customer_id`)
+)

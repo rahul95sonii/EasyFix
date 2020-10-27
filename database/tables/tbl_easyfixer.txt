@@ -1,0 +1,16 @@
+CREATE TABLE `tbl_easyfixer` (
+  `easyfixer_id` int(11) NOT NULL AUTO_INCREMENT,
+  `easyfixer_name` varchar(255) DEFAULT NULL,
+  `easyfixer_num` int(11) DEFAULT NULL,
+  `easyfixer_alt_num` int(11) DEFAULT NULL,
+  `easyfixer_email` varchar(255) DEFAULT NULL,
+  `easyfixer_add` varchar(255) DEFAULT NULL,
+  `cityId` int(11) DEFAULT NULL,
+  `easyfixer_pin` int(11) DEFAULT NULL,
+  `easyfixer_type` varchar(255) DEFAULT NULL,
+  `serviceTypeId` int(11) DEFAULT NULL,
+  `insert_date` timestamp NULL DEFAULT NULL,
+  `update_date` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`easyfixer_id`)
+)

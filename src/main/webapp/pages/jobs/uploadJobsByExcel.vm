@@ -1,0 +1,108 @@
+
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+
+<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:500px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+			
+	<!-- BEGIN CONTENT -->
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			
+			<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-paper-plane"></i>
+						<a href="#">Jobs</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					<li>
+						<a href="#">upload jobs</a>
+					</li>
+				</ul>
+			</div>
+			<h3 class="page-title">Upload Jobs</h3>
+			<!-- END PAGE HEADER-->
+			
+			<div class="clearfix">
+			</div>
+			<div class="row">
+				<div class="col-md-12 col-sm-12">
+					<!-- BEGIN EXAMPLE TABLE PORTLET-->
+					<div class="portlet box blue">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-table"></i>Upload Excel
+							</div>		
+											
+						</div>
+						<div class="portlet-body form">
+							<!-- BEGIN FORM-->
+							<form action="readExcelForJobUpload" class="form-horizontal form-bordered" method="post" enctype="multipart/form-data">
+								<div class="form-body">
+									<div class="form-group" id="dateRange_div_id">
+										<label class="control-label col-md-3" id="dateRange_label_id">File Upload:</label>
+										<div class="col-md-8">
+											<input type="file" name="jobUploadByExcelFile" size="50" value="$!jobsObj.jobUploadByExcelFile" />
+										</div>
+									</div>
+									
+								</div>
+								<div class="form-actions">
+									<div class="row">
+										<div class="col-md-offset-4 col-md-9">
+											<button type="submit" class="btn green"><i class="fa fa-upload"></i> Upload Excel</button> &nbsp; &nbsp; 
+											<a class="btn blue" href="http://core.easyfix.in/easydoc/upload_jobs/job_format.xlsx"><i class="fa fa-download"></i> Download Format</a>
+										</div>
+									</div>
+								</div>
+								#if($!msg)
+									<div class="alert alert-info text-center" style="position:absolute; width:97%; margin-top:20px;">
+										$!msg
+									</div>
+								#end
+							</form>							
+							<!-- END FORM-->
+						</div>
+					</div>
+					<!-- END EXAMPLE TABLE PORTLET-->
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<!-- END CONTENT -->
+	
+#parse("pages/common/Footer.vm")
+<script src="/lib_easyfix/assets/admin/pages/scripts/components-pickers.js"></script>
+
+
+<script>
+jQuery(document).ready(function() {       
+	Metronic.init(); // init metronic core components
+	Layout.init(); // init current layout
+	ComponentsPickers.init();
+	
+	$('.select2_category').select2({
+           allowClear: true
+        });
+    
+  
+});
+
+
+
+</script>
+

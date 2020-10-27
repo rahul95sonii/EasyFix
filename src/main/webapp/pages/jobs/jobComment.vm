@@ -1,0 +1,116 @@
+<div class="portlet box blue">
+	<div class="portlet-title">
+			<div class="caption">
+				<i class="fa fa-edit"></i>Job #if($!jobsObj.commentedOn == 1) Schedule
+												#elseif($!jobsObj.commentedOn == 2) CheckIn
+												#elseif($!jobsObj.commentedOn == 3) CheckOut
+												#elseif($!jobsObj.commentedOn == 4) Feedback
+												#elseif($!jobsObj.commentedOn == 15) Approval
+												#end Remarks
+			</div>
+	</div>		
+	
+		<div class="portlet-body form">
+			<input type="hidden" id="commentJobId" value="$!jobsObj.jobId" />
+			<input type="hidden" id="commentedOn" value="$!jobsObj.commentedOn" />
+			
+			<form name="comment" action="" method="post" class="form-horizontal" id="comment_formId">
+				<div class="form-body" >											
+					<div class="form-group" id="enum-divId">
+				 	<label class="col-md-3 control-label" id="enum-lableId">Reason<span class="required">* </span></label>			 	
+						<div class="col-md-9">
+					  		<select class="form-control select2_category input-large" id="enumId" data-placeholder="Select Reason" >
+								<option value=""></option>
+								#foreach($enum in $enumReasonList)
+									<option value="$!enum.enumId">$!enum.enumDesc</option>
+								#end			
+							</select>
+					  		<span class="help-block" style="display:none"></span>
+						</div>
+					</div>	
+					<div class="form-group" id="desc-divId">
+				 	<label class="col-md-3 control-label" id="desc-lableId">Remarks<span class="required">* </span></label>			 	
+						<div class="col-md-9">
+					  		<textarea class="form-control input-large" id="commentId" rows="3" placeholder="Write Comment..." ></textarea>
+							<span class="help-block" style="display:none"></span>
+						</div>
+					</div>
+				
+			</div>
+
+			
+		
+				<div class="form-actions right">
+					<div class="col-md-offset-3 col-md-9">
+						<button type="button" id="addUpdateComment" class="btn green">Submit</button>
+						<button type="button" data-dismiss="modal" id="cancelCommentBtn" class="btn red">Cancel</button>
+					</div>
+				</div>
+	
+			</form>
+		</div>
+		
+</div>
+
+
+<script language="javascript" type="text/javascript">
+
+$('#addUpdateComment').click(function () {
+
+
+	
+	if(blankValMetronicLabel("commentId","desc-divId","desc-lableId"))
+				return false;	
+				
+	if(blankValMetronicLabel("enumId","enum-divId","enum-lableId"))
+				return false;
+				
+	Metronic.blockUI({
+        target: '#comment_formId',
+        animate: true,
+        overlayColor: 'grey'
+    });
+	var commentJobId = $("#commentJobId").val();
+	var commentOn = $("#commentedOn").val();
+	var enumId = $("#enumId").val();
+	var divId = "";
+	if(commentOn == 1)
+		divId = "schedRemarkDiv";
+	if(commentOn == 2) 
+		divId = "checkInRemarkDiv";
+	if(commentOn == 3)  
+		divId = "checkOutRemarkDiv";
+	if(commentOn == 4)  
+		divId = "feedbackRemarkDiv";
+	if(commentOn == 15)  
+		divId = "approvalRemarkDiv";
+  
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "saveJobComment",
+	   		contentType: false,
+		    processData: false,
+		    data:function() {
+			        var data = new FormData();
+			        data.append("jobId",commentJobId);
+			        data.append("commentedOn",commentOn);        
+			        data.append("comments",$("#commentId").val());
+			       data.append("enumId",enumId);
+			        
+			        return data;
+			  }(),
+	   		success: function(data) {
+	   			window.parent.jobCommentList(commentJobId,divId);
+	   			$( "#cancelCommentBtn" ).trigger( "click" );
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Remark entry failed");
+   			}
+	});
+
+	return false;
+
+});
+
+</script>

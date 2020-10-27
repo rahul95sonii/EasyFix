@@ -1,0 +1,332 @@
+<div class="portlet box blue">
+	<div class="portlet-title">
+			<div class="caption">
+				<i class="fa fa-reorder"></i>#if($!clientObj.clientId == 0) Add #else Edit #end Client
+			</div>					
+		<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+	</div>
+		
+
+	<div class="portlet-body form">
+	
+		<form name="client" action="" method="post" class="form-horizontal" id="client_formId">
+			<div class="form-body">
+			<input type="hidden" id="clientId" value="$!clientObj.clientId" />
+									
+				<div class="form-group" id="clientName-divId">
+				 <label class="col-md-4 control-label" style="padding:0px;" id="clientName-labelId">Client Name<span class="required">* </span></label>
+					<div class="col-md-8">
+					  <input id="clientName" type="text" class="form-control input-large" data-required="1" name="clientName" value="$!clientObj.clientName">
+					 <span class="help-block" style="display:none"></span>
+					 </div>
+				</div>
+					
+				<div class="form-group" id="clientTanno-divId" >
+				 <label id="clientTanno-labelId" class="col-md-4 control-label" style="padding:0px;">TAN Number<span class="required">* </span></label>
+					<div class="col-md-8">
+					  <input id="tanNumber" type="text" class="form-control input-large" data-required="1" name="tanNumber" value="$!clientObj.tanNumber">
+					<span class="help-block" style="display:none"></span>
+					</div>
+				</div>
+					
+				<div class="form-group" id="clientMail-divId" >
+				 <label id="clientMail-labelId" class="col-md-4 control-label" style="padding:0px;">E-mail Address<span class="required">* </span></label>
+					<div class="col-md-8">
+					  <input id="clientEmail" type="email" class="form-control input-large" data-required="1" name="clientEmail" value="$!clientObj.clientEmail">
+					<span class="help-block" style="display:none"></span>
+					</div>
+				</div>
+				
+				<div class="form-group" id="clientAdd-divId">
+			 	<label class="col-md-4 control-label" id="clientAdd-labelId">Current Address<span class="required">* </span></label>
+					<div class="col-md-8">
+				  		<textarea type="text" class="form-control input-large" data-required="1" id="clientAddress" name="clientAddress" onchange="cleargps();">$!clientObj.clientAddress</textarea>
+						<span class="help-block" style="display:none"></span>
+					</div>
+				</div>
+
+				<div class="form-group" id="clientCity-divId">
+				<label class="control-label col-md-4" id="clientCity-labelId">City<span class="required"> * </span></label>
+					<div class="col-md-8">
+						<select class="form-control select2_category input-large" id="cityId" data-required="1" name="cityId" data-placeholder="Select City" >
+							<option value=""></option>
+							<option value="">Select City</option>
+								#foreach($!city in $cityList)
+									<option value="$!city.cityId" #if($!city.cityId == $!clientObj.cityId)  selected="selected" #end >$!city.cityName</option>
+								#end
+						</select>
+						<span class="help-block" style="display:none"></span>						
+					</div>
+				</div>
+			
+				<div class="form-group" id="clientPin-divId">
+			 	<label class="col-md-4 control-label" id="clientPin-labelId">Pincode<span class="required">* </span></label>
+					<div class="col-md-8">
+				  		<input maxlength="6" onkeypress="CheckNumeric(event);" type="text" class="form-control input-large" data-required="1" id="clientPincode" value="$!clientObj.clientPincode">
+						<span class="help-block" style="display:none"></span>
+					</div>
+				</div>
+				
+				<div class="form-group" id="clientPaidBy-divId">
+			 	<label class="col-md-4 control-label" id="clientPaidBy-labelId">Paid By<span class="required">* </span></label>
+					<div class="col-md-8">
+				  		<select class="form-control select2_category input-large" id="paidBy" data-required="1" data-placeholder="Select Paid By" >
+							<option value=""></option>
+							<option value="0" #if($!clientObj.paidBy == 0) selected #end >Any</option>
+							<option value="1" #if($!clientObj.paidBy == 1) selected #end >Client</option>
+							<option value="2" #if($!clientObj.paidBy == 2) selected #end >Customer</option>		
+							<option value="3" #if($!clientObj.paidBy == 3) selected #end >Easyfix</option>						
+						</select>
+						<span class="help-block" style="display:none"></span>	
+					</div>
+				</div>
+				
+				<div class="form-group" id="clientCollectedBy-divId">
+			 	<label class="col-md-4 control-label" id="clientCollectedBy-labelId">Collected By<span class="required">* </span></label>
+					<div class="col-md-8">
+				  		<select class="form-control select2_category input-large" id="collectedBy" data-required="1" data-placeholder="Select Collected By" >
+							<option value=""></option>
+							<option value="0" #if($!clientObj.collectedBy == 0) selected #end >Any</option>
+							<option value="1" #if($!clientObj.collectedBy == 1) selected #end >Serviceman</option>
+							<option value="2" #if($!clientObj.collectedBy == 2) selected #end >Easyfix</option>		
+							<option value="3" #if($!clientObj.collectedBy == 3) selected #end >Client</option>						
+						</select>
+						<span class="help-block" style="display:none"></span>
+					</div>
+				</div>
+				
+				<div class="form-group" id="clientDis-divId">
+			 	<label class="col-md-4 control-label" id="clientDis-labelId">Max Distance Travel by Easyfixer<span class="required">* </span></label>
+					<div class="col-md-8">
+				  		<input type="text" onkeypress="CheckNumeric(event);" class="form-control input-large" data-required="1" id="travelDistance" value="$!clientObj.travelDist">
+						<span class="help-block" style="display:none"></span>
+					</div>
+				</div>
+				
+				<div class="form-group" id="clientDis-divId">
+			 	<label class="col-md-4 control-label" id="clientDis-labelId">Invoice Raise<span class="required">* </span></label>
+					<div class="col-md-8">
+				  		<div class="radio-list">
+							<label>
+									<div class="md-radio-inline">
+									<div class="md-radio">
+									<input type="radio" id="radio1" class="md-radiobtn" name="invoiceRaise" value = "1" #if($!clientObj.invoiceRaise == 1) checked #end />
+									<label for="radio1">
+									<span></span>
+									<span class="check"></span>
+									<span class="box"></span>
+									Yes </label>
+									</div>
+									
+									<div class="md-radio">
+									<input type="radio" id="radio2" class="md-radiobtn" name="invoiceRaise" value = "0" #if($!clientObj.invoiceRaise == 0) checked #end />
+									<label for="radio2">
+									<span></span>
+									<span class="check"></span>
+									<span class="box"></span>
+									No </label>
+									</div>
+									</div>
+							</label>
+						</div>
+						<span class="help-block" style="display:none"></span>
+					</div>
+				</div>
+				<div id="invoiceDetailsDiv" #if($!clientObj.invoiceRaise == 0) style="display:none" #end>
+					<div class="form-group" id="invoiceName-divId">
+				 	<label class="col-md-4 control-label" id="invoiceName-labelId">Invoice Name<span class="required">* </span></label>
+						<div class="col-md-8">
+					  		<input type="text" class="form-control input-large" data-required="1" id="invoiceName" value="$!clientObj.invoiceName">
+							<span class="help-block" style="display:none"></span>
+						</div>
+					</div>
+					<div class="form-group" id="invoiceCycle-divId">
+				 	<label class="col-md-4 control-label" id="invoiceCycle-labelId">Invoice Cycle<span class="required">* </span></label>
+						<div class="col-md-8">
+					  		<input type="text" class="form-control input-large" data-required="1" id="invoiceCycle" value="$!clientObj.invoiceCycle">
+							<span class="font-blue">Enter comma separated day number for billing cycle <br>
+							If billing cycle is last of the month, please enter 40 </span>
+							<span class="help-block" style="display:none"></span>
+						</div>
+					</div>
+					
+					<div class="form-group" id="invoiceStartDt-divId">
+				 	<label class="col-md-4 control-label" id="invoiceStartDt-labelId">Invoice Start Date<span class="required">* </span></label>
+						<div class="col-md-8">
+					  		<input type="text" id="invoiceStartDt" class="form-control input-large" data-date-end-date="+30d" value="$!clientObj.invoiceStartDate" placeholder="DD-MM-YYYY">
+							<span class="help-block" style="display:none"></span>
+						</div>
+					</div>
+				</div>
+				#if($!clientObj.clientId == 0)
+					<input type="hidden" name="isActive" id="clientStatus" value="1" />
+					#else					
+						<div class="form-group">
+							<label class="control-label col-md-4">Status</label>
+							<div class="col-md-8">
+								<select class="form-control bs-select input-large" name="isActive" id="clientStatus">
+									<option value="1" #if($!clientObj.isActive == 1) selected #end>Active</option>
+									<option value="0" #if($!clientObj.isActive == 0) selected #end>Inactive</option>
+								</select>
+							</div>
+						</div>
+					#end
+					
+					<div class="form-group" id="clientWebsite-divId" >
+					 <label id="clientWebsite-labelId" class="col-md-4 control-label" style="padding:0px;">Dashboard Name<span class="required">* </span></label>
+						<div class="col-md-8">
+						  <input id="clientWebsiteUserName" type="text" class="form-control input-large" data-required="1" name="clientWebsiteUserName" value="$!clientObj.clientWebsite.loginName">
+						<span class="help-block" style="display:none"></span>
+						</div>
+					</div>
+					
+					<div class="form-group" id="clientWebsitePass-divId" >
+					 <label id="clientWebsitePass-labelId" class="col-md-4 control-label" style="padding:0px;">Dashboard Password<span class="required">* </span></label>
+						<div class="col-md-8">
+						  <input id="clientWebsitePass" type="text" class="form-control input-large" data-required="1" name="clientWebsitePass" value="$!clientObj.clientWebsite.loginPassword">
+						<span class="help-block" style="display:none"></span>
+						</div>
+					</div>
+					
+				</div>	
+			
+			<div class="form-actions right">
+				<div class="col-md-offset-2 col-md-9">
+					<button type="button" id="addEditClientBtn" class="btn green">Submit</button>
+					<button type="button" data-dismiss="modal" class="btn red">Cancel</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script>
+
+jQuery(function($) {
+	
+    $('#radio1, #radio2').click(function() {
+    	if($("#radio1").is(":checked")){
+    		$("#invoiceDetailsDiv").show();
+    	}
+    	if($("#radio2").is(":checked")){
+    		$("#invoiceDetailsDiv").hide();
+    	}
+    }); 
+});
+
+$('#addEditClientBtn').click(function () {
+
+	if(blankValMetronicLabel("clientName","clientName-divId","clientName-labelId"))
+				return false;
+	if(blankValMetronicLabel("tanNumber","clientTanno-divId","clientTanno-labelId"))
+				return false;
+	if(blankValMetronicLabel("clientEmail","clientMail-divId","clientMail-labelId"))
+				return false;
+	if(validEmailMetronic("clientEmail","clientMail-divId","clientMail-labelId"))
+				return false;
+	if(blankValMetronicLabel("clientAddress","clientAdd-divId","clientAdd-labelId"))
+				return false;
+	if(isComboSelectedMetronicLabel("cityId","clientCity-divId","clientCity-labelId"))
+				return false;
+	if(blankValMetronicLabel("clientPincode","clientPin-divId","clientPin-labelId"))
+				return false;
+	if(blankValMetronicLabel("paidBy","clientPaidBy-divId","clientPaidBy-labelId"))
+				return false;
+	if(blankValMetronicLabel("collectedBy","clientCollectedBy-divId","clientCollectedBy-labelId"))
+				return false;
+	if(blankValMetronicLabel("travelDistance","clientDis-divId","clientDis-labelId"))
+				return false;
+				
+	var invRaise = $('input:radio[name=invoiceRaise]:checked').val();
+	
+	if(invRaise == 1){
+		if(blankValMetronicLabel("invoiceName","invoiceName-divId","invoiceName-labelId"))
+				return false;
+		if(blankValMetronicLabel("invoiceCycle","invoiceCycle-divId","invoiceCycle-labelId"))
+				return false;
+		if(blankValMetronicLabel("invoiceStartDt","invoiceStartDt-divId","invoiceStartDt-labelId"))
+				return false;	
+	}
+		
+	Metronic.blockUI({
+        target: '#modal-body-id',
+        animate: true,
+        overlayColor: 'grey'
+    });
+ 	jQuery.ajax({
+   			type: "POST",
+	   		url:  "addUpdateClient",
+	   		contentType: false,
+		    processData: false,
+		    data: function() {
+			        var data = new FormData();
+			        data.append("clientId",$("#clientId").val());
+			        data.append("clientName",$("#clientName").val());
+			        data.append("tanNumber",$("#tanNumber").val());
+			        data.append("clientEmail",$("#clientEmail").val());
+			        data.append("clientAddress",$("#clientAddress").val());
+			        data.append("cityId",$("#cityId").val());
+			        data.append("clientPincode",$("#clientPincode").val());
+			        data.append("isActive",$("#clientStatus").val());
+			        data.append("paidBy",$("#paidBy").val());
+			        data.append("collectedBy",$("#collectedBy").val());
+			        data.append("travelDist",$("#travelDistance").val());
+			        data.append("invoiceRaise",invRaise);
+			        data.append("invoiceName",$("#invoiceName").val());
+			        data.append("invoiceCycle",$("#invoiceCycle").val());
+			        data.append("invoiceStartDate",$("#invoiceStartDt").val());
+			        
+			        data.append("clientWebsite.loginName",$("#clientWebsiteUserName").val());
+			        data.append("clientWebsite.loginPassword",$("#clientWebsitePass").val());
+			        return data;
+			  }(),
+	   		success: function(data) {
+					window.location.href="client"; 
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Audit entry failed");
+   			}
+	});
+
+	return false;
+
+});
+
+
+
+   function CheckNumeric(e) {
+ 
+            if (window.event) // IE 
+            {
+                if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8) {
+                    event.returnValue = false;
+                    return false;
+ 
+                }
+            }
+            else { // Fire Fox
+                if ((e.which < 48 || e.which > 57) & e.which != 8) {
+                    e.preventDefault();
+                    return false;
+ 
+                }
+            }
+        }
+
+
+$(document).ready(function () {
+			ComponentsDropdowns.init();
+			
+			//===== Date Picker=====
+			$('#invoiceStartDt').datepicker({
+		        rtl: Metronic.isRTL(),
+		        orientation: "left",
+		        format: 'dd-mm-yyyy',
+		        autoclose: true
+		    });
+			
+			
+		});
+
+</script>

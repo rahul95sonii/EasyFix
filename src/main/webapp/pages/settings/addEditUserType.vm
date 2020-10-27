@@ -1,0 +1,137 @@
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-reorder"></i>#if($!roleObj.roleId == 0) Add #else Edit #end User Type
+				</div>					
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+		
+		<div class="portlet-body form">
+		
+			<form name="usertype" class="form-horizontal" id="usertype_formId" action="" method="post">
+			<div class="form-body">
+			
+				<input type="hidden" name="roleId"  id="roleId" value="$!roleObj.roleId" />
+				
+				
+					<div class="form-group" id="userTypeName-divId">
+					 <label class="col-md-4 control-label" id="userTypeName-labelId">User Type Name<span class="required">* </span></label>
+						<div class="col-md-8">
+						  <input type="text" class="form-control input-large" data-required="1" name="roleName" id="roleName" value="$!roleObj.roleName">
+						 <span class="help-block" style="display:none">
+						</span>
+						 </div>
+					</div>
+					
+					<div class="form-group" id="userTypeDesc-divId">
+					 <label class="col-md-4 control-label" id="userTypeDesc-labelId">User Type Desc.<span class="required">* </span></label>
+						<div class="col-md-8">
+						  <textarea type="text" class="form-control input-large" data-required="1" name="roleDesc" id="roleDesc">$!roleObj.roleDesc</textarea>
+						<span class="help-block" style="display:none">
+						</span>
+						</div>
+					</div>
+					
+					
+					
+					<div class="form-group" id="userMenuName-divId">
+						<label class="control-label col-md-4" id="userMenuName-labelId">User Access<span class="required">* </span></label>
+							<div class="col-md-8">
+							  <select class="form-control select2_category input-large" id="menuIds" data-placeholder="Select Menu" multiple>
+							  	<optgroup label="Home">
+									<option value="1">Home</option>
+								#foreach($menu as $menuList)									
+									#if($menu.parentMenu == 0 || $menu.hasChild == 1)
+										</optgroup>
+										<optgroup label="$menu.menuName">
+									#else
+										<option value="$menu.menuId">$menu.menuName</option>
+									#end								
+								#end
+								</select>
+								<span class="help-block" style="display:none">
+							</div>
+					</div>
+					
+					#if($!roleObj.roleId == 0)
+					<input type="hidden" name="roleStatus" id="roleStatus" value="1" />
+					#else
+					<div class="form-group">
+					 <label class="col-md-4 control-label">Status</label>
+						<div class="col-md-8">		
+							<select class="form-control  bs-select input-large" id="roleStatus" name="roleStatus">
+								<option value="1" #if($!roleObj.roleStatus == 1) selected #end>Active</option>
+								<option value="0" #if($!roleObj.roleStatus == 0) selected #end>Inactive</option>
+							</select>
+						</div>
+					</div>
+					#end
+		   		</div>
+		   		
+				<div class="form-actions right">
+					<div class="col-md-offset-3 col-md-9">
+						<button type="button" id="addEditUserTypeBtn" class="btn green">Submit</button>
+						<button type="button" data-dismiss="modal" class="btn red">Cancel</button>
+					</div>
+				</div>
+			</form>
+		</div>		
+</div>
+<input type="hidden" value="$!roleObj.menuIds" id="menuArray" />
+<script language="javascript" type="text/javascript">
+
+var temp = $("#menuArray").val();	
+	var arr = temp.split(',');
+	for(var i=0; i<arr.length; i++)
+	{
+		$('#menuIds option[value="'+arr[i].trim()+'"]').attr('selected', 'selected');
+	}
+
+$('#addEditUserTypeBtn').click(function () {
+
+	if(blankValMetronicLabel("roleName","userTypeName-divId","userTypeName-labelId"))
+				return false;
+	if(blankValMetronicLabel("roleDesc","userTypeDesc-divId","userTypeDesc-labelId"))
+				return false;
+	if(isComboSelectedMetronicLabel("menuIds","userMenuName-divId","userMenuName-labelId"))
+				return false;
+				
+	
+	Metronic.blockUI({
+        target: '#modal-body-id',
+        animate: true,
+        overlayColor: 'grey'
+    });
+
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "addUpdateUserType",
+	   		contentType: false,
+		    processData: false,
+		    data: function() {
+			        var data = new FormData();
+			        data.append("roleId",$("#roleId").val());			        
+			        data.append("roleName",$("#roleName").val());
+			        data.append("roleDesc",$("#roleDesc").val());
+			        data.append("menuIds",$("#menuIds").val());
+			        data.append("roleStatus",$("#roleStatus").val());
+			     return data;
+			  }(),
+	   		success: function(data) {
+					window.location.href="usertype"; 
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Audit entry failed");
+   			}
+	});
+
+	return false;
+
+});
+
+$(document).ready(function () {
+			ComponentsDropdowns.init();
+		});
+
+</script>

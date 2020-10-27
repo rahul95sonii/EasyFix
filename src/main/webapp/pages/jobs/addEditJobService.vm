@@ -1,0 +1,240 @@
+#set($flag = $request.getAttribute("flag"))
+#set($total = $request.getAttribute("total"))
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-calendar"></i>Add Edit Job Services
+				</div>					
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+		
+</div>
+<div class="portlet-body form">
+	<form class="form-horizontal" role="form" id="job_formId" method="post" action="">
+	<input type="hidden" id="serviceJobId" value="$!jobsObj.jobId" />
+		<div class="form-group" id="job-service-divId" style="height:auto; margin-top:10px;">
+			<label class="control-label col-md-3" id="job-service-label-Id">Select Services<span class="required">* </span></label>
+			<div class="col-md-9">
+			<select class="form-control select2_category input-large" id="jobServicesId" data-placeholder="Select Service Type">
+					<option value="">Select Services </option>
+					#foreach($clientService in $clientServiceList)
+						<option value="$clientService.clientServiceId">$clientService.clientRateCardObj.clientRateCardName - Rs. $clientService.totalCharge /-</option>
+					#end				
+				</select>
+				<input type="hidden" id="jobServices" value="" />
+				<div id="addButton" style="float:right; padding-top:8px; padding-right:20px; cursor: pointer; color:#3598dc;">Add</div>
+				<span class="help-block" style="display:none"></span>
+				<div id='TextBoxesGroup'>					
+					#set($counter = 1)
+					#set($totChrg = 0)
+					#foreach($jobservice in $!jobServiceList)		
+						<div id="TextBoxDiv$counter" style="padding: 5px 0px"><a onclick="removeService($counter);"> <i class="fa fa-times-circle"></i></a> $jobservice.serviceName - Rs. $jobservice.totalCharge /- <input type="checkbox" class="chkNumber" value="$jobservice.serviceId" checked="checked" style="display:none" ></div>
+						#set($counter = $counter+1)
+						#set($totChrg = $totChrg + $!jobservice.totalCharge)
+					#end
+				</div>	
+				<div style="padding-top:10px; color:blue;">Total Rs. : <input type="text" value="$total" id="totalServiceAmount" style="border:0px" /></div>
+											
+			</div>
+		</div>	
+	
+		<div class="form-actions text-right">
+			<div class="row">
+				<div class="col-md-offset-2 col-md-9">
+					<button type="button" id="editSerivesBtn" class="btn green" >Update</button>
+					<button type="button" id="cancelServicesBtn" data-dismiss="modal" class="btn red">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+<input type="hidden" id="job_services" value="$!jobsObj.clientServiceIds" />
+<input type="hidden" id="flag" value="$flag" />
+<script>
+
+	
+$('#editSerivesBtn').click(function () {
+
+	var chkId = '';
+	$('.chkNumber:checked').each(function() {
+	  chkId += $(this).val() + ",";
+	});
+	chkId = chkId.slice(0,-1);// Remove last comma
+	$("#jobServices").val(chkId);
+	
+	var flag = $("#flag").val();
+	
+	if(isComboSelectedMetronicLabel("jobServices","job-service-divId","job-service-label-Id"))
+				return false;
+	
+	else if(flag=="schd") {
+		jQuery.ajax({
+	   			type: "POST",
+		   		url:  "updateJobServicesSchedule?flag="+flag,
+		   		contentType: false,
+			    processData: false,
+			    data: function() {
+				        var data = new FormData();			
+				         data.append("jobId",$("#serviceJobId").val());
+				         data.append("clientServiceIds",$("#jobServices").val());			                      
+				        	
+				        return data;
+				  }(),
+		   		success: function(data) {
+		   			//scheduleJob($("#serviceJobId").val());
+		   			jQuery("#schedule-modal-body-id").html(data);
+		   			$( "#cancelServicesBtn" ).trigger( "click" );
+										        
+	   			},
+	   			error: function(data) {
+	   				bootbox.alert("Date change entry failed");
+	   			}
+		});
+	
+		return false;
+	}
+	
+	else if(flag=="checkin") {
+			
+			jQuery.ajax({
+		   			type: "POST",
+			   		url:  "updateJobServicesCheckIn?flag="+flag,
+			   		contentType: false,
+				    processData: false,
+				    data: function() {
+					        var data = new FormData();			
+					         data.append("jobId",$("#serviceJobId").val());
+					         data.append("clientServiceIds",$("#jobServices").val());			                      
+					        	
+					        return data;
+					  }(),
+			   		success: function(data) {
+			   			//scheduleJob($("#serviceJobId").val());
+			   			jQuery("#schedule-modal-body-id").html(data);
+			   			$( "#cancelServicesBtn" ).trigger( "click" );
+											        
+		   			},
+		   			error: function(data) {
+		   				bootbox.alert("Date change entry failed");
+		   			}
+			});
+		
+			return false;
+		}
+	
+	else if(flag=="approval") {
+		
+		jQuery.ajax({
+	   			type: "POST",
+		   		url:  "updateJobServicesApproval?flag="+flag,
+		   		contentType: false,
+			    processData: false,
+			    data: function() {
+				        var data = new FormData();			
+				         data.append("jobId",$("#serviceJobId").val());
+				         data.append("clientServiceIds",$("#jobServices").val());			                      
+				        	
+				        return data;
+				  }(),
+		   		success: function(data) {
+		   			//scheduleJob($("#serviceJobId").val());
+		   			jQuery("#schedule-modal-body-id").html(data);
+		   			$( "#cancelServicesBtn" ).trigger( "click" );
+										        
+	   			},
+	   			error: function(data) {
+	   				bootbox.alert("Date change entry failed");
+	   			}
+		});
+	
+		return false;
+	}
+	
+
+	else if(flag=="checkout") {
+			
+			jQuery.ajax({
+		   			type: "POST",
+			   		url:  "updateJobServicesCheckOut?flag="+flag,
+			   		contentType: false,
+				    processData: false,
+				    data: function() {
+					        var data = new FormData();			
+					         data.append("jobId",$("#serviceJobId").val());
+					         data.append("clientServiceIds",$("#jobServices").val());			                      
+					        	
+					        return data;
+					  }(),
+			   		success: function(data) {
+			   			//scheduleJob($("#serviceJobId").val());
+			   			jQuery("#schedule-modal-body-id").html(data);
+			   			$( "#cancelServicesBtn" ).trigger( "click" );
+											        
+		   			},
+		   			error: function(data) {
+		   				bootbox.alert("Date change entry failed");
+		   			}
+			});
+		
+			return false;
+		}
+
+});
+
+
+//========= Select Services ================
+
+	var counter = $!jobServiceList.size();
+
+      $("#addButton").click(function () {
+
+		if(isComboSelectedMetronicLabel("jobServicesId","job-service-divId","job-service-label-Id"))
+				return false;
+				
+        if (counter > 100) {
+          alert("Exceeded Text Box Limit");
+          return false;
+        }
+        
+        var txt = $("#jobServicesId option:selected").text();
+		var val = $("#jobServicesId option:selected").val();
+		
+		var String=txt.substring(txt.lastIndexOf("Rs.")+3,txt.lastIndexOf("/-"));		
+		var tot = $("#totalServiceAmount").val();		
+		var total = parseInt(tot) + parseInt(String.trim());		
+		$("#totalServiceAmount").val(total);
+		
+		
+        var newTextBoxDiv = $(document.createElement('div'))
+          .attr({ id: 'TextBoxDiv' + counter,
+          		style:'padding: 5px 0px'});
+          
+          
+        newTextBoxDiv.after().html('<a onclick="removeService('+ counter +');"> <i class="fa fa-times-circle"></i></a> ' + txt + ' <input type="checkbox" class="chkNumber" value="'+val+'" checked="checked" style="display:none" >');
+       
+        newTextBoxDiv.appendTo("#TextBoxesGroup");
+
+        counter++;
+      });
+      
+      
+      function removeService(divId) {
+      
+      	var txt = $("#TextBoxDiv" + divId).text();
+     	var String=txt.substring(txt.lastIndexOf("Rs.")+3,txt.lastIndexOf("/-"));		
+		var tot = $("#totalServiceAmount").val();		
+		var total = parseInt(tot) - parseInt(String.trim());		
+		$("#totalServiceAmount").val(total);
+		
+      	$("#TextBoxDiv" + divId).remove();
+      }
+
+	
+
+$('#jobServicesId').select2({
+       allowClear: true
+    });
+
+	
+</script>

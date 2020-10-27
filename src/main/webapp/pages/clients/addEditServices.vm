@@ -1,0 +1,426 @@
+#set($clientId = $request.getAttribute("clientId"))
+
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<h4 class="modal-title">#if($!clientObj.clientServiceId == 0) Add #else Edit #end Client Services</h4>
+				</div>					
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+		
+		
+		
+		<div class="portlet-body form">
+			<form name="service" action="" method="post" class="form-horizontal" id="service_formId">
+				<input type="hidden" name="clientId" id="clientId" value="$!clientId" />
+				<input type="hidden" name="clientServiceId" id="clientServiceId" value="$!clientObj.clientServiceId" />
+				
+				<div class="form-body" style="height:450px; overflow-y: scroll; overflow-x: hidden;">
+					
+					<div class="form-group" id="clientServiceType-divId">
+					 <label class="col-md-4 control-label" id="clientServiceType-labelId">Select Service Type<span class="required">* </span></label>
+						<div class="col-md-8">
+						#if($!serviceObj.clientServiceId > 0)
+							<input type="hidden" id="serviceTypeId" value="$!serviceObj.serviceTypeId" readonly />
+							<input type="text" class="form-control input-large" value="$!serviceObj.serviceTypeObj.serviceTypeName" readonly />							
+						#else
+							<select class="form-control select2_category input-large" id="serviceTypeId" onchange="getRateCardList(this.value, $!clientId);">
+								<option value="">Select a Service Type</option>
+								#foreach($serviceType in $serviceTypeList)
+								<option value="$serviceType.serviceTypeId">$serviceType.serviceTypeName</option>
+								#end
+							</select>
+						#end
+							<span class="help-block" style="display:none"></span>
+						</div>
+					</div>
+					
+					<div class="form-group" id="clientService-divId">
+					 <label class="col-md-4 control-label" id="clientService-labelId">Service <span class="required">* </span></label>
+						<div class="col-md-8">
+						#if($!serviceObj.clientServiceId > 0)
+							<input type="hidden" id="rateCardId" value="$!serviceObj.rateCardId" readonly />
+							<input type="text" class="form-control input-large" value="$!serviceObj.clientRateCardObj.clientRateCardName" readonly />							
+						#else
+							<select class="form-control select2_category input-large" id="rateCardId" >
+								<option value="">Select Service </option>
+								#foreach($rateCard in $rateCardList)
+									<option value="$rateCard.clientRateCardId">$rateCard.clientRateCardName</option>								
+								#end
+							</select>
+						#end
+							<span class="help-block" style="display:none"></span>
+						 </div>
+					</div>						
+						
+				<div class="form-group" id="clientTotalCharge-divId">
+					<label class="control-label col-md-4" id="clientTotalCharge-labelId">Total Charge Type <span class="required">
+					* </span>
+					</label>
+					<div class="col-md-8">
+						<div class="radio-list">
+							<label>
+									<div class="md-radio-inline">
+									<div class="md-radio">
+									<input type="radio" id="radio1" class="md-radiobtn" name="chargeType" value = "1" #if($!serviceObj.chargeType == 1) checked #end />
+									<label for="radio1">
+									<span></span>
+									<span class="check"></span>
+									<span class="box"></span>
+									Fixed </label>
+									</div>
+									
+									<div class="md-radio">
+									<input type="radio" id="radio2" class="md-radiobtn" name="chargeType" value = "0" #if($!serviceObj.chargeType == 0) checked #end />
+									<label for="radio2">
+									<span></span>
+									<span class="check"></span>
+									<span class="box"></span>
+									Variable </label>
+									</div>
+									</div>
+							</label>
+						</div>	
+						<span class="help-block" id="totalChargeTypeErrorId" style="display:none">				
+					</div>
+				</div>
+			
+				<div class="form-group" id="totalCharge-divId">
+				 <label class="col-md-4 control-label" style="padding:0px;" id="totalCharge-labelId">Total Charge<span class="required">* </span></label>
+					<div class="col-md-8">
+					  <input id="totalCharge" type="text" class="form-control input-large" data-abc="$!serviceObj.totalCharge" value="$!serviceObj.totalCharge" #if($!serviceObj.chargeType == 0) disabled="disabled" #end />
+					 <span class="help-block" style="display:none"></span>
+					 </div>
+				</div>
+					
+				<div class="form-group" id="efDirectDivId">
+						<label class="col-md-4 control-label">Easyfix Direct<span class="required">
+						* </span></label>			
+						<label class="col-md-2" id="efDirectLableId">
+							<div class="md-checkbox">
+								<input type="checkbox" id="checkbox5" class="md-check" #if($!serviceObj.easyfixDirectFixed && $!serviceObj.easyfixDirectFixed != '0') checked #end onclick="checkCheckBox(this.id,'easyfixDirectFixed');" />
+									<label for="checkbox5">
+									<span class="inc"></span>
+									<span class="check"></span>
+									<span class="box"></span>
+									Fixed 
+									</label>
+							</div>
+						</label>
+								
+						<div class="col-md-6">
+							 <input id="easyfixDirectFixed" type="text" class="form-control input-small" data-abc="$!serviceObj.easyfixDirectFixed" value="$!serviceObj.easyfixDirectFixed" onchange = "checkFieldVal(this.value, 'checkbox5');" placeholder="00.00" >
+								<span class="help-block" style="display:none"></span>
+						</div>
+						
+							
+						<label class="col-md-4 control-label"></label>	
+						
+						<label class="col-md-2" id="efDirectVariableLableId">
+							<div class="md-checkbox">
+								<input type="checkbox" id="checkbox6" class="md-check" name="easyfixdirectcheck" #if($!serviceObj.easyfixDirectVariable && $!serviceObj.easyfixDirectVariable != '0.00') checked #end  onclick="checkCheckBox(this.id,'easyfixDirectVariable');" />
+									<label for="checkbox6">
+									<span class="inc"></span>
+									<span class="check"></span>
+									<span class="box"></span>
+									Variable 
+									</label>
+							</div>
+						</label>
+								
+						<div class="col-md-6">
+							  <input id="easyfixDirectVariable" type="text" class="form-control input-small" data-abc="$!serviceObj.easyfixDirectVariable" value="$!serviceObj.easyfixDirectVariable" onchange = "checkFieldVal(this.value, 'checkbox6');" placeholder="00.00" >
+								<span class="help-block" style="display:none"></span>
+						</div>
+							 
+				</div>
+							
+				<div class="form-group" id="overhead-divId">
+						<label class="col-md-4 control-label">Overhead<span class="required">
+						* </span></label>	
+						<label class="col-md-2" id="overhead-labelId">
+							<div class="md-checkbox">
+								<input type="checkbox" id="checkbox1" class="md-check" #if($!serviceObj.overheadFixed && $!serviceObj.overheadFixed != '0') checked #end  onclick="checkCheckBox(this.id,'overheadFixed');" />
+									<label for="checkbox1">
+									<span class="inc"></span>
+									<span class="check"></span>
+									<span class="box"></span>
+									Fixed 
+									</label>
+							</div>
+						</label>
+								
+						<div class="col-md-6">
+							  <input id="overheadFixed" type="text" class="form-control input-small" data-abc="$!serviceObj.overheadFixed" value="$!serviceObj.overheadFixed" onchange = "checkFieldVal(this.value, 'checkbox1');" placeholder="00.00" >
+								<span class="help-block" style="display:none"></span>
+						</div>
+									
+						<label class="col-md-4 control-label"></label>	
+						
+						<label class="col-md-2" id="overhead-var-labelId">
+							<div class="md-checkbox">
+								<input type="checkbox" id="checkbox2" class="md-check" #if($!serviceObj.overheadVariable && $!serviceObj.overheadVariable != '0.00') checked #end  onclick="checkCheckBox(this.id,'overheadVariable');" />
+									<label for="checkbox2">
+									<span class="inc"></span>
+									<span class="check"></span>
+									<span class="box"></span>
+									Variable 
+									</label>
+							</div>
+						</label>
+								
+						<div class="col-md-6">
+							  <input id="overheadVariable" type="text" class="form-control input-small" data-abc="$!serviceObj.overheadVariable" value="$!serviceObj.overheadVariable"  onchange = "checkFieldVal(this.value, 'checkbox2');" placeholder="00.00" >
+								<span class="help-block" style="display:none"></span>
+						</div>
+						
+				</div>
+	
+	
+				
+				<div class="form-group" id="client-share-div-id">
+						<label class="col-md-4 control-label">Client Share<span class="required">
+						* </span></label>	
+									
+						<label class="col-md-2" id="client-share-lable-id">
+							<div class="md-checkbox">
+								<input type="checkbox" id="checkbox3" class="md-check" #if($!serviceObj.clientFixed && $!serviceObj.clientFixed != '0') checked #end  onclick="checkCheckBox(this.id,'clientFixed');" />
+									<label for="checkbox3">
+									<span class="inc"></span>
+									<span class="check"></span>
+									<span class="box"></span>
+									Fixed 
+									</label>
+							</div>
+						</label>
+								
+						<div class="col-md-6">
+							  <input id="clientFixed" type="text" class="form-control input-small" data-abc="$!serviceObj.clientFixed" value="$!serviceObj.clientFixed"  onchange = "checkFieldVal(this.value, 'checkbox3');" placeholder="00.00" >
+								<span class="help-block" style="display:none"></span>
+						</div>
+									
+						<label class="col-md-4 control-label"></label>	
+						
+						<label class="col-md-2" id="client-share-lable-var-id">
+							<div class="md-checkbox">
+								<input type="checkbox" id="checkbox4" class="md-check" #if($!serviceObj.clientVariable && $!serviceObj.clientVariable != '0.00') checked #end  onclick="checkCheckBox(this.id,'clientVariable');" />
+									<label for="checkbox4">
+									<span class="inc"></span>
+									<span class="check"></span>
+									<span class="box"></span>
+									Variable 
+									</label>
+							</div>
+						</label>
+								
+						<div class="col-md-6">
+							  <input id="clientVariable" type="text" class="form-control input-small" data-abc="$!serviceObj.clientVariable" value="$!serviceObj.clientVariable"  onchange = "checkFieldVal(this.value, 'checkbox4');" placeholder="00.00" >
+								<span class="help-block" style="display:none"></span>
+						</div>							 
+				</div>
+		
+		   		#if($!clientObj.clientServiceId == 0)
+					<input type="hidden" name="serviceStatus" id="serviceStatus" value="1" />
+					#else					
+						<div class="form-group">
+							<label class="control-label col-md-4">Status</label>
+							<div class="col-md-8">
+								<select class="form-control bs-select input-large" name="serviceStatus" id="serviceStatus">
+									<option value="1" #if($!serviceObj.serviceStatus == 1) selected #end>Active</option>
+									<option value="0" #if($!serviceObj.serviceStatus == 0) selected #end>Inactive</option>
+								</select>
+							</div>
+						</div>
+					#end
+		   		</div>
+				<div class="form-actions text-right">
+					<div class="col-md-offset-3 col-md-9">
+							<button type="button" id="addEditServiceBtn" class="btn green">Submit</button>
+							<button type="button" data-dismiss="modal" class="btn red">Cancel</button>
+						</div>
+					</div>
+				
+				
+			</form>
+		</div>		
+</div>
+
+<script>
+
+	jQuery(function($) {
+	
+		    $('#radio1, #radio2').click(function() {
+		    	var rd1 = $('#radio1').is(':checked');
+		        var rd2 = $('#radio2').is(':checked');
+		        $('#totalCharge').prop('value','00.00', !rd1);
+		         $('#totalCharge').prop('disabled', !rd1);
+		         $('#totalCharge').prop('disabled', rd2);
+		         
+		        		      			if($("#radio1").is(":checked")){
+		      							var data = $(this).closest('label').parent().parent().parent().next().find('input#totalCharge').attr('data-abc');
+		      					
+		      								$(this).closest('label').parent().parent().parent().next().find("input#totalCharge").val('');
+		      								$(this).closest('label').parent().parent().parent().next().find("input#totalCharge").val(data);
+		      							}
+		      							
+		      					else
+		      						{
+		      							$(this).closest('label').parent().parent().parent().next().find("input#totalCharge").val('00.00');        
+		         					}
+		         				
+		         	
+		         });
+		});
+	
+	
+			        
+	$('#addEditServiceBtn').click(function () {
+	
+		if(isComboSelectedMetronicLabel("serviceTypeId","clientServiceType-divId","clientServiceType-labelId"))
+					return false;
+		if(isComboSelectedMetronicLabel("rateCardId","clientService-divId","clientService-labelId"))
+					return false;
+		if(blankCheckBoxRadioMetronic("chargeType","clientTotalCharge-divId","totalChargeTypeErrorId","Total Charge Type"))
+				return false;
+		if(blankValMetronicLabel("totalCharge","totalCharge-divId","totalCharge-labelId"))
+					return false;
+		if(isNumericDecimalMetronicLabel("totalCharge", "totalCharge-divId", "totalCharge-labelId"))
+			return false;
+					
+		chargeType = $('input:radio[name=chargeType]:checked').val();
+		var totalcharge = $("#totalCharge").val();
+		var efdf = $("#easyfixDirectFixed").val();
+		var efdv = $("#easyfixDirectVariable").val()
+		var ohf = $("#overheadFixed").val();
+		var ohv = $("#overheadVariable").val();
+		var cf = $("#clientFixed").val();
+		var cv = $("#clientVariable").val();
+		
+		if(totalcharge=="")
+			totalcharge = 0;
+		if(efdf=="")
+			efdf = 0;				
+		if(efdv=="")
+			efdv = 0;
+		if(ohf=="")
+			ohf = 0;				
+		if(ohv=="")
+			ohv = 0;
+		if(cf=="")
+			cf = 0;				
+		if(cv=="")
+			cv = 0;
+		
+		
+
+		Metronic.blockUI({
+	        target: '#modal-body-id',
+	        animate: true,
+	        overlayColor: 'grey'
+	    });
+	   
+	 	jQuery.ajax({
+	   			type: "POST",
+		   		url:  "addUpdateClientService",
+		   		contentType: false,
+			    processData: false,
+			    data: function() {
+				        var data = new FormData();
+				        data.append("clientServiceId",$("#clientServiceId").val());
+				        data.append("clientId",$("#clientId").val());
+				        data.append("serviceTypeId",$("#serviceTypeId").val());
+				        data.append("rateCardId",$("#rateCardId").val());
+				        data.append("chargeType",chargeType);
+				        data.append("totalCharge",totalcharge);
+				        data.append("easyfixDirectFixed",efdf);
+				        data.append("easyfixDirectVariable",efdv);
+				        data.append("overheadFixed",ohf);
+				        data.append("overheadVariable",ohv);
+				        data.append("clientFixed",cf);
+				        data.append("clientVariable",cv);
+				        data.append("serviceStatus",$("#serviceStatus").val());
+				        return data;
+				  }(),
+		   		success: function(data) {
+						window.location.href="service?clientId="+$("#clientId").val(); 
+										        
+	   			},
+	   			error: function(data) {
+	   				bootbox.alert("Audit entry failed");
+	   			}
+		});
+	
+		return false;
+	
+	});
+	
+	
+	function checkFieldVal(val, checkBoxId){
+	
+		if(isNumericDecimalMetronicLabel("easyfixDirectFixed", "efDirectDivId", "efDirectLableId"))
+			return false;
+		if(isNumericDecimalMetronicLabel("easyfixDirectVariable", "efDirectDivId", "efDirectVariableLableId"))
+			return false;
+		if(isNumericDecimalMetronicLabel("overheadFixed", "overhead-divId", "overhead-labelId"))
+			return false;
+		if(isNumericDecimalMetronicLabel("overheadVariable", "overhead-divId", "overhead-var-labelId"))
+			return false;
+		if(isNumericDecimalMetronicLabel("clientFixed", "client-share-div-id", "client-share-lable-id"))
+			return false;
+		if(isNumericDecimalMetronicLabel("clientVariable", "client-share-div-id", "client-share-lable-var-id"))
+			return false;
+		if(parseFloat(val) > 0)		
+			$("#"+checkBoxId).prop('checked', true);		
+		else
+			$("#"+checkBoxId).prop('checked', false);
+	
+	}
+	
+	function checkCheckBox(checkBoxId,FieldId){
+		if($('#'+checkBoxId).is(':checked') == false)
+		{
+			$("#"+FieldId).val("");
+		}
+	
+	}
+	
+	 function CheckNumeric(e) {
+ 
+            if (window.event) // IE 
+            {
+                if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8 & e.keyCode == 9 & e.keyCode == 127 & e.keyCode != 46) {
+                    event.returnValue = false;
+                    return false;
+ 
+                }
+            }
+            else { // Fire Fox
+                if ((e.which < 48 || e.which > 57) & e.which != 8 &  e.which != 46) {
+                    e.preventDefault();
+                    return false;
+ 
+                }
+            }
+        }
+        
+function getRateCardList(serviceTypeId,clientId){
+		jQuery.ajax({
+			type	: "POST",
+			async   : false,
+			url		: "getRateCardList?clientId="+clientId+"&serviceTypeId="+serviceTypeId, 
+			success	: function(data){
+				jQuery("#rateCardId").html(data);
+				
+			}
+		});  
+
+}	
+
+
+
+jQuery(document).ready(function() {       
+	ComponentsDropdowns.init();    
+});
+        
+
+</script>

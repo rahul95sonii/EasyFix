@@ -1,0 +1,501 @@
+<input type="hidden" name="customerId" id="customerId" value="#if($!custObj.customerId) $!custObj.customerId #else 0 #end" />
+<input type="hidden" id="flag" value="job" />
+#if($!custObj.customerId)
+	<div style="right:5px; top:-50px; position: absolute;">
+		<a href="#portlet-config-re-schedule" class="btn btn-default btn-sm" data-toggle="modal" onclick="viewJobHistory($!custObj.customerId);">
+			View History</a>
+	</div>
+#end
+<div class="form-group" id="job-name-divId" >
+	 <label id="job-name-label-id" class="col-md-4 control-label">Customer Name<span class="required">* </span></label>
+	<div class="col-md-6">
+		<input id="customerName" type="text" class="form-control input-large" name="customerName" value="$!custObj.customerName">
+		<span class="help-block" style="display:none">
+	</div>
+</div>			
+
+<div class="form-group" id="job-name-divId" >
+	<label id="job-additional-name-label-id" class="col-md-4 control-label">Additional Name</label>
+	<div class="col-md-6">
+		<input id="additionalName" type="text" class="form-control input-large" name="additionalName">
+		<span class="help-block" style="display:none">
+	</div>
+</div>
+
+<div class="form-group" id="job-customer-mail-divId" >
+	<label id="job-customer-mail-label-id" class="col-md-4 control-label">E-mail Address </label>
+	<div class="col-md-6">
+	  <input id="customerEmailId" type="email" class="form-control input-large" name="customerEmailId" value="$!custObj.customerEmail">
+		<span class="help-block" style="display:none">
+	</div>
+</div>					
+
+<div class="form-group" id="job-client-divId" >
+	<label id="job-client-label-id" class="col-md-4 control-label">Client<span class="required">* </span></label>
+	<div class="col-md-6">		
+		<select class="form-control select2_category input-large" id="clientId" name="clientId" data-placeholder="Select Service Type" >
+			<option value="">Select Client</option>
+			#foreach($client in $clientList)
+				<option value="$!client.clientId">$client.clientName</option>
+			#end			
+		</select>
+		<span class="help-block" style="display:none">
+	</div>
+</div>	
+		<div class="form-group" id="collected-by-div-id">
+			<label class="control-label col-md-4" id="collected-by-label-id">Collected By:<span class="required">* </span></label>
+			<div class="col-md-8">
+				<select class="form-control select2_category input-large" id="collectedBy">
+						<option value="">-- Select --</option>
+					</select>				
+				<span class="help-block" style="display:none">
+			</div>
+		</div>
+<div class="form-group" id="job-client-ref_id-divId" >
+	<label id="job-client_ref-label-id" class="col-md-4 control-label">Client Reference ID<span class="required">* </span></label>
+	<div class="col-md-6">		
+		<input id="client_ref_id" type="text" class="form-control input-large" name="client_ref_id" value="$!jobsObj.clientRefId">
+		<span class="help-block" style="display:none">
+		
+	</div>
+</div>					
+				
+
+<div class="form-group" id="job-servicetype-divId" >
+	<label id="job-servicetype-label-id" class="col-md-4 control-label">Select Service Type<span class="required">* </span></label>
+	<div class="col-md-6">		
+		<select class="form-control select2_category input-large" id="serviceTypeId" name="serviceTypeId" >
+			<option value="">Select Service Type</option>			
+		</select>
+		<span class="help-block" style="display:none">
+	</div>
+</div>
+
+<div class="form-group" id="job-service-divId">
+	<label class="control-label col-md-4" id="job-service-label-Id">Select Services<span class="required">* </span></label>
+	<div class="col-md-7">
+		<select class="form-control select2_category input-large" id="clientServicesId"  data-placeholder="Select Services" >
+		</select>
+		<input type="hidden" id="clientServices" value="" />
+		<div id="addButton" style="float:right; padding-top:8px; cursor: pointer; color:#3598dc;">Add</div>
+		<span class="help-block" style="display:none"></span>
+		<div id='TextBoxesGroup'></div>		
+		<div style="padding-top:10px; color:blue;">Total Rs. : <input type="text" value="0" id="totalServiceAmount" style="border:0px" /></div>						
+	</div>
+</div>					
+
+<div class="form-group" id="job-service-desc-divId">
+ <label id="job-service-desc-label-id" class="col-md-4 control-label">Job Description<span class="required">* </span></label>
+	<div class="col-md-6">
+	  <textarea id="jobDescId" type="text" class="form-control input-large" data-required="1" name="jobDesc" value=""></textarea>
+		<span class="help-block" style="display:none">
+	</div>
+</div>	
+
+<div class="form-group" id="job-type-divId" >
+<label id="job-type-label-id" class="col-md-4 control-label">Job Type<span class="required">* </span></label>
+<div class="col-md-6">		
+	<select class="form-control select2_category input-large" id="jobTypeId">
+	<option value="">-- Select --</option>
+	<option value="Repair">Repair</option>
+	<option value="Installation">Installation</option>
+</select>
+	<span class="help-block" style="display:none">
+	
+</div>
+</div>
+
+<div class="form-group" id="job-reqest-date-divId">
+	<label class="col-md-4 control-label" id="job-reqest-date-label-id">Requested DateTime<span class="required">* </span></label>
+	<div class="col-md-6">
+		<div class="input-group date form_datetime input-large">
+			<input type="text" id="requestDateTime" name="requestDateTime" readonly class="form-control">
+			<span class="input-group-btn">
+			<!--<button class="btn default date-reset" type="button"><i class="fa fa-refresh"></i></button>-->
+			<button class="btn default date-set" type="button" name="jdtin"><i class="fa fa-calendar"></i></button>
+			</span>
+		</div>
+		<span class="help-block" style="display:none">
+	</div>
+</div>
+
+<div class="form-group" id="job-image-upload-divId" >
+<label id="job-image-upload-label-id" class="col-md-4 control-label">Job Image</label>
+<div class="col-md-6">		
+	<input id="jobImage" type="file" class="form-control input-large" name="jobImage" value="$!jobsObj.jobImage">
+	<span class="help-block" id="error-file-text" style="display:none">Unsupported file format</span>
+	
+</div>
+</div>
+
+<div class="form-group" id="job-skill-upload-divId" >
+<label id="job-skill-upload-label-id" class="control-label col-md-4">Skill</label>
+<div class="col-md-8">		
+	<select class="form-control select2_category input-large" id="jobSkill" data-placeholder="Select Easyfixer skill Level">
+	<option value=""></option>
+	#foreach($skill in $skillList)
+		<option value="$!skill.skillId" #if($!skill.skillId == $!jobsObj.skillId)  selected="selected" #end >$!skill.skillName</option>
+	#end
+</select>
+	<span class="help-block" style="display:none">
+	
+</div>
+</div>
+
+<input type="hidden" id="addressListSize" value="$!addressList.size()" />
+#if($!addressList.size() > 0)
+<div class="row" id="custAddressDiv">
+	<div class="col-md-12 portlet-body">
+		<table class="table table-striped table-hover table-bordered" id="sample_editable_1">
+			<thead>
+				<tr>
+					<th width="10%" style="text-align:center">Choose</th>
+					<th width="40%">Address</th>
+					<th width="20%" style="text-align:center">City</th>
+					<th style="text-align:center">GPS Location</th>
+					<th width="5%" style="text-align:center">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				#set($i = 1)
+				#foreach($address in $addressList)
+				<tr>
+					<td style="padding:20px"><div class="md-radio">
+							<input type="radio" id="radio$i" class="md-radiobtn" name="chooseAddress" value="$!address.addressId" />
+							<label for="radio$i">
+							<span></span>
+							<span class="check"></span>
+							<span class="box"></span>
+							</label>
+						</div>				
+					
+					</td>
+					<td>$!address.address
+						  <!-- #if($!address.pinCode !="") <br> Pincode : $!address.pinCode #end -->
+					</td>
+					<td style="text-align:center">$!address.cityObj.cityName</td>
+					<td style="text-align:center">$!address.gpsLocation</td>
+					<td style="text-align:center"><a href="#sub-portlet-config" data-toggle="modal" onclick="addEditCustAddress($!address.addressId);">
+								<i class="fa fa-edit"></i></a></td>
+				</tr>
+						#set($i = $i+1)
+				#end						
+			</tbody>
+		</table>
+		<span class="help-block" id="addressErrorId" style="display:none">
+	</div>
+</div>
+<div class="form-group">
+ <label id="job-service-desc-label-id" class="col-md-4 control-label"></label>
+	<div class="col-md-6">
+		<a href="#sub-portlet-config" class="btn btn-default btn-sm" data-toggle="modal" onclick="addEditCustAddress(0);">
+		<i class="fa fa-plus"></i> Add New Address</a>								
+	</div>
+</div>
+#else
+	<div class="form-group" id="add-divId">
+ 	<label class="col-md-4 control-label" id="add-lableId">Address<span class="required">* </span></label>
+		<div class="col-md-8">
+	  		<textarea type="text" class="form-control input-large" data-required="1" id="address" name="customerAddress">$!customerObj.addressObj.address</textarea>
+			<span class="help-block" style="display:none">
+		</div>
+	</div>
+
+	<div class="form-group" id="city-divId">
+	<label class="control-label col-md-4" id="city-lableId">City<span class="required"> * </span></label>
+		<div class="col-md-8">
+			<select class="form-control select2_category input-large" id="cityId" data-required="1" name="custmerCityId" data-placeholder="Select City" >
+				<option value="">Select City</option>
+					#foreach($!city in $cityList)
+						<option value="$!city.cityId" >$!city.cityName</option>
+					#end
+			</select>
+			<span class="help-block" style="display:none">							
+		</div>
+	</div>
+	<div class="form-group" id="custGeo-divId">
+		 <label class="col-md-4 control-label" id="custGeo-lableId">GPS Coordinates<span class="required">* </span></label>
+			<div class="col-md-7">
+				<div class="input-group">
+					<input type="text" class="form-control input-large" name="customerGps" id="coord" value="$!customerObj.addressObj.gpsLocation" readonly>
+					<span class="input-group-btn">
+					<a id="geoBtnId" class="btn blue btn-sm" data-toggle="modal" onclick="getGeoLocation();">
+					Get GPS</a>
+					</span>
+				</div>
+				<span class="help-block" style="display:none">
+			</div>				
+	</div>
+
+	<div class="form-group" id="custPin-divId">
+ 	<label class="col-md-4 control-label" id="custPin-lableId">Pincode<span class="required">* </span></label>
+		<div class="col-md-8">
+	  		<input maxlength="6" onkeypress="CheckNumeric(event);" type="text" class="form-control input-large" data-required="1" id="customerPin" name="customerPin" value="$!customerObj.addressObj.pinCode">
+			<span class="help-block" style="display:none">
+		</div>
+	</div>
+#end
+
+
+<script>
+
+
+	$( "#clientId" ).change(function() {
+	
+		var clientId = $("#clientId").val();
+		var groupVal = $("#TextBoxesGroup").text();
+
+		if(groupVal == "") 	
+		{
+			$("#s2id_serviceTypeId").find("span.select2-chosen").text('Select Service Type');
+			$("#s2id_clientServicesId").find("span.select2-chosen").text('Select Services');
+			$('#serviceTypeId option[value!=""]').remove();
+			$('#clientServicesId option[value!=""]').remove();
+			
+			if(clientId!="")
+			{	
+				jQuery.ajax({  		
+						type: "POST",
+				   		url: "getServiceTypeListByClientId?fkClientId="+clientId,
+				   		success: function(data) 
+				   		{  	
+				   			$("#serviceTypeId").html(data);
+				   			getcollectedBy(clientId);
+				   		}
+					});
+				return false;		
+			}
+			
+		}
+		else 
+		{
+			var conf = confirm("Are you sure want to change client?");
+			if(conf) 
+			{
+				$("#s2id_serviceTypeId").find("span.select2-chosen").text('Select Service Type');
+				$("#s2id_clientServicesId").find("span.select2-chosen").text('Select Services');
+				$('#serviceTypeId option[value!=""]').remove();
+				$('#clientServicesId option[value!=""]').remove();
+				$("#TextBoxesGroup").text("");
+				
+				if(clientId!="")
+				{	
+					jQuery.ajax({  		
+							type: "POST",
+					   		url: "getServiceTypeListByClientId?fkClientId="+clientId,
+					   		success: function(data) 
+					   		{  	
+					   			$("#serviceTypeId").html(data);
+					   		}
+						});
+						jQuery.ajax({  		
+							type: "POST",
+					   		url: "getCollectedbyByClientId?fkClientId="+clientId,
+					   		success: function(data) 
+					   		{  	
+					   			$("#collected-by-div-id").html(data);
+					   		}
+						});
+				
+						return false;	
+				}	
+					
+				
+			}
+		}
+	});
+	
+function getcollectedBy(clientId)
+{
+	jQuery.ajax({  		
+				type: "POST",
+		   		url: "getCollectedbyByClientId?fkClientId="+clientId,
+		   		success: function(data) 
+		   		{  	
+		   			$("#collected-by-div-id").html(data);
+		   		}
+			});
+
+		return false;
+
+}
+	
+	
+	$( "#serviceTypeId" ).change(function() {
+	
+		var clientId = $("#clientId").val();
+		var serviceTypeId = $("#serviceTypeId").val();
+		var groupVal = $("#TextBoxesGroup").text();
+
+		if(groupVal == "") 	
+		{
+			$("#s2id_clientServicesId").find("span.select2-chosen").text('Select Services');
+			$('#clientServicesId option[value!=""]').remove();
+		
+			if(clientId!="" && serviceTypeId!="")
+			{
+		
+				jQuery.ajax({  		
+						type: "POST",
+				   		url: "getServiceListByClientIdAndServiceTypeId?fkClientId="+clientId+"&fkServiceTypeId="+serviceTypeId,
+				   		success: function(data) 
+				   		{  	
+				   			$("#clientServicesId").html(data);
+				   		}
+					});
+			
+					return false;	
+			}
+		}
+		else 
+		{
+			var conf = confirm("Are you sure want to change service type?");
+			if(conf) 
+			{
+				$("#s2id_clientServicesId").find("span.select2-chosen").text('Select Services');
+				$('#clientServicesId option[value!=""]').remove();
+				$("#TextBoxesGroup").text("");
+				
+				if(clientId!="" && serviceTypeId!="")
+				{
+					jQuery.ajax({  		
+							type: "POST",
+					   		url: "getServiceListByClientIdAndServiceTypeId?fkClientId="+clientId+"&fkServiceTypeId="+serviceTypeId,
+					   		success: function(data) 
+					   		{  	
+					   			$("#clientServicesId").html(data);
+					   		}
+						});
+				
+						return false;	
+				}
+			}
+		}
+	});
+	
+	
+	
+	function addEditCustAddress(addressId)
+	{
+		var customerId = $("#customerId").val();
+		$('input[name="chooseAddress"]').prop('checked', false);
+		
+		jQuery("#sub-modal-body-id").html("<center>Please wait...</center> ");
+			  jQuery.ajax({
+				type	: "POST",
+				url		: "addEditCustAddress?customerId="+customerId+"&addressObj.addressId="+addressId, 
+				success	: function(data){
+					jQuery("#sub-modal-body-id").html(" ");
+				    jQuery("#sub-modal-body-id").html(data);				    
+				}
+			}); 		
+	}
+	
+	
+	
+	function CheckNumeric(e) { 
+      if (window.event) // IE 
+        {
+          if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8) {
+             event.returnValue = false;
+             return false;
+ 
+            }
+         }
+       else { // Fire Fox
+           if ((e.which < 48 || e.which > 57) & e.which != 8) {
+              e.preventDefault();
+              return false;
+ 
+            }
+        }
+     }
+
+
+function selectAddressAjax(id)
+{
+	//var conf = confirm("Are you sure selected address is correct address?");
+	//if(conf)
+	{
+		var add = $("#add"+id).val();
+		var loc = $("#loc"+id).val();
+		var pin = $("#pin"+id).val();
+		
+		$("#coord").val(loc);
+		$("#customerPin").val(pin);
+		$( "#cancelAddChoseBtn" ).trigger( "click" );
+	}
+}
+
+
+//========= Select Services ================
+
+	var counter = 1;
+
+      $("#addButton").click(function () {
+
+		if(isComboSelectedMetronicLabel("clientServicesId","job-service-divId","job-service-label-Id"))
+				return false;
+				
+        if (counter > 100) {
+          alert("Exceeded Text Box Limit");
+          return false;
+        }
+        
+        var txt = $("#clientServicesId option:selected").text();
+		var val = $("#clientServicesId option:selected").val();
+		
+		var String=txt.substring(txt.lastIndexOf("Rs.")+3,txt.lastIndexOf("/-"));		
+		var tot = $("#totalServiceAmount").val();		
+		var total = parseInt(tot) + parseInt(String.trim());		
+		$("#totalServiceAmount").val(total);
+		
+        var newTextBoxDiv = $(document.createElement('div'))
+          .attr({ id: 'TextBoxDiv' + counter,
+          		style:'padding: 5px 0px'});
+          
+          
+        newTextBoxDiv.after().html('<a onclick="removeService('+ counter +');"> <i class="fa fa-times-circle"></i></a> ' + txt + ' <input type="checkbox" class="chkNumber" value="'+val+'" checked="checked" style="display:none" >');
+       
+        newTextBoxDiv.appendTo("#TextBoxesGroup");
+
+        counter++;
+      });
+      
+      
+      function removeService(divId) {
+      
+      	var txt = $("#TextBoxDiv" + divId).text();
+     	var String=txt.substring(txt.lastIndexOf("Rs.")+3,txt.lastIndexOf("/-"));		
+		var tot = $("#totalServiceAmount").val();		
+		var total = parseInt(tot) - parseInt(String.trim());		
+		$("#totalServiceAmount").val(total);
+		
+      	$("#TextBoxDiv" + divId).remove();
+      }
+
+
+$(document).ready(function () {		  
+		
+// For Date Time Picker
+
+	var fromdate = new Date();
+	var dd = fromdate.getDate();
+	var mm = fromdate.getMonth()+1; //January is 0!
+	var yyyy = fromdate.getFullYear();
+	
+	var formatedDate = yyyy+"-"+mm+"-"+dd;
+
+	   $(".form_datetime").datetimepicker({
+	   		autoclose: true,
+	    	isRTL: Metronic.isRTL(),
+	    	format: "dd MM yyyy - hh:ii",
+	    	startDate: formatedDate,
+	       	pickerPosition: (Metronic.isRTL() ? "top-right" : "top-left"),
+	       	minuteStep: 15
+	   });
+	   
+	 ComponentsDropdowns.init(); 
+	
+});
+</script>

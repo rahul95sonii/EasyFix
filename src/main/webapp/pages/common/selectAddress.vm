@@ -1,0 +1,49 @@
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-reorder"></i>Select Address
+				</div>					
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+		
+</div>
+
+		<div class="portlet-body form">			
+				<table class="table table-striped table-hover table-bordered" id="sample_editable_1">
+					<thead>
+						<tr>
+							<th width="10%" style="text-align:center">Choose</th>
+							<th width="60%">Address</th>
+							<th style="text-align:center">GPS Location</th>
+							<th style="text-align:center">pin</th>
+						</tr>
+					</thead>
+					<tbody>
+						#set($i = 1)
+						#foreach($add in $addList)
+						<tr>
+							<td style="padding:20px"><div class="md-radio">
+									<input type="radio" id="rdo$i" name="gpsradio" class="md-radiobtn" value="$i" onclick="selectAddressAjax(this.value);" #if($!add.gpsLocation == 'NA') disabled #end />
+									<label for="rdo$i">
+									<span></span>
+									<span class="check"></span>
+									<span class="box"></span>
+									</label>
+								</div>				
+							
+							</td>
+							<td>$!add.address <input type="hidden" id="add$i" value="$!add.address" /></td>
+							<td style="text-align:center">$!add.gpsLocation <input type="hidden" id="loc$i" value="$!add.gpsLocation" /></td>
+							<td style="text-align:center">$!add.pinCode <input type="hidden" id="pin$i" value="$!add.pinCode" /></td>
+						</tr>
+								#set($i = $i+1)
+						#end						
+					</tbody>
+				</table>	
+				<button type="button" id="cancelAddChoseBtn" data-dismiss="modal" style="display:none"></button>		
+			</div>
+
+
+
+
+

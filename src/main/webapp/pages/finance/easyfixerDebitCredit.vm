@@ -1,0 +1,309 @@
+
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+
+<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:700px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+	
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+			
+	<!-- BEGIN CONTENT -->
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			
+		<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-user-md"></i>
+						<a href="#">Finance</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					<li>
+						<a href="#">EasyFixers #if($financeObj.transactionType == 1) Debit #else Credit #end</a>
+					</li>
+				</ul>
+			</div>
+			<h3 class="page-title">EasyFixers  #if($financeObj.transactionType == 1) Debit #else Credit #end</h3>
+			<!-- END PAGE HEADER-->
+			
+			<div class="clearfix">
+			</div>
+			
+			<!-- START FILTER -->
+			<div class="row">
+				<div class="col-md-12 col-sm-12">
+					<!-- BEGIN EXAMPLE TABLE PORTLET-->
+					<div class="portlet box blue">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-table"></i>EasyFixers  #if($financeObj.transactionType == 1) Debit #else Credit #end
+							</div>
+							<div class="actions">
+								<a href="#portlet-config" class="btn btn-default btn-sm" data-toggle="modal" onclick="addEditTransaction($financeObj.transactionType);">
+								<i class="fa fa-plus"></i>
+								New  #if($financeObj.transactionType == 1) Debit #else Credit #end Transaction
+								</a>
+							</div>
+						</div>
+						<div class="portlet-body form">
+							<!-- BEGIN FORM-->
+							<form class="form-horizontal" action="#">
+								<div class="form-body">
+									<div class="row">
+											<div class="col-md-4" style="margin-left:30px;">
+												<div class="form-group" id="efr_div_id">
+													<div class="col-md-12">
+														<label class="control-label" id="efr_lable_id">Easyfixer</label>
+													</div>
+													<div class="col-md-12">
+														<select class="form-control select2_category input-large" id="easyfixerId" data-placeholder="Select Easyfixer">
+															<option value=""></option>
+															#foreach($easyfixer in $easyfixerList)
+															<option value="$!easyfixer.easyfixerId">$!easyfixer.easyfixerName [ $!easyfixer.easyfixerNo ]</option>
+															#end
+														</select>
+														<span class="help-block" style="display:none"></span>
+													</div>
+												</div>
+											</div>
+											<!--/span-->
+											<div class="col-md-4">
+												<div class="form-group" id="date-range-div-id">
+													<label class="control-label" id="date-range-lable-id">Date Range</label>
+													
+													<div class="input-group date-picker input-daterange  input-large">
+														<input type="text" id="from-date" name="from" class="form-control" placeholder="dd-mm-yyyy">
+														<span class="input-group-addon">
+														to </span>
+														<input type="text" id="to-date" name="to" class="form-control" placeholder="dd-mm-yyyy">
+													</div>
+													<span class="help-block" style="display:none"></span>
+												
+												</div>
+											</div>
+											<!--/span-->
+											<div class="col-md-2">
+												<div class="form-group">
+													<div class="col-md-12">
+														<label class="control-label">Transaction Type</label>
+													</div>
+													<div class="col-md-12">
+														<select class="form-control input-small" id="transType" data-placeholder="-- Select --">
+															<option value="0">Both</option>
+															<option value="1" >Debit</option>
+															<option value="2" >Credit</option>
+														</select>
+													</div>
+												</div>
+											</div>
+											<!--/span-->
+											<div class="col-md-1 text-right">
+											<button class="btn blue btn-sm" type="button" style="margin-top:30px" onclick="searchTransaction();"><i class="fa fa-search"></i> Search</button>
+										</div>				
+									</div>
+									<!--/row-->																										
+								</div>								
+							</form>							
+							<!-- END FORM-->
+						</div>
+					</div>
+					<!-- END EXAMPLE TABLE PORTLET-->
+				</div>
+				
+			</div>
+			<!-- END FILTER -->
+			
+			<div class="row">
+				<div class="col-md-12 col-sm-12">
+					<!-- BEGIN EXAMPLE TABLE PORTLET-->
+					<div class="portlet box blue">
+						
+						<div class="portlet-body" id="transListDiv">
+							<table class="table table-striped table-hover table-bordered" id="sample_editable_1">
+							<thead>
+							<tr>
+								<th width="5%">ID</th>
+								<th width="20%">EasyFixer</th>
+								<th width="15%" class="text-center">Transaction Date</th>
+								<th>Description</th>
+								<th width="15%" class="text-center">Amount</th>
+								<!-- <th width="12%" class="text-center">Credit</th> -->
+								<th width="15%" class="text-center">Balance</th>
+								<th width="10%" class="text-center">Details</th>
+							</tr>
+							</thead>
+							<tbody>
+							#foreach($trans in $transactionList)
+								#set($color = "")
+								#set($transAmount = "")
+								
+								#if($!trans.transactionType == 1)
+									#set($color = "red")
+									#set($transAmount = "[-] &nbsp;  $!trans.transactionAmount")
+								#else
+									#set($color = "blue")
+									#set($transAmount = "[+] &nbsp;  $!trans.transactionAmount")
+								#end
+							
+							<tr>
+								<td>$!trans.easyfixerId</td>
+								<td>$!trans.easyfixerName [ $!trans.easyfixerNo ]</td>
+								<td class="text-center">$!trans.transactionDate</td>
+								<td>$!trans.description</td>
+								<td class="text-right" style="color:$color"> $transAmount </td>
+								<!-- <td class="text-right" style="color:blue">#if($!trans.transactionType == 2) $!trans.transactionAmount #end</td> -->
+								<td class="text-right">$!trans.balaceAmount</td>
+								
+								<td class="text-center">
+								
+								#if($!trans.source == 1)
+		                         <a href="#portlet-config" data-toggle="modal" title="View Details" onclick="jobDetails($!trans.jobId);">
+		                         <i class="fa fa-search"></i></a> &nbsp;  &nbsp;
+		                        #elseif($!trans.source == 2)
+		                         <a href="javascript:alert('cash payment');">
+		                         <i class="fa fa-search"></i></a> &nbsp;  &nbsp;
+		                         #elseif($!trans.source == 3)
+		                          <a href="javascript:alert('cheque payment');">
+		                         <i class="fa fa-search"></i></a> &nbsp;  &nbsp;
+		                         #end
+		                      	</td>
+		                      	
+							</tr>
+							#end
+							
+							</tbody>
+							</table>
+						</div>
+					</div>
+					<!-- END EXAMPLE TABLE PORTLET-->
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<!-- END CONTENT -->
+
+#parse("pages/common/Footer.vm")
+<script type="text/javascript" src="/lib_easyfix/assets/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="/lib_easyfix/assets/global/plugins/jquery-validation/js/additional-methods.min.js"></script>
+<script src="/lib_easyfix/assets/admin/pages/scripts/table-editable.js"></script>
+
+<script>
+
+
+function addEditTransaction(transactionType){
+	jQuery("#modal-body-id").html("<center>Please wait...</center> ");
+	 
+	 jQuery.ajax({
+		type	: "POST",
+		url		: "addEditTransaction?transType="+transactionType, 
+		success	: function(data){
+		    jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	});  
+
+}
+function jobDetails(jobId){
+	jQuery("#modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "jobDetails?jobId="+jobId, 
+		success	: function(data){
+			jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	});  
+
+}
+
+function searchTransaction(){
+	if(blankValMetronicLabel("easyfixerId","efr_div_id","efr_lable_id"))
+				return false;	
+/*	if(blankValMetronicLabel("from-date","date-range-div-id","date-range-lable-id"))
+				return false;	
+	if(blankValMetronicLabel("to-date","date-range-div-id","date-range-lable-id"))
+				return false; */
+
+
+	jQuery("#transListDiv").html("<center>Please wait...</center> ");
+	
+
+	 jQuery.ajax({
+		type	: "POST",
+		url		: "transactionList", 
+		contentType: false,
+		processData: false,
+		data:function() {
+			        var data = new FormData();
+			        data.append("easyfixerId",$("#easyfixerId").val());
+			        data.append("fromDate",$("#from-date").val());
+			        data.append("toDate",$("#to-date").val());
+			        data.append("transactionType",$("#transType").val());
+			        
+			        return data;
+			  }(),
+		success	: function(data){
+		    jQuery("#transListDiv").html(" ");
+		    jQuery("#transListDiv").html(data);
+		}
+	});  
+
+}
+
+
+jQuery(document).ready(function() {       
+   	Metronic.init(); // init metronic core components
+	Layout.init(); // init current layout	
+	
+
+	$('#easyfixerId').select2({
+            placeholder: "Select an option",
+            allowClear: true
+        });
+ 
+   
+	$('#sample_editable_1').dataTable({
+		
+            "order": [  ] 
+	});
+	
+	$("#sample_editable_1_length").hide();
+	$("#sample_editable_1_filter").hide();
+	
+	
+	
+	 	  
+	//===== Date Picker=====
+	$('#from-date').datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        format: 'dd/mm/yyyy',
+        autoclose: true
+    });
+    $('#to-date').datepicker({
+        rtl: Metronic.isRTL(),
+        orientation: "left",
+        format: 'dd/mm/yyyy',
+        autoclose: true
+    });
+    
+    
+   
+    
+
+});
+
+</script>
+

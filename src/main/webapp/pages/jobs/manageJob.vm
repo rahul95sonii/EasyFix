@@ -1,0 +1,602 @@
+
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+
+<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:800px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+	
+	<div class="modal fade" id="sub-portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:600px; margin-top:100px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="sub-modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+<!-- BEGIN MODAL FOR GPS LOCATION FORM-->		
+		<div class="modal fade" id="address-portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+			<div class="modal-dialog" style="width:600px; margin-top:100px;">
+			    <div class="modal-content">
+					<div class="modal-body" id="address-modal-id">
+						
+					</div>
+				</div>	
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->		
+		</div>
+<!-- BEGIN MODAL FOR SCHEDULING FORM-->		
+		<div class="modal fade" id="portlet-config-schedule" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:1000px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="schedule-modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+
+<!-- BEGIN MODAL FOR SCHEDULING FORM-->		
+		<div class="modal fade" id="portlet-config-re-schedule" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:1000px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="re-schedule-modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>	
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			
+			
+			<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-paper-plane"></i>
+						<a href="#">Jobs</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					<li>
+						<a href="#">Manage Jobs</a>
+					</li>
+				</ul>
+			</div>
+			<h3 class="page-title">Manage Jobs</h3>
+			<!-- END PAGE HEADER-->
+			
+			<div class="clearfix">
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="portlet box blue">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-calendar"></i>Filter Job
+							</div>
+							<div class="actions">
+								<!--<a class="btn btn-default btn-sm" href="javascript:;">-->
+								<a href="#portlet-config" class="btn btn-default btn-sm" data-toggle="modal" onclick="addjob(0);"> 
+								<i class="fa fa-plus"></i>
+								Book New Call
+								</a>	
+														
+							</div>
+						</div>
+												
+					<div class="portlet-body">
+						<table class="table">
+							<tbody>
+								<tr>
+									<td width="20%" style="border:0"><b>JobId : </b> <br>
+										<input type="text" class="form-control" id="filterJobId" value="" placeholder="-- All --" >
+									</td>
+									<td width="20%" style="border:0"><b>Customer : </b> <br>
+										<input type="text" class="form-control" id="filterCustomerId" value="" placeholder="-- All --" >
+									</td>
+									<td width="20%" style="border:0"><b>Easyfixer : </b> <br>
+										<input type="text" class="form-control" id="filterEasyfixerId" value="" placeholder="-- All --" >
+									</td>
+									<td width="20%" style="border:0"><b>Status :</b> <br>
+										<select class="form-control select2_job_filter" id="filterStatusId" data-placeholder="-- All --" >
+											<option value=""></option>
+											<option value="100">All</option>
+											<option value="-1">For Confirmation</option>
+											<option value="0">New Booked</option>
+											<option value="1">Scheduled</option>
+											<option value="2">Checked-In</option>
+											<option value="3">Checked-Out</option>
+											<option value="5">Completed</option>
+											<option value="6">Canceled</option>
+											<option value="7">Enquiry</option>
+											<option value="9">Call Later</option>
+											<option value="10">App Checkout Verification</option>
+													
+										</select>
+									</td>
+									<td style="border:0"><b>Owner : </b> <br>
+										<select class="form-control select2_job_filter" id="filterOwnerId" data-placeholder="-- All --" >
+											<option value=""></option>
+											<option value="0">All</option>
+											#foreach($!user in $userlist)
+												<option value="$!user.userId">$!user.userName</option>
+											#end			
+										</select>
+									</td>							
+									
+								</tr>
+								<tr>
+									<td style="border:0"><b>Client : </b> <br>
+										<select class="form-control select2_job_filter" id="filterClientId" data-placeholder="-- All --" >
+											<option value=""></option>
+											<option value="0">All</option>	
+											#foreach($!client in $clientList)
+												<option value="$!client.clientId">$!client.clientName</option>
+											#end		
+										</select>
+									</td>
+									<td style="border:0"><b>Service Type : </b> <br>
+										<select class="form-control select2_job_filter" id="filterServiceTypeId" data-placeholder="-- All --" >
+											<option value=""></option>
+											<option value="0">All</option>	
+											#foreach($!servType in $serviceTypeList)
+												<option value="$!servType.serviceTypeId">$!servType.serviceTypeName</option>
+											#end		
+										</select>
+									</td>
+									<td style="border:0"><b>City :</b> <br>
+										<select class="form-control select2_job_filter" id="filterCityId" data-placeholder="-- All --" >
+											<option value=""></option>	
+											<option value="0">All</option>
+											#foreach($!city in $cityList)
+												<option value="$!city.cityId">$!city.cityName</option>
+											#end		
+										</select>
+									</td>									
+									<td style="border:0" colspan="2"><b>Requested Date Range : </b> <br>
+										<div class="input-group" id="defaultrange" style="float:left">
+											<input type="text" class="form-control input-large" id="dateRange" >
+											<span class="input-group-btn" style="float:left">
+											<button class="btn default date-range-toggle" type="button"><i class="fa fa-calendar"></i></button>
+											</span>	
+											<span class="help-block" style="display:none"></span>											
+										</div>
+										<div style="float:right; padding:10px"><a href="Javascript:void(0);" onclick="showJobList();"><i class="fa fa-search"></i></a></div>
+									</td>
+									
+									
+								</tr>
+								<tr>
+								<td width="20%" style="border:0"><b>pin : </b> <br>
+										<input type="text" class="form-control" id="filterpinCode" value="" placeholder="-- All --" >
+									</td>
+								</tr>	
+							</tbody>
+						</table>
+						
+						<div id="showJobListDiv"></div>
+						
+					</div>									
+				</div>
+			</div>	
+			
+		</div>
+			
+	</div>
+	<!-- END CONTENT -->
+
+#parse("pages/common/Footer.vm")
+
+<script type="text/javascript" src="/lib_easyfix/assets/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="/lib_easyfix/assets/global/plugins/jquery-validation/js/additional-methods.min.js"></script>
+
+<script src="pages/metronic_js/jobComboSearch.js"></script>
+<script src="/lib_easyfix/assets/admin/pages/scripts/components-pickers.js"></script>
+<script>
+
+
+function addjob(jobId){
+	jQuery("#modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "addEditJob?jobId="+jobId+"&loc=job", 
+		success	: function(data){
+			jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	});  
+
+}
+
+function editjob(jobId){
+	jQuery("#modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "editJob?jobId="+jobId+"&loc=job", 
+		success	: function(data){
+			jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	});  
+
+}
+
+function scheduleJob(jobId, flag){
+	if(flag == "re-sched") 
+	{
+		var conf = confirm("Are you sure want to Re-Schedule this job.");
+		if(conf) 
+		{
+			jQuery("#schedule-modal-body-id").html("<center>Please wait...</center> ");
+			  jQuery.ajax({
+				type	: "POST",
+				url		: "scheduleJob?jobId="+jobId+"&loc=job", 
+				success	: function(data){
+					jQuery("#schedule-modal-body-id").html(" ");
+				    jQuery("#schedule-modal-body-id").html(data);
+				}
+			});  
+		}
+	}
+	else {
+		jQuery("#schedule-modal-body-id").html("<center>Please wait...</center> ");
+		  jQuery.ajax({
+			type	: "POST",
+			url		: "scheduleJob?jobId="+jobId+"&loc=job", 
+			success	: function(data){
+				jQuery("#schedule-modal-body-id").html(" ");
+			    jQuery("#schedule-modal-body-id").html(data);
+			}
+		});  
+	}
+}
+
+function jobDetails(jobId){
+	jQuery("#schedule-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "jobDetails?jobId="+jobId, 
+		success	: function(data){
+			jQuery("#schedule-modal-body-id").html(" ");
+		    jQuery("#schedule-modal-body-id").html(data);
+		}
+	});  
+
+}
+
+function checkInJob(jobId){
+	jQuery("#schedule-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "checkInJob?jobId="+jobId+"&loc=job", 
+		success	: function(data){
+			jQuery("#schedule-modal-body-id").html(" ");
+		    jQuery("#schedule-modal-body-id").html(data);
+		}
+	});  
+
+}
+
+
+function checkOutJob(jobId){
+	jQuery("#schedule-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "checkOutJob?jobId="+jobId+"&loc=job", 
+		success	: function(data){
+			jQuery("#schedule-modal-body-id").html(" ");
+		    jQuery("#schedule-modal-body-id").html(data);
+		}
+	});  
+
+}
+
+function feedbackJob(jobId){
+	jQuery("#schedule-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "feedbackJob?jobId="+jobId+"&loc=job", 
+		success	: function(data){
+			jQuery("#schedule-modal-body-id").html(" ");
+		    jQuery("#schedule-modal-body-id").html(data);
+		}
+	});  
+
+}
+
+function addComment(jobId,flag){
+	jQuery("#sub-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "addJobComment?jobId="+jobId+"&commentedOn="+flag, 
+		success	: function(data){
+			jQuery("#sub-modal-body-id").html(" ");
+		    jQuery("#sub-modal-body-id").html(data);
+		}
+	});
+}
+
+function jobCommentList(jobId,divId){
+	jQuery("#"+divId).html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "jobCommentList?jobId="+jobId, 
+		success	: function(data){
+			jQuery("#"+divId).html(" ");
+		    jQuery("#"+divId).html(data);
+		}
+	});
+}
+
+function cancelJob(jobId,flag){
+	jQuery("#sub-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "cancelJob?jobId="+jobId+"&canceledOn="+flag+"&loc=job", 
+		success	: function(data){
+			jQuery("#sub-modal-body-id").html(" ");
+		    jQuery("#sub-modal-body-id").html(data);
+		}
+	});
+}
+
+function changeOwner(jobId,jobOwner){
+	jQuery("#sub-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "changeJobOwner?jobId="+jobId+"&jobOwner="+jobOwner, 
+		success	: function(data){
+			jQuery("#sub-modal-body-id").html(" ");
+		    jQuery("#sub-modal-body-id").html(data);
+		}
+	});
+}
+
+
+
+function showJobList() {
+
+	var client = $("#filterClientId").val();
+	var easyfixer = $("#filterEasyfixerId").val();
+	var status = $("#filterStatusId").val();
+	var city = $("#filterCityId").val();
+	var owner = $("#filterOwnerId").val();
+	var customer = $("#filterCustomerId").val();
+	var servType = $("#filterServiceTypeId").val();
+	var jobId = $("#filterJobId").val();
+	var pincode = $("#filterpinCode").val();
+	
+	var tempRange = $("#dateRange").val();
+	
+	if(client=="" && easyfixer=="" && status=="" && city=="" && owner=="" && customer=="" && servType=="" && jobId=="" && tempRange=="" && pincode=="")
+	{
+		bootbox.alert("Please select atleast one filter");
+		return false;
+	}
+	
+	var startDate = "";
+	var endDate = "";
+
+	if(tempRange != "") {			
+		var dateRange = tempRange.split("--");
+		startDate = dateRange[0].trim();
+		endDate = dateRange[1].trim();	
+	}
+	
+	if(jobId == "")
+		jobId = 0;
+	if(client == "")
+		client = 0;
+/*	if(easyfixer == "")
+		easyfixer = 0;
+	if(customer == "")
+		customer = 0; */
+	if(status == "")
+		status = 100;
+	if(city == "")
+		city = 0;
+	if(owner == "")
+		owner = 0;	
+	if(servType == "")
+		servType = 0;
+	
+
+	Metronic.blockUI({
+        target: '#showJobListDiv',
+        animate: true,
+        overlayColor: 'grey'
+    });
+	
+
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "getJobListByFilter",
+	   		contentType: false,
+		    processData: false,
+		    data: function() {
+			        var data = new FormData();	
+			         data.append("jobId", jobId);		
+			         data.append("fkClientId", client);
+			         data.append("easyfixterObj.easyfixerName", easyfixer);
+			         data.append("jobStatus", status);
+			         data.append("fkCityId", city);
+			         data.append("jobOwner", owner); 			         
+			         data.append("customerObj.customerName", customer);
+			         data.append("fkServiceTypeId", servType);
+			         data.append("startDate", startDate);
+			         data.append("endDate", endDate);
+			         data.append("addressObj.pinCode", pincode);
+			        	
+			        return data;
+			  }(),
+	   		success: function(data) {
+	   			jQuery("#showJobListDiv").html(data);
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Job entry failed");
+   			}
+	});
+
+	return false;
+	
+}
+
+function setJobDesc(jobId,desc){
+
+ jQuery("#sub-modal-body-id").html(" ");
+	jQuery.ajax({  		
+		type: "POST",
+   		url: "changeJobDesc?jobId="+jobId+"&jobDesc="+desc+"&flag=1",
+   		success: function(data) 
+   		{  	
+   			jQuery("#sub-modal-body-id").html(" ");
+			jQuery("#sub-modal-body-id").html(data);
+   		}
+	});
+
+	return false;	
+				
+}
+
+function showCrmSmsList(no,jobId){
+
+ jQuery("#sub-modal-body-id").html(" ");
+	jQuery.ajax({  		
+		type: "POST",
+   		url: "getCrmSmsList?mobileNo="+no+"&jobId="+jobId,
+   		success: function(data) 
+   		{  	
+   			jQuery("#sub-modal-body-id").html(" ");
+			jQuery("#sub-modal-body-id").html(data);
+   		}
+	});
+
+	return false;	
+				
+}
+
+
+//$('#uploadImageJobBtn').click(function () {
+function uploadImageJob(jobId,status){
+	var fileName=$("#jobImage").val();
+	
+	if(fileName==""){
+		$("#error-file-text").show();	
+		return false;
+	}
+	
+	if(!fileName){
+		$("#error-file-text").show();	
+		return false;
+	}
+
+	if(fileName!=""){
+		var  namePart = fileName.split(".");
+		var extension = namePart[ namePart.length - 1 ];
+		extension=extension.toLowerCase();
+		
+		if(extension =="doc" || extension =="docx" || extension =="xls" || extension =="xlsx" || extension =="pdf" 
+			|| extension =="png" || extension =="jpg" || extension =="jpeg" ||extension =="gif" ){
+			$("#error-file-text").hide();		
+			
+		 }else{			
+			 $("#error-file-text").css( "color", "#b94a48" );
+			 $("#error-file-text").show();			 
+			 return false; 
+		 }
+	}
+	
+			
+		Metronic.blockUI({
+	        target: '#schedule-modal-body-id',
+	        animate: true,
+	        overlayColor: 'grey'
+	    });
+	
+		jQuery.ajax({
+	   			type: "POST",
+		   		url:  "uploadJobImage",
+		   		contentType: false,
+			    processData: false,
+			    data:function() {
+				        var data = new FormData();
+				        data.append("jobId",jobId);
+				        data.append("jobStatus",status);
+				        if(jQuery("#jobImage").get(0).files[0]!=null){
+			            	data.append("jobImage", jQuery("#jobImage").get(0).files[0]);
+			            }
+			         if(fileName!=null){
+			        	 data.append("jobImageName",fileName);
+			         }        
+				        return data;
+				  }(),
+		   		success: function(data) {
+		   			window.location.href=$("#loc").val();
+	/*	   			if($("#loc").val() == 'job')
+		   			{
+		   				$( "#cancelChekInBtn" ).trigger( "click" );
+		   				showJobList();
+		   			}
+		   			else	
+		   			{
+		   				//window.location.href=$("#loc").val();
+		   				$( "#cancelChekInBtn" ).trigger( "click" );
+		   					refreshHome ();
+		   			}
+						
+		*/								        
+	   			},
+	   			error: function(data) {
+	   				bootbox.alert("CheckIn entry failed");
+	   			}
+			});
+	
+			return false;
+		
+}
+//);
+
+
+
+function jobImageList(jobId,divId){
+	jQuery("#"+divId).html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "jobImageList?jobId="+jobId, 
+		success	: function(data){
+			jQuery("#"+divId).html(" ");
+		    jQuery("#"+divId).html(data);
+		}
+	});
+}
+
+jQuery(document).ready(function() {       
+   		Metronic.init(); // init metronic core components
+		Layout.init(); // init current layout
+   		JobComboSearch.init();
+		ComponentsPickers.init();
+});
+
+</script>
+

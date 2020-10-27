@@ -1,0 +1,7 @@
+CREATE TABLE `tbl_document_type` (
+  `document_type_id` int(11) NOT NULL AUTO_INCREMENT,
+  `document_name` varchar(255) DEFAULT NULL,
+  `document_mandatory` varchar(10) DEFAULT NULL,
+  `document_type_status` tinyint(2) DEFAULT '1' COMMENT '0:Inactive, 1:Active',
+  PRIMARY KEY (`document_type_id` )
+)

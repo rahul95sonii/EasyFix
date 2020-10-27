@@ -1,0 +1,183 @@
+
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+
+<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:500px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+			
+	<!-- BEGIN CONTENT -->
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			
+			<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-gear"></i>
+						<a href="#">Settings</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					<li>
+						<a href="#">Easyfixer Report</a>  
+					</li>
+				</ul>
+				
+			</div>
+			<h3 class="page-title">Easyfixer Report</h3>
+			<!-- END PAGE HEADER-->
+			
+			<div class="clearfix">
+			</div>
+			<div class="row">
+				<div class="col-md-12 col-sm-12">
+					<!-- BEGIN EXAMPLE TABLE PORTLET-->
+					<div class="portlet box blue">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-table"></i>Filter Report
+							</div>						
+						</div>
+						<div class="portlet-body form">
+							<!-- BEGIN FORM-->
+							<form action="easyfixerReport" class="form-horizontal form-bordered" method="POST" id="downloadFrm">
+								<div class="form-body">
+									<div class="form-group" id="dateRange_div_id">
+										<label class="control-label col-md-3" id="dateRange_label_id">Date Ranges</label>
+										<div class="col-md-8">
+											<div class="input-group" id="defaultrange">
+												<input type="text" class="form-control input-large" id="dateRange" name = "dateRange">
+												<span class="input-group-btn" style="float:left">
+												<button class="btn default date-range-toggle" type="button"><i class="fa fa-calendar"></i></button>
+												</span>	
+												<span class="help-block" style="display:none"></span>											
+											</div>	
+																					
+										</div>
+									</div>
+									<div class="form-group ">
+										<label class="control-label col-md-3">Easyfixer Status</label>
+										<div class="col-md-4">
+											<select class="form-control select2_category input-large" id="jobStatus" name="flag" data-placeholder="-- All --">
+												
+												<option value="100">All</option>
+												<option value="0">inactive</option>
+												<option value="1">active</option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group ">
+										<label class="control-label col-md-3">Client</label>
+										<div class="col-md-4">
+											<select class="form-control select2_category input-large" id="client" name="clientId" data-placeholder="-- All --">
+												
+												<option value="0">All</option>
+												#foreach($clients in $!clientList)
+													<option value="$clients.clientId">$clients.clientName</option>
+												#end
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="form-actions">
+									<div class="row">
+										<div class="col-md-offset-4 col-md-9">
+											<button type="submit" class="btn green" id="downloadReportBtn1"><i class="fa fa-download"></i> Download</button>
+										</div>
+									</div>
+								</div>
+							</form>
+							
+							<!-- END FORM-->
+						</div>
+					</div>
+					<!-- END EXAMPLE TABLE PORTLET-->
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<!-- END CONTENT -->
+	
+	
+#parse("pages/common/Footer.vm")
+<script src="/lib_easyfix/assets/admin/pages/scripts/components-pickers.js"></script>
+
+
+<script>
+jQuery(document).ready(function() {       
+	Metronic.init(); // init metronic core components
+	Layout.init(); // init current layout
+	ComponentsPickers.init();
+	
+	$('.select2_category').select2({
+           allowClear: true
+        });
+    
+  
+});
+$('#downloadReportBtn1').click(function () {
+	if(blankValMetronicLabel("dateRange","dateRange_div_id","dateRange_label_id"))
+				return false;	
+	var jobStatus = $("#jobStatus").val();
+	var client = $("#client").val();
+	if(jobStatus=="")
+		jobStatus=100;
+	if(client=="")
+		client=0;
+	
+});
+		
+		
+$('#downloadReportBtn').click(function () {
+	if(blankValMetronicLabel("dateRange","dateRange_div_id","dateRange_label_id"))
+				return false;	
+	var jobStatus = $("#jobStatus").val();
+	var client = $("#client").val();
+<!--	if(jobStatus=="")
+		jobStatus=100;
+	if(client=="")
+		client=0;
+-->
+	var tempRange = $("#dateRange").val();
+	var dateRange = tempRange.split("--");
+	var startDate = dateRange[0].trim();
+	var endDate = dateRange[1].trim();
+	
+		
+	
+	//jQuery("#transListDiv").html("<center>Please wait...</center> ");
+	 jQuery.ajax({
+		type	: "POST",
+		url		: "downloadCompletedJobReport", 
+		contentType: false,
+		processData: false,
+		data:function() {
+			        var data = new FormData();
+			        data.append("startDate",startDate);
+			        data.append("endDate",endDate);
+			        data.append("flag",jobStatus);
+			        data.append("clientId",client);
+			        
+			        return data;
+			  }(),
+		success	: function(data){
+		   
+		}
+	
+	});  
+
+	
+});
+
+</script>

@@ -1,0 +1,247 @@
+<div style="border-top:2px solid #60aee4; padding-top:5px;">
+<div style="top:25px; position:relative; left:400px;  color:greeen">Total Payout : <span id="totalPendingDiv"></span> /-</div>
+	<form class="form-horizontal" id="form_sample_3" action="#" novalidate="novalidate">
+	<table class="table table-striped table-hover table-bordered" id="sample_editable_1">
+		<thead>
+			<tr>
+				<th width="5%" class="text-center">ID</th>
+				<th width="15%">Easyfixer</th>
+				<th width="10%" class="text-right" style="padding-right:20px">Balance</th>
+				<th width="10%" class="text-right" style="padding-right:20px">Payout</th>
+				<th width="15%" class="text-center">Ops. Amt.</th>
+				<th width="10%" class="text-center">Ops. Aprv. Date</th>
+				<th width="15%" class="text-center">Fin. Aprv. Amt.</th>
+				<th width="10%" class="text-center">Fin. Update Date</th>
+				<th class="text-center">Status</th>
+			</tr>
+			</thead>
+			<tbody>
+			#set($i = 1)
+			#set($totalPayout = 0)
+			#set($payout = 0 )
+			#foreach($efr in $easyfixerList)
+				
+				#set($opsAmunt = "")
+				#set($finAmunt = "")
+				#set($finApprove = $!efr.servicePayoutObj.isApprovedByFinance)
+				#set($payoutId = $!efr.servicePayoutObj.payoutId)
+				
+				#set($payout=$!efr.currentBalance - 1000)
+				#set($totalPayout = $totalPayout + $payout)
+				
+				#if($!efr.servicePayoutObj.opsAmount > 0)
+					#set($opsAmunt = $!efr.servicePayoutObj.opsApprovedAmount)
+				#end
+				#if($!efr.servicePayoutObj.finApprovedAmount > 0)
+					#set($finAmunt = $!efr.servicePayoutObj.finApprovedAmount)
+				#end
+				
+				<tr>
+					<td class="text-center"><a href="#portlet-config" data-toggle="modal" title="Transaction List" onclick="efrTransList('$!efr.easyfixerId','$!efr.easyfixerName','$!efr.easyfixerNo');">$!efr.easyfixerId</a></td>
+					<td>$!efr.easyfixerName [$!efr.easyfixerNo]</td>
+					<td class="text-right" style="padding-right:20px;" id="balDiv$i"> $!efr.currentBalance </td>
+					<td class="text-right" style="padding-right:20px" id="payOutDiv$i">$payout</td>
+					<td class="text-center" id="OpsAmtDiv$i">
+						<input type="text" id="pay$i" class="form-control" style="width:100px; float:left" value="$opsAmunt" #if($finApprove == 2 || $finApprove == 3) readonly #end />
+						#if($finApprove == 0)
+							<a id="payActDiv$i" title="Approve Amount" onclick="opsAprvAmountAjax('$payoutId','$!efr.easyfixerId','$!efr.currentBalance','$payout','$i');">
+							<i class="fa fa-save" style="padding-top:10px"></i></a>
+						#end
+					</td>
+					<td class="text-center" id="OpsAprvDate$i">$!efr.servicePayoutObj.opsApprovedDate</td>
+					<td class="text-center" id="finAprv$i">
+										
+						#if($opsAmunt > 0) 
+							<input type="text" id="finAprvAmnt$i" class="form-control" style="width:100px; float:left" value="$finAmunt" #if($finApprove == 2 || $finApprove == 3) readonly #end /></span>
+							
+							#if($finApprove == 1) 
+								<a id="finSaveBtn$i" title="Approve" onclick="finAprvAmountAjax('$payoutId','$!efr.easyfixerId','$!efr.currentBalance','$payout','$opsAmunt','$i',2);">
+								<i class="fa fa-check-square-o"></i></a><br>
+								
+								<a id="finRejectBtn$i" title="Reject" onclick="finRejectAjax('$payoutId','$!efr.easyfixerId','$!efr.currentBalance','$payout','$opsAmunt','$i',3);">
+								<i class="fa fa-times"></i></a>
+							#end
+						#end
+					
+					</td>
+					<td class="text-center" id="finAprvDate$i">$!efr.servicePayoutObj.finApproveDate</td>
+					<td class="text-center" id="statusDiv$i">#if($finApprove == 1) <span style="color:blue"> Ops. Approved </span>
+											#elseif($finApprove == 2) <span style="color:green"> Fin. Approved </span>
+											#elseif($finApprove == 3) <span style="color:red"> Fin. Rejected </span>
+											#end				
+					</td>
+				</tr>
+				#set($i = $i+1)
+			#end
+									
+		</tbody>
+	</table>
+	</form>
+</div>
+
+<script>
+
+$("#totalPendingDiv").html("<b>"+$totalPayout+"</b>");
+
+function efrTransList(efrId, name, mob){
+	jQuery("#modal-body-id").html("<center>Please wait...</center> ");
+
+	 jQuery.ajax({
+		type	: "POST",
+		url		: "efrTransactionList?efrId="+efrId+"&name="+name+" [ "+mob+" ]", 
+		success	: function(data){
+			//alert(data);
+		    jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	}); 
+}
+
+
+function opsAprvAmountAjax(payoutId,efrId, balance, payout, divId)
+{
+
+    $("#payActDiv"+divId).hide();
+    
+	var val = $("#pay"+divId).val();
+	if(val == "" || isNaN(val) == 1)
+	{
+		$("#OpsAmtDiv"+divId).addClass('alert-danger');			
+		return false;
+	}
+	
+	$("#OpsAmtDiv"+divId).removeClass("alert-danger").addClass('alert-success');
+	
+	
+	var d = new Date();
+	var month = d.getMonth()+1;
+	var day = d.getDate();
+	
+	var outputDt = ((''+day).length<2 ? '0' : '') + day + '-' +
+	    ((''+month).length<2 ? '0' : '') + month + '-' +
+	    d.getFullYear();
+	
+	
+	
+
+	if(payoutId > 0)
+	{
+
+    
+		var conf = confirm("Are you sure want to change Ops. Amount");		
+		if(conf)
+		{
+			jQuery.ajax({
+				type	: "POST",
+				url		: "saveServicePayout?efrId="+efrId+"&balance="+balance+"&payout="+payout+"&val="+val+"&payoutId="+payoutId, 
+				success	: function(data){
+					$("#OpsAprvDate"+divId).html(outputDt);
+				}
+			}); 
+		}
+	}
+	else
+	{
+		jQuery.ajax({
+				type	: "POST",
+				url		: "saveServicePayout?efrId="+efrId+"&balance="+balance+"&payout="+payout+"&val="+val+"&payoutId="+payoutId, 
+				success	: function(data){
+					$("#OpsAprvDate"+divId).html(outputDt);
+				}
+			}); 
+	}
+
+}
+
+
+
+function finAprvAmountAjax(payoutId,efrId,balance,payout,opsAmount,divId,isApprove)
+{	
+	$("#finSaveBtn"+divId).hide();
+	var d = new Date();
+	var month = d.getMonth()+1;
+	var day = d.getDate();
+	
+	var outputDt = ((''+day).length<2 ? '0' : '') + day + '-' +
+	    ((''+month).length<2 ? '0' : '') + month + '-' +
+	    d.getFullYear();
+	    
+	var val = $("#pay"+divId).val();
+	var finApproveAmount = 	$("#finAprvAmnt"+divId).val();  
+	if(finApproveAmount == 0 || finApproveAmount == "" || isNaN(finApproveAmount) == 1 || (parseInt(finApproveAmount) > parseInt(val)))
+	{
+		$("#finAprv"+divId).addClass('alert-danger');			
+		return false;
+	}
+	else
+	{
+		$("#finAprv"+divId).removeClass("alert-danger").addClass('alert-success');
+		
+		jQuery.ajax({
+			type	: "POST",
+			url		: "finApprovePayout?payoutId="+payoutId+"&efrId="+efrId+"&finAprvAmnt="+finApproveAmount+"&status="+isApprove, 
+			success	: function(data){
+				$("#statusDiv"+divId).html("<span style='color:Green'>Approved</span>");
+				$("#finAprvDate"+divId).html(outputDt);
+				$("#payActDiv"+divId).hide();
+				$("#pay"+divId).prop('readonly', true);
+				$("#finSaveBtn"+divId).hide();
+				$("#finRejectBtn"+divId).hide();				
+				$("#finAprvAmnt"+divId).prop('readonly', true);
+				
+				
+			}
+		}); 
+	}
+		
+	
+}
+
+
+function finRejectAjax(payoutId,efrId,balance,payout,opsAmount,divId,isApprove)
+{	
+	$("#finRejectBtn"+divId).hide(); 
+	var d = new Date();
+	var month = d.getMonth()+1;
+	var day = d.getDate();
+	
+	var outputDt = ((''+day).length<2 ? '0' : '') + day + '-' +
+	    ((''+month).length<2 ? '0' : '') + month + '-' +
+	    d.getFullYear();
+	 
+	var conf = confirm("Are you sure want to reject this payout?")
+	if(conf)
+	{	
+		jQuery.ajax({
+			type	: "POST",
+			url		: "finApprovePayout?payoutId="+payoutId+"&efrId="+efrId+"&finAprvAmnt=0&status="+isApprove, 
+			success	: function(data){
+				$("#statusDiv"+divId).html("<span style='color:red'>Rejected</span>");
+				$("#finAprvDate"+divId).html(outputDt);
+				$("#payActDiv"+divId).hide();
+				$("#pay"+divId).prop('readonly', true);
+				$("#finSaveBtn"+divId).hide();
+				$("#finRejectBtn"+divId).hide();
+				$("#finAprvAmnt"+divId).prop('readonly', true);				
+				
+			}
+		}); 
+	}
+		
+	
+}
+
+
+
+
+
+jQuery(document).ready(function() { 
+	$('#sample_editable_1').DataTable( {
+		"columnDefs": [ {
+      		"targets": [ 0,4,5,7,8 ],
+      		"orderable": false	} ],
+	    "order": [[ 0, "asc" ]] } );
+});
+
+
+</script>

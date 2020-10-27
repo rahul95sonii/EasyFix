@@ -1,0 +1,10 @@
+CREATE TABLE `tbl_client_rate_card` (
+  `crc_id` int(11) NOT NULL AUTO_INCREMENT,
+  `crc_servicetype_id` int(11) DEFAULT NULL,
+  `crc_service_name` varchar(255) DEFAULT NULL,
+  `insert_date` timestamp NULL DEFAULT NULL,
+  `update_date` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`crc_id`)
+)
+

@@ -1,0 +1,165 @@
+#set($transType = $request.getAttribute("transType"))
+<div class="portlet box blue">
+	<div class="portlet-title">
+			<div class="caption">
+				<i class="fa fa-money"></i>#if($!transType == 1) Debit #else Credit #end Easyfixer Transaction
+			</div>
+	</div>		
+	
+		<div class="portlet-body form">
+			<input type="hidden" id="transactionType" value="$!transType" />
+			
+			<form name="transaction" action="" method="post" class="form-horizontal" id="transaction_formId">
+				<div class="form-body" >											
+				<div class="form-group" id="efrName-divId">
+			 	<label class="col-md-4 control-label" id="efrName-lableId">Easyfixer Name<span class="required">* </span></label>
+					<div class="col-md-8">
+				  		<select class="form-control select2_category input-large" id="efrId" data-placeholder="Select Easyfixer">
+							<option value=""></option>
+							#foreach($easyfixer in $easyfixerList)
+							<option value="$!easyfixer.easyfixerId">$!easyfixer.easyfixerName [ $!easyfixer.easyfixerNo ]</option>
+							#end
+						</select>
+						<span class="help-block" style="display:none"></span>
+					</div>
+				</div>
+			
+				<div class="form-group" id="amount-divId">
+			 	<label class="col-md-4 control-label" id="amount-lableId">Amount<span class="required">* </span></label>
+					<div class="col-md-8">
+				  		<input type="text" class="form-control input-large" id="amount" placeholder="Enter Amount" value="">
+						<span class="help-block" style="display:none"></span>
+					</div>
+				</div>
+				
+				<div class="form-group" id="source-divId">
+			 	<label class="col-md-4 control-label" id="source-lableId">Source<span class="required">* </span></label>			 	
+					<div class="col-md-8">
+				  		<div class="radio-list" data-error-container="#form_2_easyfixerType_error">
+							<label class=" md-radio-inline">
+								<div class="md-radio">
+								<input type="radio" id="radio1" class="md-radiobtn" name="source" value="2" checked="checked" />
+								<label for="radio1">
+								<span></span>
+								<span class="check"></span>
+								<span class="box"></span>
+								Cash </label>
+								</div>
+							
+								<div class="md-radio">
+								<input type="radio" id="radio2" class="md-radiobtn" name="source" value="3" />
+								<label for="radio2">
+								<span></span>
+								<span class="check"></span>
+								<span class="box"></span>
+								Cheque </label>
+								</div>
+							</label>
+						</div>
+						
+						<span class="help-block" id="sourceId" style="display:none">
+					</div>
+				</div>
+								
+				<div class="form-group" id="desc-divId">
+			 	<label class="col-md-4 control-label" id="desc-lableId">Description<span class="required">* </span></label>			 	
+					<div class="col-md-8">
+				  		<textarea class="form-control input-large" id="description" rows="3" placeholder="If soruce is Cheque, Please mention cheque number in description." ></textarea>
+						<span class="help-block" style="display:none"></span>
+					</div>
+				</div>
+				
+			</div>
+			
+				<div class="form-actions right">
+					<div class="col-md-offset-3 col-md-9">
+						<button type="button" id="addUpdateTransactionBtn" class="btn green">Submit</button>
+						<button type="button" data-dismiss="modal" id="transactionCancelBtn" class="btn red">Cancel</button>
+					</div>
+				</div>
+	
+			</form>
+		</div>
+		
+</div>
+
+
+<script language="javascript" type="text/javascript">
+
+
+
+$('#addUpdateTransactionBtn').click(function () {
+
+	if(isComboSelectedMetronicLabel("efrId","efrName-divId","efrName-lableId"))
+				return false;
+	if(blankValMetronicLabel("amount","amount-divId","amount-lableId"))
+				return false;	
+	if(isNumericDecimalMetronicLabel("amount","amount-divId","amount-lableId"))
+				return false;
+	if(blankValMetronicLabel("description","desc-divId","desc-lableId"))
+				return false;	
+	
+	Metronic.blockUI({
+        target: '#modal-body-id',
+        animate: true,
+        overlayColor: 'grey'
+    });
+    
+    
+    var transType = $("#transactionType").val();
+    var sourceType = "";
+    sourceType = $('input:radio[name=source]:checked').val();
+    
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "addUpdateEasyFixerAmount",
+	   		contentType: false,
+		    processData: false,
+		    data:function() {
+			        var data = new FormData();
+			        data.append("easyfixerId",$("#efrId").val());
+			        data.append("transactionAmount",$("#amount").val());
+			        data.append("transactionType",transType);
+			        data.append("source",sourceType);	        
+			        data.append("Description",$("#description").val());
+			        
+			        return data;
+			  }(),
+	   		success: function(data) {
+	   			if(data == '0') {
+	   				Metronic.unblockUI('#modal-body-id');
+	   				
+	   			}
+	   			else {
+	   				if($("#easyfixerId").val() == "")
+	   				{
+	   					if(transType == '1')
+							window.location.href="easyfixerDebit";
+						if(transType == '2')
+							window.location.href="easyfixerCredit"; 
+					}
+					else {
+						$("#transactionCancelBtn").trigger( "click" );
+						searchTransaction();
+					}
+				}
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Transaction entry failed");
+   			}
+	});
+
+	return false;
+
+});
+
+   
+$(document).ready(function () {
+	$('#efrId').select2({
+           allowClear: true
+        });
+});
+
+
+</script>

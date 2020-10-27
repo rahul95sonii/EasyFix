@@ -1,0 +1,9 @@
+#set($jobId = $request.getAttribute("jobId")) 
+#set($changedDate = $request.getAttribute("changedDate")) 
+#set($status = $request.getAttribute("status")) 
+
+
+$!changedDate
+ &nbsp; &nbsp; 
+ <a href="#sub-portlet-config" class="btn btn btn-xs blue" data-toggle="modal" onclick="setJobRequestedDate($!jobId,'$!changedDate');">
+<i class="fa fa-clock-o"></i> Change </a>

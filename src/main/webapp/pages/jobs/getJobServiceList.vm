@@ -1,0 +1,64 @@
+#set($service = $request.getAttribute("service"))
+#set($totalSum = $request.getAttribute("totalSum"))
+#set($star = $request.getAttribute("star"))
+
+#set($flag = $request.getAttribute("flag"))
+
+<input type="hidden" id="jobService" value="$!service" />
+<input type="hidden" id="jobServiceListSize" value="$!jobServiceList.size()" />
+<div class="table-scrollable">
+#if($flag == "schd")
+	<table class="table table-hover">
+		<tbody>
+			<tr style="background-color:#EEE">
+				<td><b>Services</b></td>
+				<td width="20%" style="text-align:right; padding-right:20px;"><b>Charge</b></td>													
+			</tr>
+
+			#foreach($service in $jobServiceList)
+				<tr>
+					<td>$!service.serviceName</td>
+					<td style="text-align:right; padding-right:20px;">
+						#if($!service.getJobChargeType() == 0 || $!service.totalCharge == "0.00")
+							$!service.totalCharge <span style="color:red">*</span>
+						#else
+							$!service.totalCharge
+						#end
+					</td>													
+				</tr>
+			#end
+			<tr">
+				<td style="text-align:right"><b>Total: </b></td>
+				<td width="20%" style="text-align:right; padding-right:20px;"><b>$totalSum
+				#if($star==1) <span style="color:red">*</span> #end</b></td>								
+			</tr>
+		</tbody>
+	</table>
+#else	
+	
+	<div id="servicelabelId" style="display:none;">Amount</div>
+		<table class="table table-hover">
+		<tbody>
+			<tr style="background-color:#EEE">
+				<td><b>Services</b></td>
+				<td width="30%" style="padding-left:20px;"><b>Charge</b></td>													
+			</tr>
+			#set($i=0)										
+			#foreach($service in $jobServiceList)
+				<input type="hidden" id="servId$i" value="$!service.jobServiceId" />
+				<tr>
+					<td style="padding-top:15px">$!service.serviceName </td>
+					<td><input type="text" class="form-control input-small" id="serve$i" value="$!service.totalCharge" #if($!service.getJobChargeType() == 1) readonly #end onchange="addtotal(this.value)" onfocus="chk(this.value)"/>
+						<span class="help-block" style="display:none">
+					</td>													
+				</tr>
+				#set($i=$i+1)
+			#end
+			<tr">
+				<td style="text-align:right;padding-top:15px"><b>Total: </b></td>
+				<td><input type="text" id="totalsum" class="form-control input-small" value="$totalSum" readonly /></td>								
+			</tr>
+		</tbody>
+		</table>
+#end
+</div>

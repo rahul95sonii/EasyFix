@@ -1,0 +1,64 @@
+<div class="portlet box blue">
+	<div class="portlet-title">
+			<div class="caption">
+				<i class="fa fa-list"></i>Last 30 Days Recharge List
+			</div>
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+	</div>		
+	
+		<div class="portlet-body form">
+			<input type="hidden" value="$!efrId" id="efrId" />
+			<form name="transaction" action="" method="post" class="form-horizontal" id="transaction_formId">
+				<div class="form-body" >
+					
+						<table class="table table-striped table-hover table-bordered" id="sample_editable_3">
+							<thead>
+								<tr>
+									<th width="8%" class="text-center">Id</th>
+									<th width="20%">Name</th>
+									<th width="10%" class="text-center">Number</th>
+									<th width="15%" class="text-right" style="padding-right:20px;">Amount</th>
+									<th width="10%">Date</th>
+									<th width="15%">Payment Mode</th>
+									<th width="15%">Reference#</th>
+									<th width="15%">Comments</th>
+									<th class="text-center">Approved</th>
+								</tr>
+								</thead>
+								<tbody>
+								#set($i = 1)
+								#foreach($efr in $NDMRechargeList)									
+									<tr>
+										<td class="text-center">$!efr.efrId</td>
+										<td>$!efr.efr.easyfixerName</td>
+										<td class="text-center">$!efr.efr.easyfixerNo</td>										
+										<td class="text-right" style="padding-right:20px;">#if($!efr.recharge_type == 1) - #else + #end $!efr.recharge_amount</td>
+										<td>$!efr.recharge_date</td>										
+										<td>$!efr.paymentMode</td>
+										<td>$!efr.referenceId</td>
+										<td>$!efr.comments</td>
+										<td class="text-center">#if($!efr.approved_by_finance == 1) <span style="color:green"> Yes </span> #else <span style="color:red"> No </span> #end</td>
+									</tr>
+									#set($i= $i+1)
+								#end							
+							</tbody>
+						</table>
+					
+				</div>
+				
+			</form>
+		</div>
+		
+</div>
+
+<script>
+jQuery(document).ready(function() {       
+		
+$('#sample_editable_3').DataTable( { 
+	"columnDefs": [ {
+      		"targets": [ 5,6,7,8 ],
+    		"orderable": false	} ],
+    "order": [[ 0, "asc" ]] } );
+   		
+});
+</script>

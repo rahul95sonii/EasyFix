@@ -1,0 +1,112 @@
+#set($divId = $request.getAttribute("divId"))
+<input type="hidden" id="divId" value="$divId" />
+
+<div class="portlet box blue">
+	<div class="portlet-title">
+			<div class="caption">
+				<i class="fa fa-edit"></i>Job Reject
+			</div>
+	</div>		
+	
+		<div class="portlet-body form">
+			<input type="hidden" id="rejectJobId" value="$!jobsObj.jobId" />
+			<input type="hidden" id="efrId" value="$!jobsObj.fkEasyfixterId" />
+			
+			<form name="comment" action="" method="post" class="form-horizontal" id="comment_formId">
+				<div class="form-body" >
+					<div class="form-group">
+				 	<label class="col-md-3 control-label">Easyfixer</label>			 	
+						<div class="col-md-9">
+					  		<p class="form-control-static">$jobsObj.easyfixterObj.easyfixerName [ $jobsObj.easyfixterObj.easyfixerNo ]</p>
+						</div>
+					</div>											
+					<div class="form-group" id="reject-divId">
+				 	<label class="col-md-3 control-label" id="reject-lableId">Reject Reason<span class="required">* </span></label>			 	
+						<div class="col-md-9">
+					  		<select class="form-control select2_category input-large" id="rejectReason" data-placeholder="Select Cancel Reason" >
+								<option value=""></option>
+								#foreach($reject in $rejectReasonList)
+									<option value="$!reject.efrRejectionReasonId">$!reject.efrRejectReasonName</option>
+								#end			
+							</select>
+					  		<span class="help-block" style="display:none"></span>
+						</div>
+					</div>	
+					<div class="form-group" id="desc-divId">
+				 	<label class="col-md-3 control-label" id="desc-lableId">Remarks<span class="required">* </span></label>			 	
+						<div class="col-md-9">
+					  		<textarea class="form-control input-large" id="commentId" rows="3" placeholder="Write Comment..." ></textarea>
+							<span class="help-block" style="display:none"></span>
+						</div>
+					</div>
+				
+			</div>
+			
+				<div class="form-actions right">
+					<div class="col-md-offset-3 col-md-9">
+						<button type="button" id="rejectJobBtn" class="btn green">Submit</button>
+						<button type="button" data-dismiss="modal" id="rejCancelBtn" class="btn red">Cancel</button>
+					</div>
+				</div>
+	
+			</form>
+		</div>
+		
+</div>
+
+
+<script language="javascript" type="text/javascript">
+
+$('#rejectJobBtn').click(function () {
+	
+	if(isComboSelectedMetronicLabel("rejectReason","reject-divId","reject-lableId"))
+				return false;
+	if(blankValMetronicLabel("commentId","desc-divId","desc-lableId"))
+				return false;	
+				
+	var rejectJobId = $("#rejectJobId").val();
+	var rejectId = $("#rejectReason").val();
+	var efrId = $("#efrId").val();
+	var divId = $("#divId").val();
+	
+	var conf = confirm("Are you sure want to cancel this job?");
+	if(conf) {
+		jQuery.ajax({
+	   			type: "POST",
+		   		url:  "recordEfrJobRejections",
+		   		contentType: false,
+			    processData: false,
+			    data:function() {
+				        var data = new FormData();
+				        data.append("jobId",rejectJobId);
+				        data.append("efrRejectionReasonId",rejectId); 
+				        data.append("fkEasyfixterId",efrId); 		          
+				        data.append("efrrejectionComment",$("#commentId").val());
+				        
+				        return data;
+				  }(),
+		   		success: function(data) {
+		   			//window.location.href=$("#loc").val();
+		   			$( "#rejCancelBtn" ).trigger( "click" );
+		   			$("#radio"+divId).attr("disabled", true);
+		   			$("#row"+divId).addClass( "alert-danger" );
+		   			$("#rej"+divId).html('<i class="fa fa-thumbs-down"></i>');		   			
+										        
+	   			},
+	   			error: function(data) {
+	   				bootbox.alert("Job rejection failed");
+	   			}
+		});
+	
+		return false;
+	}
+
+});
+
+
+	$('#cancelId').select2({
+           allowClear: true
+        });
+
+
+</script>

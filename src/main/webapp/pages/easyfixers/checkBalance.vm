@@ -1,0 +1,174 @@
+
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+
+<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:1000px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+	
+	
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			
+			
+			<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-building"></i>
+						<a href="#">EasyFixers</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					
+					<li>
+						<a href="#">Check Balance</a>
+					</li>
+				</ul>
+			</div>
+			<h3 class="page-title">Check Balance</h3>
+			<!-- END PAGE HEADER-->
+			
+			<div class="clearfix">
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="portlet box blue">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-calendar"></i>Filter Parameter
+							</div>
+							<div class="actions">
+							<!--	<a href="#" id="downloadLink" disabled class="btn btn-default btn-sm" onclick="downloadClientTracking('cityTracking')">
+									<i class="fa fa-download"></i>
+									Download
+								</a>	-->					
+							</div>
+						</div>
+												
+					<div class="portlet-body">
+						<table class="table">
+							<tbody>
+								<tr>									
+								
+									<td width="20%" style="border:0"><b>Name :</b> <br>
+										<input type="text" id="efrName" value="" class="form-control" data-placeholder="Enter Easyfixer Name" />
+									</td>
+									<td width="20%" style="border:0"><b>Srvice Type</b> <br>
+										<select class="form-control select2_category input-large" id="serviceTypeId" data-required="1" data-placeholder="Select service type"  >
+											<option value=""></option>							
+												#foreach($!service in $serviceTypeList)
+													<option value="$!service.serviceTypeId" >$!service.serviceTypeName</option>
+												#end
+										</select>
+									</td>
+									<td width="20%" style="border:0"><b>Mobile No. :</b> <br>
+										<input type="text" id="efrNo" value="" class="form-control" data-placeholder="Enter Easyfixer No." />
+									</td>
+									<td width="20%" style="border:0"><b>NDM Name :</b> <br>
+										<select class="form-control select2_category input-large" id="ndmId" data-required="1" data-placeholder="Select NDM"  >
+											<option value=""></option>							
+												#foreach($!ndm in $NDMList)
+													<option value="$!ndm.userId" >$!ndm.userName</option>
+												#end
+										</select>
+									</td>
+									
+									<td style="text-align:left; padding:32px 30px; border:0"><a href="Javascript:void(0);" title="Search" onclick="showList();"><i class="fa fa-search"></i></a></td>
+								</tr>
+							</tbody>
+						</table>
+						
+						<div id="showListDiv"></div>
+						
+					</div>									
+				</div>
+			</div>	
+			
+		</div>
+			
+	</div>
+	<!-- END CONTENT -->
+
+#parse("pages/common/Footer.vm")
+
+
+<script>
+
+function showList() {
+
+	var efrName = $("#efrName").val();
+	var efrNo = $("#efrNo").val();
+	var ndmId = $("#ndmId").val();
+	var service = $("#serviceTypeId").val();
+	
+	if(ndmId == "")
+		ndmId = 0;
+		
+		if(service=="")
+		service=0;
+		
+	Metronic.blockUI({
+        target: '#showListDiv',
+        animate: true,
+        overlayColor: 'grey'
+    });
+	
+
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "checkBalanceDetails",
+	   		contentType: false,
+		    processData: false,
+		    data: function() {
+			        var data = new FormData();	
+			         data.append("easyfixerName", efrName);
+			         data.append("easyfixerNo", efrNo);
+			         data.append("ndmId", ndmId);
+			        data.append("easyfixerServiceTypeId", service);
+			        return data;
+			  }(),
+	   		success: function(data) {
+	   			jQuery("#showListDiv").html(data);
+	   			//$("#downloadLink").removeAttr("disabled");
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Job entry failed");
+   			}
+	});
+
+	return false;
+	
+}
+
+
+function downloadClientTracking(flag) {
+	window.location="downloadTracking?track="+flag;
+
+}
+
+
+jQuery(document).ready(function() {       
+   		Metronic.init(); // init metronic core components
+		Layout.init(); // init current layout
+		
+		$('#ndmId').select2({
+            placeholder: "Select an option",
+            allowClear: true
+        });
+   		
+});
+
+</script>
+

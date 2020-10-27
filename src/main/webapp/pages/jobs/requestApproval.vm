@@ -1,0 +1,150 @@
+#set($approveJobId = $request.getAttribute("approveJobId"))
+#set($totalSum = $request.getAttribute("totalSum"))
+#set($loc = $request.getAttribute("loc"))
+
+<input type="hidden" id="loc" value="$loc" />
+<input type="hidden" id="pevVal" value="" />
+<input type="hidden" id="approveJobId" value="$!approveJobId" />
+<input type="hidden" id="jobServiceList" value="$!jobServiceList" />
+
+<div class="portlet box blue">
+	<div class="portlet-title">
+		<div class="caption">
+			<i class="fa fa-edit"></i>Approve Job
+		</div>
+		<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+	</div>		
+	
+	<div class="portlet-body form">
+		<form name="comment" action="" method="post" class="form-horizontal" id="approveIdForm">
+		<div class="form-body" >
+		<h4 class="form-section" style="margin:10px 0px 0px">Selected Services</h4>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="portlet-body" id="serviceDivId">
+					<div class="table-scrollable"  style="overflow-y: auto">
+						<table class="table table-hover" >
+						<thead>
+							<tr style="background-color:#EEE">
+								<td><b>Services</b></td>
+								<td><b>Charge</b></td>	
+								<td><b>Material</b></td>
+								<td><b>Desc</b></td>
+							</tr>
+						</thead>
+						<div style="overflow-y: auto">
+						<tbody>
+							#set($i=0)										
+							#foreach($service in $jobServiceList)
+								<input type="hidden" id="jobServId1$i" value="$!service.jobServiceId" />
+								<tr>
+									<td>$!service.serviceName </td>
+									<td><input type="text" class="form-control input-xsmall sumComponentApproval" id="serveAmount1$i" value="$!service.totalCharge" #if($!service.getJobChargeType() == 1) readonly #end   onkeyup="addtotal()" onfocus="chk(this.value)"/>
+										<span class="help-block" style="display:none">
+									</td>	
+									<td><input type="text" class="form-control input-xsmall sumComponentApproval" id="serveMaterial1$i"  value="$!service.serviceMaterialCharge"  onkeyup="addtotal()"/>
+									<span class="help-block" style="display:none">
+									<td><input type="text" class="form-control input-medium" id="serveDesc1$i"  value="$!service.serviceDescription"/>
+									</td>
+								</tr>
+								#set($i=$i+1)
+							#end
+							</div>
+							<tr>
+								<td style="text-align:right;padding-top:15px"><b>Total Amount: </b></td>
+								<td><input type="text" id="totalsum1" class="form-control input-xsmall" value="$totalSum" readonly /></td>								
+							</tr>
+						</tbody>
+						</table>
+					</div>
+				</div>
+			</div>		
+		</div>
+		<!--/row-->
+		
+			
+			<div class="form-actions right">
+				<div class="col-md-offset-3 col-md-9">
+					<button type="button" id="approveJobBtn" class="btn green">Request Approval</button>
+					<button type="button" data-dismiss="modal" id="cancelApproveBtn1" class="btn red">Cancel</button>
+				</div>
+			</div>
+		</div>
+		</form>
+		
+		
+	</div>
+		
+</div>
+
+
+<script language="javascript" type="text/javascript">
+
+
+	$('#approveJobBtn').click(function () {
+			
+	$( "#approveJobBtn" ).prop("disabled",true);
+		
+	var approveJobId = $("#approveJobId").val();
+	var data = new FormData();
+    #set($maxSize = $jobServiceList.size())
+	#set($maxSize = $maxSize - 1 )
+	#set($range = [0..$maxSize] )
+	data.append("jobId"  ,approveJobId);
+	#foreach($i in $range) 
+				
+				data.append("jobServiceList[$i].jobServiceId"  ,$("#jobServId1$i").val());
+				data.append("jobServiceList[$i].totalCharge"  ,$("#serveAmount1$i").val());
+				data.append("jobServiceList[$i].serviceMaterialCharge" ,$("#serveMaterial1$i").val());
+				data.append("jobServiceList[$i].serviceDescription" ,$("#serveDesc1$i").val());
+	#end
+
+		jQuery.ajax({
+	   			type: "POST",
+		   		url:  "confirmApprovejob",
+		   		contentType: false,
+			    processData: false,
+			    data:data,
+		   		success: function(data) {
+		   			$( "#cancelApproveBtn1" ).trigger( "click" );
+					$( "#cancelChekInBtn" ).trigger( "click" );
+					refreshHome ();	
+					showJobList();
+	   			},
+	   			error: function(data) {
+	   				bootbox.alert("Job approval  failed");
+	   				$( "#approveJobBtn" ).prop("disabled",false);
+	   			}
+		});
+});
+
+
+function addtotal(){
+//	if(val == "" || isNaN(val)==1) val = 0;
+//	var total = parseFloat($("#totalsum1").val());
+//	$("#totalsum1").val(parseFloat(val) + total);
+	
+	var total = 0;
+	
+	$('.sumComponentApproval').each(function(){
+
+		total += Number(this.value) ;
+
+		});
+	
+	$("#totalsum1").val(total);
+}
+	
+	
+function chk(a) {
+	if(a == "" || isNaN(a)==1) a = 0;
+	$("#pevVal").val(a);
+}
+
+$(document).ready(function () {
+	$('#reasonId').select2({
+           allowClear: true
+        });
+});
+
+</script>

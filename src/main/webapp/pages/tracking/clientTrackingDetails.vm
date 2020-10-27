@@ -1,0 +1,117 @@
+#set($sts = $request.getAttribute("job_status"))
+<div style="border-top:2px solid #60aee4; padding-top:10px;">
+	<table class="table table-striped table-hover table-bordered" id="sample_editable_1">
+		<thead>
+			<tr>
+				<th>Client</th>
+				<th class="text-center">Jobs</th>
+				<th class="text-center">Finished</th>
+				<th class="text-center">Canceled</th>
+				<th class="text-center">CheckOut</th>
+				<th class="text-right" style="padding-right:10px">Billing</th>
+				<th class="text-right" style="padding-right:10px">EF Share</th>
+				<th class="text-right" style="padding-right:10px">Client Share</th>
+				<th class="text-right" style="padding-right:10px">Material</th>
+				<!--<th class="text-center">Rating</th>
+				<th class="text-center">% Margin</th>-->
+				<th class="text-right" style="padding-right:10px">Avg. Ticket</th>
+			</tr>
+			</thead>
+			<tbody>
+			
+			#set($totalJob = 0)
+			#set($totalCompleted = 0)
+			#set($totalCanceled = 0)
+			#set($totalBilling = 0)
+			#set($totalEfShare = 0)
+			#set($totalClientShare = 0)
+			#set($totalMaterial = 0)
+			#set($totalCheckOut = 0)
+			#foreach($cal in $clientAnalsisList)
+				#set($totalJob = $totalJob + $!cal.jobGiven)
+				#set($totalCompleted = $totalCompleted + $!cal.jobCompleted)
+				#set($totalCanceled = $totalCanceled + $!cal.jobCanceled)
+				#set($totalBilling = $totalBilling + $!cal.billing)
+				#set($totalEfShare = $totalEfShare + $!cal.efShare)
+				#set($totalClientShare = $totalClientShare + $!cal.clientShare)
+				#set($totalMaterial = $totalMaterial + $!cal.material)
+				#set($totalCheckOut = $totalCheckOut + $!cal.jobCheckOut)
+			<tr>
+				<td>$!cal.clientName</td>
+				<td class="text-center">$!cal.jobGiven</td>
+				<td class="text-center">$!cal.jobCompleted</td>
+				<td class="text-center">$!cal.jobCanceled</td>
+				<td class="text-center">$!cal.jobCheckOut</td>
+				<td class="text-right" style="padding-right:5px">$!cal.billing</td>
+				<td class="text-right" style="padding-right:5px">$!cal.efShare</td>
+				<td class="text-right" style="padding-right:5px">$!cal.clientShare</td>
+				<td class="text-right" style="padding-right:5px">$!cal.material</td>
+				<!--<td class="text-center">$!cal.customerRating</td>
+				<td class="text-center">$!cal.margin</td>-->
+				<td class="text-right" style="padding-right:5px">$!cal.avgTicket</td>
+			</tr>
+			#end										
+		</tbody>
+	</table>
+	
+	<div class="alert-warning" style="border-top:2px solid #60aee4; padding-top:10px;">
+		<div class="row">
+			<div class="col-md-3">
+				<label class="control-label col-md-7">Total Jobs :</label>
+				<div class="col-md-5">$totalJob</div>							
+			</div>
+			<!--/span-->
+			<div class="col-md-3">
+				<label class="control-label col-md-7">Total Finished :</label>
+				<div class="col-md-5">$totalCompleted</div>							
+			</div>
+			<!--/span-->
+			<div class="col-md-3">
+				<label class="control-label col-md-7">Total Canceled :</label>
+				<div class="col-md-5">$totalCanceled</div>							
+			</div>
+			<!--/span-->
+			<div class="col-md-3">
+				<label class="control-label col-md-7">Total CheckOut :</label>
+				<div class="col-md-5">$totalCheckOut</div>							
+			</div>
+			<!--/span-->
+		</div>
+		<!--/row-->
+		#if($sts == 3)
+		<div class="row">
+			<div class="col-md-3">
+				<label class="control-label col-md-7">Total EF Share :</label>
+				<div class="col-md-5">$totalEfShare</div>							
+			</div>
+			<!--/span-->
+			<div class="col-md-3">
+				<label class="control-label col-md-7">Client Share :</label>
+				<div class="col-md-5">$totalClientShare</div>							
+			</div>
+			<!--/span-->
+			<div class="col-md-3">
+				<label class="control-label col-md-7">Total Material :</label>
+				<div class="col-md-5">$totalMaterial</div>							
+			</div>
+			<!--/span-->
+			<div class="col-md-3">
+				<label class="control-label col-md-7">Total Billing :</label>
+				<div class="col-md-5">$totalBilling</div>							
+			</div>
+			<!--/span-->
+		</div>
+		<!--/row-->
+		
+		#end
+	</div>
+	
+	
+</div>
+
+<script>
+
+jQuery(document).ready(function() { 
+	$('#sample_editable_1').DataTable( { "order": [[ 0, "desc" ]] } );
+});
+</script>

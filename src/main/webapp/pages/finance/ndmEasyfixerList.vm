@@ -1,0 +1,98 @@
+<div style="border-top:2px solid #60aee4; padding-top:5px;">
+<div style="top:25px; position:relative; left:400px;  color:red">Total Pending Collection : <span id="totalPendingDiv"></span> /-</div>
+	<table class="table table-striped table-hover table-bordered" id="sample_editable_1">
+		<thead>
+			<tr>
+				<th width="7%" class="text-center">ID</th>
+				<th width="18%">Name</th>
+				<th width="10%">Mobile No.</th>
+				<th width="10%">City</th>
+				<th width="15%">NDM Name</th>
+				<th width="15%" class="text-right" style="padding-right:20px">Balance</th>
+				<th width="10%" class="text-center">Status</th>
+				<th class="text-center">Action</th>
+			</tr>
+			</thead>
+			<tbody>
+			#set($total=0)
+			#set($bal = 0)
+			#foreach($efr in $efrList)
+				#if($!efr.currentBalance <= 300)
+						#set($bal = 0 - $!efr.currentBalance)
+							#if($!efr.isActive == 1)
+								#set($total = $total + $bal + 300)
+							#else
+								#set($total = $total + $bal)
+							#end
+				#end
+			<tr>
+				<td>$!efr.easyfixerId</td>
+				<td>$!efr.easyfixerName</td>
+				<td>$!efr.easyfixerNo</td>
+				<td>$!efr.cityObj.cityName</td>
+				<td>$!efr.NDMName.userName</td>
+				<td class="text-right" style="padding-right:20px; #if($!efr.currentBalance <= 300) color:red; #end "> $!efr.currentBalance </td>
+				<td class="text-center">#if($!efr.isActive == 1) <span style="color:green"> Active </span> #else <span style="color:red"> Inactive </span> #end</td>
+				<td class="text-center">
+				#if($!userObj.roleId == 12 || $!userObj.roleId == 13)
+					<a href="#portlet-config" data-toggle="modal" title="Submit Collection" onclick="efrRechargeAccount('$!efr.easyfixerId','$!efr.easyfixerName','$!efr.easyfixerNo');">
+					<i class="fa fa-edit "></i></a> &nbsp; &nbsp;  &nbsp; &nbsp; 
+				#end
+					<a href="#portlet-config" data-toggle="modal" title="Transaction List" onclick="efrTransList('$!efr.easyfixerId','$!efr.easyfixerName','$!efr.easyfixerNo');">
+					<i class="fa fa-list "></i></a>
+					
+				</td>
+			</tr>
+			#set($bal = 0)
+			#end							
+		</tbody>
+	</table>
+	
+</div>
+
+<script>
+
+$("#totalPendingDiv").html("<b>"+$total+"</b>");
+
+function efrTransList(efrId, name, mob){
+	jQuery("#modal-body-id").html("<center>Please wait...</center> ");
+
+	 jQuery.ajax({
+		type	: "POST",
+		url		: "efrTransactionList?efrId="+efrId+"&name="+name+" [ "+mob+" ]", 
+		success	: function(data){
+			//alert(data);
+		    jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	}); 
+}
+
+function efrRechargeAccount(efrId,name,mob){
+	jQuery("#modal-body-id").html("<center>Please wait...</center> ");
+
+	 jQuery.ajax({
+		type	: "POST",
+		url		: "efrRechargeAccount?efrId="+efrId+"&name="+name+" [ "+mob+" ]", 
+		success	: function(data){
+			//alert(data);
+		    jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	}); 
+}
+
+
+
+
+
+jQuery(document).ready(function() { 
+	$('#sample_editable_1').DataTable( {
+		"columnDefs": [ {
+      		"targets": [ 7 ],
+      		"orderable": false	} ],
+	    "order": [[ 5, "asc" ]] } );
+});
+
+
+</script>

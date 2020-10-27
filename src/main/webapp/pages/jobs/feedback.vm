@@ -1,0 +1,610 @@
+#set($loc = $request.getAttribute("loc"))
+
+<input type="hidden" id="loc" value="$loc" />
+
+<div class="portlet box blue">
+		<div class="portlet-title">
+				<div class="caption">
+					<i class="fa fa-calendar"></i>Feedback Job
+				</div>					
+			<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+		</div>
+		
+</div>
+		<div class="portlet-body form">
+			<form class="form-horizontal" role="form" id="job_formId" method="post" action="">
+			<input type="hidden" id="feedbackJobId" value="$!jobsObj.jobId" />
+			<input type="hidden" id="easyfixerId" value="$!jobsObj.fkEasyfixterId" />
+			
+				<div class="form-body" style="height:420px; overflow-y: scroll; overflow-x: hidden;">
+					<h4 class="form-section" style="margin:10px 0px 0px">Job Info</h4>
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Job Id:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.jobId
+								</p>
+							</div>							
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Job Description:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									  $!jobsObj.jobDesc
+								</p>
+							</div>							
+						</div>
+						<!--/span-->
+					</div>
+					<!--/row-->
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Created On:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									  $!jobsObj.createdDateTime
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Requested On:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.requestedDateTime									 
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+					</div>
+					<!--/row-->
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Client:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									  $!jobsObj.clientObj.clientName
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Service Type:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									  $!jobsObj.serviceTypeObj.serviceTypeName
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+					</div>
+					<!--/row-->
+										
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Easyfixer:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									$!jobsObj.easyfixterObj.easyfixerName
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Contact No.:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.easyfixterObj.easyfixerNo
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+					</div>
+					<!--/row-->
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Scheduled On:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									  $!jobsObj.scheduleDateTime
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Checked In On:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.checkInDateTime
+								</p>
+							</div>
+						</div>
+						<!--/span-->						
+					</div>					
+					<!--/row-->
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Customer Name:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.customerObj.customerName
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Contact No.:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.customerObj.customerMobNo
+									 &nbsp; &nbsp; 
+									 <a href="#sub-portlet-config" class="btn btn btn-xs blue" data-toggle="modal" onclick="showCrmSmsList($!jobsObj.customerObj.customerMobNo,$!jobsObj.jobId);">
+									<i class="fa fa-envelope-o"></i> SMS </a>
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+					</div>
+					<!--/row-->
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Address:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.addressObj.address
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">City:</label>
+							<div class="col-md-8">
+								<p class="form-control-static">
+									 $!jobsObj.addressObj.cityObj.cityName
+								</p>
+							</div>
+						</div>
+						<!--/span-->
+					</div>
+					<!--/row-->
+					<div class="row">
+						<div class="col-md-6">					
+							<label class="control-label col-md-4">Paid By:</label>
+							<div class="col-md-8"><p class="form-control-static">
+								 #if($!jobsObj.paidBy == 1) Client	#end
+								 #if($!jobsObj.paidBy == 2) Customer #end									 
+							</p>
+							</div>
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4" id="collected-by-label-id">Collected By:</label>
+							<div class="col-md-8"><p class="form-control-static">
+								 #if($!jobsObj.collectedBy == 1) Easyfixer	#end
+								 #if($!jobsObj.collectedBy == 2) Easyfix	#end									 
+							</p>
+							</div>							
+						</div>
+						<!--/span-->						
+					</div>					
+					<!--/row-->
+					<div class="row">
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Total Amount:</label>
+							<div class="col-md-8"><p class="form-control-static">
+								Rs. $!jobsObj.totalServiceAmount /-							 
+							</p>
+							</div>							
+						</div>
+						<!--/span-->
+						<div class="col-md-6">
+							<label class="control-label col-md-4">Material Amount</label>
+							<div class="col-md-8"><p class="form-control-static">
+								Rs.  $!jobsObj.MaterialCharge /-
+							</p>
+							</div>
+						</div>
+						<!--/span-->						
+					</div>					
+					<!--/row-->
+					<div class="row">
+						<div class="col-md-12">
+							<label class="control-label col-md-2">Job Services:</label>
+							<div class="col-md-10"><p class="form-control-static">
+								$!jobsObj.clientServices							 
+							</p>
+							</div>							
+						</div>
+						<!--/span-->						
+					</div>					
+					<!--/row-->
+					<div class = "row">
+					<div class="col-md-6">	
+					<div class="form-group" id="job-image-upload-divId" >
+					<label id="job-image-upload-label-id" class="col-md-4 control-label">Job Image:</label>
+					
+					<div class="col-md-8">
+						<input id="jobImage" type="file" class="form-control input-medium" name="jobImage" value="$!jobsObj.jobImage">
+						<span class="help-block" id="error-file-text" style="display:none">Unsupported file format</span>
+						<label id="job-image-upload-label-id" class="col-md-4 control-label"><button type="button" id="uploadImageJobBtn" class="btn green" onclick="uploadImageJob($!jobsObj.jobId,$!jobsObj.jobStatus);">Upload</button>
+					</lable>
+					</div>
+						</div>
+					</div>
+					</div>
+					<!--/row-->
+					
+					
+					<h4 class="form-section" style="margin:10px 0px 0px">Customer Feedback</h4>
+					<div class="row" id="happyWithService-divId">					
+						<label class="control-label col-md-2 bold">Q1.</label>
+						<div class="col-md-10"><p class="form-control-static bold">
+							Are you happy with the services?</p>
+						</div>
+						<label class="control-label col-md-2">Ans.</label>
+						<div class="col-md-10">
+							<div class="radio-list">
+								<label>
+										<div class="md-radio-inline">
+											<div class="md-radio">
+												<input type="radio" id="radio1" class="md-radiobtn" name="happyWithService" value = "Yes" />
+												<label for="radio1">
+												<span></span>
+												<span class="check"></span>
+												<span class="box"></span>
+												Yes </label>
+											</div>
+										
+											<div class="md-radio">
+												<input type="radio" id="radio2" class="md-radiobtn" name="happyWithService" value = "No" />
+												<label for="radio2">
+												<span></span>
+												<span class="check"></span>
+												<span class="box"></span>
+												No </label>
+											</div>
+										</div>
+								</label>
+							</div>	
+							<span class="help-block" id="happyWithServiceErrorId" style="display:none">
+						</div>			
+					</div>
+					<!--/row-->
+					<div class="row" id="efrRate-divId">
+						<label id="efrRate-lable_id" style="display:none">handyman rating from 1 to 5</label>
+						<label class="control-label col-md-2 bold">Q2.</label>
+						<div class="col-md-10"><p class="form-control-static bold">
+							How would you like to rate the handyman who visited your site?</p>
+						</div>
+						<label class="control-label col-md-2">Ans.</label>
+						<div class="col-md-6">
+							<div id="slider-easyfixer" class="slider bg-green"> </div>
+								<div class="slider-value">
+									 Rating: <span id="easyfixerRate"></span>
+									 <input type="hidden" id="efrRate" value="" />
+									 <span class="help-block" style="display:none">
+								</div>
+						</div>			
+					</div>
+					<!--/row-->
+					<div class="row" id="efRate-divId">
+						<label id="efRate-lable_id" style="display:none">easyfix rating from 1 to 5</label>
+						<label class="control-label col-md-2 bold">Q3.</label>
+						<div class="col-md-10"><p class="form-control-static bold">
+							How would you like to rate the service experience from EasyFix?</p>
+						</div>
+						<label class="control-label col-md-2">Ans.</label>
+						<div class="col-md-6">
+							<div id="slider-easyfix" class="slider bg-blue"> </div>
+							<div class="slider-value">
+									 Rating: <span id="easyfixRate"></span>
+									 <input type="hidden" id="efRate" value="" />
+									 <span class="help-block" style="display:none">
+							</div>
+						</div>			
+					</div>
+					<!--/row-->
+					<div class="row" id="pay-divId">
+						<label id="material-labelId" style="display:none">Material Charges</label>						
+						<label id="service-labelId" style="display:none">Services Charges</label>
+						<label class="control-label col-md-2 bold">Q4.</label>
+						<div class="col-md-10"><p class="form-control-static bold">
+							How much did you pay?</p>
+						</div>
+						<label class="control-label col-md-2">Ans.</label>
+						
+						<div class="col-md-4">Material : <input id="material" type="text" class="form-control input-small" value="" placeholder="0.00" />
+						<span class="help-block" style="display:none">
+						</div>	
+							
+						<div class="col-md-4">Services : <input id="service" type="text" class="form-control input-small" value="" placeholder="0.00" />
+						<span class="help-block" style="display:none">
+						</div>	
+								
+							
+					</div>
+					<!--/row-->
+					<div class="row" id="serviceTaken-divId">
+						<label class="control-label col-md-2 bold">Q5.</label>
+						<div class="col-md-10"><p class="form-control-static bold">
+							Where were these services taken?</p>
+						</div>
+						<label class="control-label col-md-2">Ans.</label>
+						<div class="col-md-10">
+							<div class="radio-list">
+								<label>
+										<div class="md-radio-inline">
+											<div class="md-radio">
+												<input type="radio" id="radio3" class="md-radiobtn" name="serviceTaken" value = "Home" />
+												<label for="radio3">
+												<span></span>
+												<span class="check"></span>
+												<span class="box"></span>
+												Home </label>
+											</div>
+										
+											<div class="md-radio">
+												<input type="radio" id="radio4" class="md-radiobtn" name="serviceTaken" value = "Office" />
+												<label for="radio4">
+												<span></span>
+												<span class="check"></span>
+												<span class="box"></span>
+												Office </label>
+											</div>
+										</div>
+								</label>
+							</div>	
+							<span class="help-block" id="serviceTakenErrorId" style="display:none">
+						</div>			
+					</div>
+					<!--/row-->
+					<div class="row" id="anotherCall-divId">
+						<label class="control-label col-md-2 bold">Q6.</label>
+						<div class="col-md-10"><p class="form-control-static bold">
+							Would you like to book another service?</p>
+						</div>
+						<label class="control-label col-md-2">Ans.</label>
+						<div class="col-md-10">
+							<div class="radio-list">
+								<label>
+										<div class="md-radio-inline">
+											<div class="md-radio">
+												<input type="radio" id="radio5" class="md-radiobtn" name="anotherCall" value = "Yes" />
+												<label for="radio5">
+												<span></span>
+												<span class="check"></span>
+												<span class="box"></span>
+												Yes </label>
+											</div>
+										
+											<div class="md-radio">
+												<input type="radio" id="radio6" class="md-radiobtn" name="anotherCall" value = "No" />
+												<label for="radio6">
+												<span></span>
+												<span class="check"></span>
+												<span class="box"></span>
+												No </label>
+											</div>
+										</div>
+								</label>
+							</div>	
+							<span class="help-block" id="anotherCallErrorId" style="display:none">
+						</div>			
+					</div>
+					<!--/row-->
+					<div class="row" id="crossSelling-divId">
+						<label class="control-label col-md-2 bold">Q6.</label>
+						<div class="col-md-10"><p class="form-control-static bold">
+							Cross Selling Done?</p>
+						</div>
+						<label class="control-label col-md-2">Ans.</label>
+						<div class="col-md-10">
+							<div class="radio-list">
+								<label>
+										<div class="md-radio-inline">
+											<div class="md-radio">
+												<input type="radio" id="radio7" class="md-radiobtn" name="crossSelling" value = "Yes" />
+												<label for="radio7">
+												<span></span>
+												<span class="check"></span>
+												<span class="box"></span>
+												Yes </label>
+											</div>
+										
+											<div class="md-radio">
+												<input type="radio" id="radio8" class="md-radiobtn" name="crossSelling" value = "No" />
+												<label for="radio8">
+												<span></span>
+												<span class="check"></span>
+												<span class="box"></span>
+												No </label>
+											</div>
+										</div>
+								</label>
+							</div>	
+							<span class="help-block" id="crossSellingErrorId" style="display:none">
+						</div>			
+					</div>
+					<!--/row-->
+					<h4 class="form-section" style="margin:20px 0px 0px">Remarks</h4>
+					<div class="row">
+						<span class="help-block" style="display:none; margin-left:50px"></span>
+							<div class="portlet box">						
+								<div class="portlet-body" style="padding-top:0px;" id="feedbackRemarkDiv">										
+																	
+								</div>							
+							</div>						
+					</div>
+					<!--/row-->
+					<h4 class="form-section" style="margin:20px 0px 0px">Image</h4>
+					<div class="row">
+						<span class="help-block" style="display:none; margin-left:50px"></span>
+							<div class="portlet box">						
+								<div class="portlet-body" style="padding-top:0px;" id="feedbackImageDiv">										
+																	
+								</div>							
+							</div>						
+					</div>
+					<!--/row-->
+					
+				</div>
+				<div class="form-actions">
+					<div class="row" id="feedbackActionDivId">
+						<div class="col-md-6">
+							<a href="#sub-portlet-config" data-toggle="modal" class="btn purple" onclick="addComment($!jobsObj.jobId,4);">
+								<i class="fa fa-edit"></i> Add Remarks</a>
+						</div>
+						<div class="col-md-6 text-right">
+							<button type="button" id="feedbackJobBtn" class="btn green" >Submit</button>
+							<button type="button" data-dismiss="modal" class="btn red" id="cancelFeedbackBtn">Close</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+
+<script>	
+	
+
+function refreshHome ()
+		{
+		Metronic.blockUI({
+        target: '#userJobListDiv',
+        animate: true,
+        overlayColor: 'grey'
+    });
+			jQuery.ajax({
+			type	: "POST",
+			url		: "userOwnerJob", 
+			success	: function(data){
+			    $('#userJobListDiv').fadeOut('slow');
+			    $("#userJobListDiv").html(data);
+			    $('#userJobListDiv').fadeIn('slow');
+			}
+		});
+		}
+		
+		
+$('#feedbackJobBtn').click(function () {
+	if(blankCheckBoxRadioMetronic("happyWithService","happyWithService-divId","happyWithServiceErrorId"," "))
+				return false;
+	if(isComboSelectedMetronicLabel("efrRate","efrRate-divId","efrRate-lable_id"))
+				return false;
+	if(isComboSelectedMetronicLabel("efRate","efRate-divId","efRate-lable_id"))
+				return false;
+	if(blankValMetronicLabel("material","pay-divId","material-labelId"))
+				return false;
+	if(blankValMetronicLabel("service","pay-divId","service-labelId"))
+				return false;
+	if(blankCheckBoxRadioMetronic("serviceTaken","serviceTaken-divId","serviceTakenErrorId"," "))
+				return false;
+	if(blankCheckBoxRadioMetronic("anotherCall","anotherCall-divId","anotherCallErrorId"," "))
+				return false;
+	if(blankCheckBoxRadioMetronic("crossSelling","crossSelling-divId","crossSellingErrorId"," "))
+				return false;
+				
+	var happyWithService = $('input:radio[name=happyWithService]:checked').val();
+	var serviceTaken = $('input:radio[name=serviceTaken]:checked').val();
+	var anotherCall = $('input:radio[name=anotherCall]:checked').val();
+	var crossSelling = $('input:radio[name=crossSelling]:checked').val();
+	
+	$("#feedbackActionDivId").hide();
+	
+	Metronic.blockUI({
+        target: '#schedule-modal-body-id',
+        animate: true,
+        overlayColor: 'grey'
+    });
+
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "saveFeedbackJob",
+	   		contentType: false,
+		    processData: false,
+		    data:function() {
+			        var data = new FormData();
+			        data.append("jobId",$("#feedbackJobId").val());
+			        data.append("fkEasyfixterId",$("#easyfixerId").val());
+			        data.append("happyWithService",happyWithService);
+			        data.append("easyfixerRating",$("#efrRate").val());
+			        data.append("easyfixRating",$("#efRate").val());
+			        data.append("MaterialCharge",$("#material").val());
+			        data.append("totalServiceAmount",$("#service").val());
+			        data.append("serviceTaken",serviceTaken);
+			        data.append("anotherCall",anotherCall);
+			        data.append("crossSelling",crossSelling);
+			        
+			        return data;
+			  }(),
+	   		success: function(data) {
+	   			if($("#loc").val() == 'job')
+	   			{
+	   				$( "#cancelFeedbackBtn" ).trigger( "click" );
+	   				showJobList();
+	   			}
+	   			else	
+	   			{
+	   				//window.location.href=$("#loc").val();
+	   				$( "#cancelFeedbackBtn" ).trigger( "click" );
+	   				refreshHome();
+	   				
+	   			}
+					 
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Feedback entry failed"); 
+   			}
+	});
+
+	return false;
+
+});
+
+
+
+jQuery(document).ready(function() {       
+	  jobCommentList($!jobsObj.jobId,'feedbackRemarkDiv');
+	  jobImageList($!jobsObj.jobId,'feedbackImageDiv');
+	  
+	  
+//=== Easyfixer Rating	===  
+	  $("#slider-easyfixer").slider({
+                isRTL: Metronic.isRTL(),
+                range: "max",
+                min: 0,
+                max: 5,
+                value: 0,
+                slide: function (event, ui) {
+                    $("#easyfixerRate").text(ui.value);
+                    $("#efrRate").val(ui.value);
+                }
+            });
+	 
+	 $("#easyfixerRate").text($("#slider-easyfixer").slider("value"));
+	 
+//=== Easyfixer Rating	===  
+	  $("#slider-easyfix").slider({
+                isRTL: Metronic.isRTL(),
+                range: "max",
+                min: 0,
+                max: 5,
+                value: 0,
+                slide: function (event, ui) {
+                    $("#easyfixRate").text(ui.value);
+                    $("#efRate").val(ui.value);
+                }
+            });
+	 
+	 $("#easyfixRate").text($("#slider-easyfix").slider("value"));
+	 
+	 
+});
+
+</script>	
+
+
+

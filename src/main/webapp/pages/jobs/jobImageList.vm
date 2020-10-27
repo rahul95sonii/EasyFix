@@ -1,0 +1,28 @@
+<table class="table table-striped  table-hover">
+	<thead>
+	<tr style="background-color:#EEE">
+		<th width="10%">Image At</th>
+		<th>Image</th>
+		<th width="10%">Date/Time</th>
+	</tr>
+	</thead>
+	<tbody>
+		#foreach($image in $jobImageList)
+			<tr class="odd gradeX">
+				<td>#if($!image.jobStage == 0) Booking
+					#elseif($!image.jobStage == 1) checkin
+					#elseif($!image.jobStage == 2)	Checkout
+					#elseif($!image.jobStage == 3)	Feedback
+					#elseif($!image.jobStage > 3) Other	
+					#end</td>
+				<td><a href="http://core.easyfix.in/easydoc/upload_jobs/$!image.image"><i class="fa fa-download"></i>$!image.image
+				
+				</td>
+				<td>$!image.createdDate</td>
+			</tr>
+			
+		#end
+		
+		
+	</tbody>
+	</table>

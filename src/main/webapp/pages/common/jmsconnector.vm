@@ -1,0 +1,83 @@
+
+            <form class="form-horizontal" id='connect_form'>
+             
+                    <input name=url id='connect_url' value='ws://localhost:61614' type="text">
+              
+                    <input id='connect_login' placeholder="User Login" value="admin" type="text">
+              
+                    <input id='connect_passcode' placeholder="User Password" value="admin" type="password">
+              
+                    <input id='destination' placeholder="Destination" value="/topic/exotel" type="text">
+               
+                  <button id='connect_submit' type="submit" class="btn btn-large btn-primary">Connect</button>
+             
+            </form>
+
+          <div id="connected" style="display:none">
+            <div class="page-header">
+              <h2>Chat Room</h2>
+            </div>
+            <div id="messages">
+            </div>
+            <form class="well form-search" id='send_form'>
+              <button class="btn" type="button" id='disconnect' style="float:right">Disconnect</button>
+              <input class="input-medium" id='send_form_input' placeholder="Type your message here" class="span6"/>
+              <button class="btn" type="submit">Send</button>
+            </form>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- Scripts placed at the end of the document so the pages load faster -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+   <script src="pages/js/stomp.js"></script>
+    <script>//<![CDATA[
+    $(document).ready(function() {
+      if(window.WebSocket) {
+        var client, destination;
+        $('#connect_form').submit(function() {
+          var url = $("#connect_url").val();
+          var login = $("#connect_login").val();
+          var passcode = $("#connect_passcode").val();
+          destination = $("#destination").val();
+
+          client = Stomp.client(url);
+	
+          // this allows to display debug logs directly on the web page
+          client.debug = function(str) {
+
+          };
+          
+          // the client is notified when it is connected to the server.
+          client.connect(login, passcode, function(frame) {
+			 
+            client.debug("connected to Stomp");
+            $('#connect').fadeOut({ duration: 'fast' });
+            $('#connected').fadeIn();
+            client.subscribe(destination, function(message) {
+              $("#messages").append("<p>" + message.body + "</p>\n");
+			  var quote = JSON.parse(message.body);  
+			   $("#messages").append("<p>" + quote.fromNumber + " has called " + quote.agentNumber + "</p>\n");
+
+            });
+          });
+          return false;
+        });
+  
+        $('#disconnect').click(function() {
+          client.disconnect(function() {
+            $('#connected').fadeOut({ duration: 'fast' });
+            $('#connect').fadeIn();
+            $("#messages").html("")
+          });
+          return false;
+        });
+   
+    
+      } 
+    });
+    //]]></script>
+
+

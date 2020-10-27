@@ -1,0 +1,50 @@
+<span class="help-block" id="efrErrorId" style="display:none; margin-left:50px"></span>
+	<div class="portlet box">						
+		<div class="portlet-body" style="padding-top:0px;">										
+			<table class="table table-striped  table-hover" id="sample_111">
+			<thead>
+			<tr>
+				<th width="5%" style="padding-left:30px">#</th>
+				<th width="35%">Easyfixer Name</th>
+				<th width="20%">Mobile No.</th>
+				<th width="20%">Distance</th>
+				<th width="10%">Final Rating(%)</th>
+				<th width="10%" class="text-center">&nbsp;</th>
+			</tr>
+			</thead>
+			<tbody>
+				#set($i=0)
+				#foreach($efr in $finalEfrList)
+					<tr id="row$i" class="odd gradeX #if($!efr.assignStatus == 1) alert-danger #end">
+						<td style="padding-left:20px">
+							<div class="md-radio">
+							<input type="radio" id="radio$i" class="md-radiobtn" name="chooseEasyfixer" value="$!efr.easyfixerId" #if($!efr.easyfixerId == $!jobsObj.fkEasyfixterId) checked #end  #if($!efr.assignStatus == 1) disabled #end />
+							
+								<label for="radio$i">
+								<span></span>
+								<span class="check"></span>
+								<span class="box"></span>
+								</label>
+							</div>
+						</td>
+						<td>$!efr.easyfixerName</td>
+						<td>$!efr.easyfixerNo</td>
+						<td>$!efr.distanceFormCustomer</td>
+						<td>$!efr.finalWeightage</td>
+						<td class="text-center" id="rej$i">
+						#if($!efr.assignStatus == 1)
+							<a href="#" title="Rejected"><i class="fa fa-thumbs-down"></i></a>
+						#else
+							<a href="#sub-portlet-config" data-toggle="modal" title="Reject" onclick="rejectcall($!jobsObj.jobId,$!efr.easyfixerId,'$!efr.easyfixerName','$!efr.easyfixerNo',$i);">
+							<i class="fa fa-thumbs-o-down"></i></a>
+						#end
+					</td>
+					</tr>
+					#set($i=$i+1)
+				#end
+				
+				
+			</tbody>
+			</table>								
+		</div>							
+	</div>	

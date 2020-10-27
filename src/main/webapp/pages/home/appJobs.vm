@@ -1,0 +1,698 @@
+
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+
+
+<!-- BEGIN CONTENT -->
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+				<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+					<div class="modal-dialog" style="width:800px;">
+					    <div class="modal-content">
+							<div class="modal-body" id="modal-body-id">
+								 <center>Please wait...</center>
+							</div>
+						</div>	
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.modal-dialog -->		
+				</div>
+				
+				<div class="modal fade" id="sub-portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+					<div class="modal-dialog" style="width:600px; margin-top:100px;">
+					    <div class="modal-content">
+							<div class="modal-body" id="sub-modal-body-id">
+								 <center>Please wait...</center>
+							</div>
+						</div>	
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.modal-dialog -->		
+				</div>
+			<!-- BEGIN MODAL FOR GPS LOCATION FORM-->		
+					<div class="modal fade" id="address-portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+						<div class="modal-dialog" style="width:600px; margin-top:100px;">
+						    <div class="modal-content">
+								<div class="modal-body" id="address-modal-id">
+									
+								</div>
+							</div>	
+							<!-- /.modal-content -->
+						</div>
+						<!-- /.modal-dialog -->		
+					</div>
+			<!-- BEGIN MODAL FOR SCHEDULING FORM-->		
+					<div class="modal fade" id="portlet-config-schedule" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+					<div class="modal-dialog" style="width:1000px;">
+					    <div class="modal-content">
+							<div class="modal-body" id="schedule-modal-body-id">
+								 <center>Please wait...</center>
+							</div>
+						</div>	
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.modal-dialog -->		
+				</div>
+			
+			<!-- BEGIN MODAL FOR SCHEDULING FORM-->		
+					<div class="modal fade" id="portlet-config-re-schedule" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+					<div class="modal-dialog" style="width:1100px;">
+					    <div class="modal-content">
+							<div class="modal-body" id="re-schedule-modal-body-id">
+								 <center>Please wait...</center>
+							</div>
+						</div>	
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.modal-dialog -->		
+				</div>	
+			<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+
+						
+			<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-home"></i>
+						<a href="#">Home</a>
+						<i class="fa fa-angle-right"></i>
+					</li>					
+				</ul>
+				
+			</div>
+			<!-- END PAGE HEADER-->
+			
+			<div class="clearfix"> 
+				
+			</div>
+			#if($userObj.roleId == 1)
+		
+				<div class="row">				
+						<div class="note note-success">
+							<h3 class="block">Hello! $userObj.userName</h3>
+							<h4>Welcome to Easyfix.</h4>
+							<p>For use Easyfix CRM. Please contact to your reporting head.</p>
+						</div>
+				</div>
+			#elseif($userObj.displayJobDashboard > 0)
+			
+			<div id="userJobListDiv" >
+			
+				##if($jobObj.jobLeadList.size() > 0)
+				<div class="row">
+					<div class="col-md-12 col-sm-12">
+						<!-- BEGIN EXAMPLE TABLE PORTLET-->
+						<div class="portlet box blue">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="fa fa-eye"></i>Pending for Confirmation
+								</div>
+								<div class="actions">
+									<a href="#portlet-config" class="btn btn-default btn-sm" data-toggle="modal" onclick="addjob(0);">
+									<i class="fa fa-plus"></i>
+									Book New Call
+									</a>								
+								</div>						
+							</div>
+							<div class="portlet-body">
+								<table class="table table-striped table-hover table-bordered" id="sample_6">
+									<thead>
+										<tr>
+											<th width="20%">Customer</th>
+											<th width="10%">Client</th>
+											<th width="15%">Job Type</th>
+											<th width="15%">Request Date</th>
+											<th width="15%" style="text-align:center">Time Left (Hr : Min)</th>
+											<th></th>
+											<th width="15%">Job Owner</th>
+											<th width="8%" style="text-align:center">Action</th>
+										</tr>
+										</thead>
+										<tbody>
+											#foreach($leadjob in $jobObj.jobLeadList)
+											
+											#set($leadhour = $!leadjob.timeDifference/60)
+											#set($leadminut = $!leadjob.timeDifference - ($leadhour*60))
+											#set($leadsymb = "")
+											#if($leadhour == 0 && $leadminut < 0) 
+												#set($leadsymb = "-")
+											#end
+											#if($leadminut < 0) 
+												#set($leadminut = $leadminut - ($leadminut*2))
+											#end
+											
+											#if($!leadjob.timeDifference < -30)
+												#set($colorCode = "danger")												
+											#else
+												#set($colorCode = "")
+											#end
+											<tr class="$colorCode">
+												
+												<td>$!leadjob.customerObj.customerName [ $!leadjob.customerObj.customerMobNo ]</td>
+												<td>$!leadjob.clientObj.clientName</td>
+												<td>$!leadjob.serviceTypeObj.serviceTypeName</td>
+												<td>$!leadjob.requestedDateTime</td>
+												<td style="text-align:center">$!leadsymb $leadhour : $leadminut</td>
+												<td>$!leadjob.timeDifference</td>
+												<td>$!leadjob.empName</td>
+												<td style="text-align:center;"><a href="#portlet-config-re-schedule" data-toggle="modal" title="confirmjob" onclick="confirmjob($!leadjob.jobId);">
+													<i class="fa fa-edit"></i></a></td>
+											</tr>
+											#end
+										
+										</tbody>
+								</table>
+							</div>
+						</div>
+						<!-- END EXAMPLE TABLE PORTLET-->
+					</div>	
+				</div>
+				<!-- END ROW-->
+				<br />
+				##end
+				#if($jobObj.scheduleList.size() > 0)
+				<div class="row">
+					<div class="col-md-12 col-sm-12">
+						<!-- BEGIN EXAMPLE TABLE PORTLET-->
+						<div class="portlet box blue">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="fa fa-calendar"></i>Pending for Scheduling
+								</div>	
+													
+							</div>
+							<div class="portlet-body">
+								<table class="table table-hover table-bordered" id="sample_5">
+									<thead>
+										<tr>
+											<th width="5%">JobId</th>
+											<th width="20%">Customer</th>
+											<th width="15%">Client</th>
+											<th width="15%">Job Type</th>
+											<th width="15%">Requested Date</th>
+											<th width="15%" style="text-align:center">Time Left (Hr : Min)</th>
+											<th></th>
+											<th width="15%">Job Owner</th>
+											<th width="8%" style="text-align:center">Action</th>
+										</tr>
+										</thead>
+										<tbody>
+											#foreach($schedJob in $jobObj.scheduleList)
+											
+
+												#set($hour = $!schedJob.timeDifference/60)
+												#set($minut = $!schedJob.timeDifference - ($hour*60))
+												#set($symb = "")
+												#if($hour == 0 && $minut < 0) 
+													#set($symb = "-")
+												#end
+												#if($minut < 0) 
+													#set($minut = $minut - ($minut*2))
+												#end
+																					
+											
+											#if($!schedJob.timeDifference < 30)
+												#set($colorCode = "danger")
+											#elseif($!schedJob.timeDifference >= 30 && $!schedJob.timeDifference < 120)
+												#set($colorCode = "warning")
+											#else
+												#set($colorCode = "")
+											#end
+											<tr class="$colorCode">
+												<td>$!schedJob.jobId</td>
+												<td>$!schedJob.customerObj.customerName [ $!schedJob.customerObj.customerMobNo ]</td>
+												<td>$!schedJob.clientObj.clientName</td>
+												<td>$!schedJob.serviceTypeObj.serviceTypeName</td>
+												<td>$!schedJob.requestedDateTime</td>
+												<td style="text-align:center">$!symb $hour : $minut</td>
+												<td>$!schedJob.timeDifference</td>
+												<td>$!schedJob.empName</td>
+												<td style="text-align:center;"><a href="#portlet-config-schedule" data-toggle="modal" title="Schedule" onclick="scheduleJob($!schedJob.jobId);">
+												<i class="fa fa-calendar"></i></a></td>
+											</tr>
+											#end
+										
+										</tbody>
+								</table>
+							</div>
+						</div>
+						<!-- END EXAMPLE TABLE PORTLET-->
+					</div>	
+				</div>
+				<!-- END ROW-->
+				<br />
+				#end
+				#if($jobObj.checkInList.size() > 0)
+				<div class="row">	
+					<div class="col-md-12 col-sm-12">
+						<!-- BEGIN EXAMPLE TABLE PORTLET-->
+						<div class="portlet box blue">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="fa fa-check-square-o"></i>Pending for Check-In
+								</div>						
+							</div>
+							<div class="portlet-body">
+								<table class="table table-striped table-hover table-bordered" id="sample_2">
+									<thead>
+										<tr>
+											<th width="5%">JobId</th>
+											<th width="20%">Customer</th>
+											<th width="10%">Client</th>
+											<th width="15%">Easyfixer</th>
+											<th width="10%">Job Type</th>
+											<th width="10%">Schedule Date</th>
+											<th width="10%" style="text-align:center">Time Left (Hr : Min)</th>
+											<th></th>
+											<th width="15%">Job Owner</th>
+											<th width="8%" style="text-align:center">Action</th>
+										</tr>
+										</thead>
+										<tbody>
+											#foreach($checkInJob in $jobObj.checkInList)
+											
+											#set($checkInhour = $!checkInJob.timeDifference/60)
+											#set($checkInminut = $!checkInJob.timeDifference - ($checkInhour*60))
+											#set($checkInsymb = "")
+											#if($checkInhour == 0 && $checkInminut < 0) 
+												#set($checkInsymb = "-")
+											#end
+											#if($checkInminut < 0) 
+												#set($checkInminut = $checkInminut - ($checkInminut*2))
+											#end
+											
+											#if($!checkInJob.timeDifference < 15)
+												#set($colorCode = "danger")
+											#elseif($!checkInJob.timeDifference >= 15 && $!checkInJob.timeDifference < 30)
+												#set($colorCode = "warning")
+											#else
+												#set($colorCode = "")
+											#end
+											<tr class="$colorCode">
+												<td>$!checkInJob.jobId</td>
+												<td>$!checkInJob.customerObj.customerName [ $!checkInJob.customerObj.customerMobNo ]</td>
+												<td>$!checkInJob.clientObj.clientName</td>
+												<td>$!checkInJob.easyfixterObj.easyfixerName</td>
+												<td>$!checkInJob.serviceTypeObj.serviceTypeName</td>
+												<td>$!checkInJob.scheduleDateTime</td>
+												<td style="text-align:center">$!checkInsymb $checkInhour : $checkInminut</td>
+												<td>$!checkInJob.timeDifference</td>
+												<td>$!checkInJob.empName</td>
+												<td style="text-align:center;"><a href="#portlet-config-schedule" data-toggle="modal" title="CheckIn" onclick="checkInJob($!checkInJob.jobId);">
+										<i class="fa fa-check-square-o"></i></a></td>
+											</tr>
+											#end
+										
+										</tbody>
+								</table>
+							</div>
+						</div>
+						<!-- END EXAMPLE TABLE PORTLET-->
+					</div>					
+				</div>	
+				<!-- END ROW-->
+				<br />
+				#end
+				#if($jobObj.checkOutList.size() > 0)
+				<div class="row">
+					<div class="col-md-12 col-sm-12">
+						<!-- BEGIN EXAMPLE TABLE PORTLET-->
+						<div class="portlet box blue">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="fa fa-shopping-cart"></i>Pending for Check-Out
+								</div>						
+							</div>
+							<div class="portlet-body">
+								<table class="table table-striped table-hover table-bordered" id="sample_3">
+									<thead>
+										<tr>
+											<th width="5%">JobId</th>
+											<th width="20%">Customer</th>
+											<th width="10%">Client</th>
+											<th width="15%">Easyfixer</th>
+											<th width="10%">Job Type</th>
+											<th width="10%">CheckIn Date</th>
+											<th width="10%" style="text-align:center">Time Left (Hr : Min)</th>
+											<th></th>
+											<th width="15%">Job Owner</th>
+											<th width="8%" style="text-align:center">Action</th>
+										</tr>
+										</thead>
+										<tbody>
+											#foreach($checkOutJob in $jobObj.checkOutList)
+											
+											#set($checkOuthour = $!checkOutJob.timeDifference/60)
+											#set($checkOutminut = $!checkOutJob.timeDifference - ($checkOuthour*60))
+											#set($checkOutsymb = "")
+											#if($checkOuthour == 0 && $checkOutminut < 0) 
+												#set($checkOutsymb = "-")
+											#end
+											#if($checkOutminut < 0) 
+												#set($checkOutminut = $checkOutminut - ($checkOutminut*2))
+											#end
+											
+											#if($!checkOutJob.timeDifference < -120)
+												#set($colorCode = "danger")												
+											#else
+												#set($colorCode = "")
+											#end
+											<tr class="$colorCode">
+												<td>$!checkOutJob.jobId</td>
+												<td>$!checkOutJob.customerObj.customerName [ $!checkOutJob.customerObj.customerMobNo ]</td>
+												<td>$!checkOutJob.clientObj.clientName</td>
+												<td>$!checkOutJob.easyfixterObj.easyfixerName</td>
+												<td>$!checkOutJob.serviceTypeObj.serviceTypeName</td>
+												<td>$!checkOutJob.checkInDateTime</td>
+												<td style="text-align:center">$!checkOutsymb $checkOuthour : $checkOutminut</td>
+												<td>$!checkOutJob.timeDifference</td>
+												<td>$!checkOutJob.empName</td>
+												<td style="text-align:center;"><a href="#portlet-config-schedule" data-toggle="modal" title="CheckOut" onclick="checkOutJob($!checkOutJob.jobId);">
+										<i class="fa fa-shopping-cart"></i></a></td>
+											</tr>
+											#end
+										
+										</tbody>
+								</table>
+							</div>
+						</div>
+						<!-- END EXAMPLE TABLE PORTLET-->
+					</div>	
+				</div>
+				<!-- END ROW-->
+				<br />
+				#end
+				#if($jobObj.feedbackList.size() > 0)
+					<div class="row">	
+						<div class="col-md-12 col-sm-12">
+							<!-- BEGIN EXAMPLE TABLE PORTLET-->
+							<div class="portlet box blue">
+								<div class="portlet-title">
+									<div class="caption">
+										<i class="fa fa-wechat"></i>Pending for Feedback
+									</div>						
+								</div>
+								<div class="portlet-body">
+									<table class="table table-striped table-hover table-bordered" id="sample_4">
+										<thead>
+											<tr>
+												<th width="5%">JobId</th>
+												<th width="20%">Customer</th>
+												<th width="10%">Client</th>
+												<th width="15%">Easyfixer</th>
+												<th width="10%">Job Type</th>
+												<th width="10%">CheckOut Date</th>
+												<th width="10%" style="text-align:center">Time Left (Hr : Min)</th>
+												<th></th>
+												<th width="15%">Job Owner</th>
+												<th width="8%" style="text-align:center;">Action</th>
+											</tr>
+											</thead>
+											<tbody>
+												#foreach($feedbackJob in $jobObj.feedbackList)
+												
+												#set($feedbackhour = $!feedbackJob.timeDifference/60)
+												#set($feedbackminut = $!feedbackJob.timeDifference - ($feedbackhour*60))
+												#set($feedbacksymb = "")
+												#if($feedbackhour == 0 && $feedbackminut < 0) 
+													#set($feedbacksymb = "-")
+												#end
+												#if($feedbackminut < 0) 
+													#set($feedbackminut = $feedbackminut - ($feedbackminut*2))
+												#end
+												
+												#if($!feedbackJob.timeDifference < -720)
+													#set($colorCode = "danger")												
+												#else
+													#set($colorCode = "")
+												#end
+												<tr class="$colorCode">
+													<td>$!feedbackJob.jobId</td>
+													<td>$!feedbackJob.customerObj.customerName [ $!feedbackJob.customerObj.customerMobNo ]</td>
+													<td>$!feedbackJob.clientObj.clientName</td>
+													<td>$!feedbackJob.easyfixterObj.easyfixerName</td>
+													<td>$!feedbackJob.serviceTypeObj.serviceTypeName</td>
+													<td>$!feedbackJob.checkOutDateTime</td>
+													<td style="text-align:center">$!feedbacksymb $feedbackhour : $feedbackminut</td>
+													<td>$!feedbackJob.timeDifference</td>
+													<td>$!feedbackJob.empName</td>
+													<td style="text-align:center;"><a href="#portlet-config-schedule" data-toggle="modal" title="Feedback" onclick="feedbackJob($!feedbackJob.jobId);">
+											<i class="fa fa-wechat"></i></a></td>
+												</tr>
+												#end
+											
+											</tbody>
+									</table>
+								</div>
+							</div>
+							<!-- END EXAMPLE TABLE PORTLET-->
+						</div>					
+					</div>
+					<!-- END ROW-->		
+					#end
+					#if($jobObj.callLaterList.size() > 0)
+					<div class="row">	
+						<div class="col-md-12 col-sm-12">
+							<!-- BEGIN EXAMPLE TABLE PORTLET-->
+							<div class="portlet box blue">
+								<div class="portlet-title">
+									<div class="caption">
+										<i class="fa fa-calendar"></i>Call Later Jobs
+									</div>						
+								</div>
+								<div class="portlet-body">
+									<table class="table table-striped table-hover table-bordered" id="sample_7">
+										<thead>
+											<tr>
+												<th width="5%">JobId</th>
+												<th width="20%">Customer</th>
+												<th width="10%">Client</th>
+											<!--	<th width="15%">Easyfixer</th> -->
+												<th width="10%">Job Type</th>
+												<th width="10%">Requested Date</th>
+												<th width="10%" style="text-align:center">Time Left (Hr : Min)</th>
+												<th width="15%">Job Owner</th>
+												<th width="8%" style="text-align:center;">Confirm</th>
+												<th width="8%" style="text-align:center;">Re-book</th>
+											</tr>
+											</thead>
+											<tbody>
+												#foreach($callLaterJob in $jobObj.callLaterList)
+												
+												#set($callLaterhour = $!callLaterJob.timeDifference/60)
+												#set($callLaterminut = $!callLaterJob.timeDifference - ($callLaterhour*60))
+												#set($callLatersymb = "")
+												#if($callLaterhour == 0 && $callLaterminut < 0) 
+													#set($callLatersymb = "-")
+												#end
+												#if($callLaterminut < 0) 
+													#set($callLaterminut = $callLaterminut - ($callLaterminut*2))
+												#end
+												
+												#if($!callLaterJob.timeDifference < -720)
+													#set($colorCode = "danger")												
+												#else
+													#set($colorCode = "")
+												#end
+												<tr class="$colorCode">
+													<td>$!callLaterJob.jobId</td>
+													<td>$!callLaterJob.customerObj.customerName [ $!callLaterJob.customerObj.customerMobNo ]</td>
+													<td>$!callLaterJob.clientObj.clientName</td>
+													<td>$!callLaterJob.serviceTypeObj.serviceTypeName</td>
+													<td>$!callLaterJob.requestedDateTime</td>
+													<td style="text-align:center">$!callLatersymb $callLaterhour : $callLaterminut</td>
+										
+													<td>$!callLaterJob.empName</td>
+													<td style="text-align:center;"><a href="#portlet-config-schedule" data-toggle="modal" title="Schedule" onclick="scheduleJob($!callLaterJob.jobId);">
+													<i class="fa fa-calendar"></i></a></td>
+													<td style="text-align:center;"><a href="#portlet-config" data-toggle="modal" title="Re-Book" onclick="cancelCallLateJobAndShowNewBookingPage($!callLaterJob.jobId);">
+													<i class="fa fa-plus-square"></i></a></td> 
+													
+											
+												</tr>
+												#end
+											
+											</tbody>
+									</table>
+								</div>
+							</div>
+							<!-- END EXAMPLE TABLE PORTLET-->
+						</div>					
+					</div>
+					<!-- END ROW-->		
+					#end				
+				</div>				
+		
+				#else 
+					<div class="note note-success" style="margin-top:100px">
+							<h3 class="block text-center">Hello! $userObj.userName</h3>
+							<h4 class="text-center">Welcome to Easyfix.</h4>
+						
+					</div>					
+				#end				
+			</div>
+		</div>
+	</div>
+	<!-- END CONTENT -->
+
+#parse("pages/common/Footer.vm")
+
+
+<script src="pages/metronic_js/userHomeTable.js"></script>
+
+<script>
+jQuery(document).ready(function() {       
+	Metronic.init(); // init metronic core components
+	Layout.init(); // init current layout
+ 	TableManaged.init();
+});
+
+function cancelCallLateJobAndShowNewBookingPage(jobId){
+	
+	jQuery("#modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "cancelCallLateJobAndShowNewBookingPage?jobId="+jobId,
+		success	: function(data){
+			jQuery("#re-schedule-modal-body-id").html(" ");
+			jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	});  
+
+}
+
+
+function addjob(jobId){
+	jQuery("#modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "addEditJob?jobId="+jobId+"&loc=home", 
+		success	: function(data){
+			jQuery("#re-schedule-modal-body-id").html(" ");
+			jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	});  
+
+}
+
+function scheduleJob(jobId){
+	jQuery("#schedule-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "scheduleJob?jobId="+jobId+"&loc=home", 
+		success	: function(data){
+			jQuery("#schedule-modal-body-id").html(" ");
+		    jQuery("#schedule-modal-body-id").html(data);
+		}
+	});  
+
+}
+
+function jobDetails(jobId){
+	jQuery("#schedule-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "jobDetails?jobId="+jobId+"&loc=home", 
+		success	: function(data){
+			jQuery("#schedule-modal-body-id").html(" ");
+		    jQuery("#schedule-modal-body-id").html(data);
+		}
+	});  
+
+}
+
+function checkInJob(jobId){
+	jQuery("#schedule-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "checkInJob?jobId="+jobId+"&loc=home", 
+		success	: function(data){
+			jQuery("#schedule-modal-body-id").html(" ");
+		    jQuery("#schedule-modal-body-id").html(data);
+		}
+	});  
+
+}
+
+
+function checkOutJob(jobId){
+	jQuery("#schedule-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "checkOutJob?jobId="+jobId+"&loc=home", 
+		success	: function(data){
+			jQuery("#schedule-modal-body-id").html(" ");
+		    jQuery("#schedule-modal-body-id").html(data);
+		}
+	});  
+
+}
+
+function feedbackJob(jobId){
+	jQuery("#schedule-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "feedbackJob?jobId="+jobId+"&loc=home", 
+		success	: function(data){
+			jQuery("#schedule-modal-body-id").html(" ");
+		    jQuery("#schedule-modal-body-id").html(data);
+		}
+	});  
+
+}
+
+function addComment(jobId,flag){
+	jQuery("#sub-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "addJobComment?jobId="+jobId+"&commentedOn="+flag, 
+		success	: function(data){
+			jQuery("#sub-modal-body-id").html(" ");
+		    jQuery("#sub-modal-body-id").html(data);
+		}
+	});
+}
+
+function jobCommentList(jobId,divId){
+	jQuery("#"+divId).html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "jobCommentList?jobId="+jobId, 
+		success	: function(data){
+			jQuery("#"+divId).html(" ");
+		    jQuery("#"+divId).html(data);
+		}
+	});
+}
+
+function cancelJob(jobId,flag){
+	jQuery("#sub-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "cancelJob?jobId="+jobId+"&canceledOn="+flag+"&loc=home", 
+		success	: function(data){
+			jQuery("#sub-modal-body-id").html(" ");
+		    jQuery("#sub-modal-body-id").html(data);
+		}
+	});
+}
+
+function confirmjob(jobId){
+	jQuery("#re-schedule-modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "confirmJob?jobId="+jobId+"&loc=home", 
+		success	: function(data){
+			jQuery("#modal-body-id").html(" ");
+			jQuery("#re-schedule-modal-body-id").html(" ");
+		    jQuery("#re-schedule-modal-body-id").html(data);
+		}
+	});  
+
+}
+
+</script>
+

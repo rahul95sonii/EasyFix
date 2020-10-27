@@ -1,0 +1,374 @@
+
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:800px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+	
+	<div class="modal fade" id="sub-portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:600px; margin-top:100px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="sub-modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+<!-- BEGIN MODAL FOR GPS LOCATION FORM-->		
+		<div class="modal fade" id="address-portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+			<div class="modal-dialog" style="width:1000px; margin-top:100px;">
+			    <div class="modal-content">
+					<div class="modal-body" id="address-modal-id">
+						
+					</div>
+				</div>	
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->		
+		</div>
+<!-- BEGIN MODAL FOR SCHEDULING FORM-->		
+		<div class="modal fade" id="portlet-config-schedule" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:1000px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="schedule-modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+
+<!-- BEGIN MODAL FOR SCHEDULING FORM-->		
+		<div class="modal fade" id="portlet-config-re-schedule" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:1000px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="re-schedule-modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>	
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+
+
+
+<script>
+
+
+function invDetailsAjax(val)
+{
+	var res = val.split("~");	
+	
+	var divId 		= res[0];
+	var invId 		= res[1];
+	var prevDue		= parseInt(res[2]);
+	var totalBill	= parseInt(res[3]);
+	var totalPaid	= parseInt(res[4]);
+	var isRaise		= res[5];
+	var isPaid		= res[6];
+	var curDue		= parseInt(res[7]);
+	var exlFile		= res[8];
+	var invoiceClientId = res[9];
+	var masterSheet = res[10];
+	
+	var link = "--";
+	var raise = "--";
+	var paid = "--";
+	if(res[1] == 'blank')
+	{
+		$("#prevDueDiv"+divId).html("--");
+		$("#curDueDiv"+divId).html("--");
+		$("#totalDiv"+divId).html("--");
+		$("#isRaisedDiv"+divId).html("--");
+		$("#paidAmountDiv"+divId).html(paid);
+		$("#actionDiv"+divId).html(link);
+	}
+	else 
+	{
+		/*var lastDate = new Date(res[6]);
+		var curDate = new Date();				
+		var dateDif = (lastDate.getTime()+86400000) - curDate.getTime();	*/	
+		
+		
+		if(totalBill > 0) 
+		{
+			var path = "http://core.easyfix.in/easydoc/client_invoice/"+exlFile;
+			var MasterSheetPath = "http://core.easyfix.in/easydoc/client_invoice/"+masterSheet;
+			link = "<a href='"+path+"' target='_blank' title='Download PDF'><i class='fa fa-file-excel-o'></i></a> &nbsp;&nbsp  <a href='"+MasterSheetPath+"' target='_blank' title='Download Excel'><i class='fa fa-file-excel-o'></i></a>&nbsp;&nbsp <a title='Create Invoice' onclick='raiseInvoiceByclient("+invoiceClientId+")'><i class='fa fa-calendar'></i></a>";
+		
+	
+			if(isRaise == 1)
+			{
+				raise = "<span style='color:green'>Yes</span>";
+				if((totalPaid < totalBill) && (isPaid == 0))
+				{
+				
+					paid = "<span id='totalAmountDiv"+divId+"'>"+totalPaid+"</span><br><span style='float:left'><input type='text' id='paid"+divId+"' class='form-control' style='width:80px;' /></span>"+
+									"<span id='PaidAmntBtn"+divId+"' style='float:left; padding-top:10px'> &nbsp; &nbsp; <a onclick='savePaidInvoice("+divId+","+invId+");'><i class='fa fa-save'></i></a></span>";
+				}
+				else
+				{
+					paid = totalPaid;
+				}
+			}
+			else
+			{
+				raise = "<span style='color:red'>No &nbsp; &nbsp; <a onclick='changeStatus("+divId+","+invId+");' title='Change Status'><i class='fa fa-check-square-o'></i></a></span>";
+			}
+			
+		}
+		
+		$("#prevDueDiv"+divId).html(prevDue);
+		$("#curDueDiv"+divId).html("<a href='#portlet-config-schedule' data-toggle='modal' title='View' onclick='clientInvocieDetail("+invoiceClientId+","+invId+")';>"+curDue+"</a>");
+		$("#totalDiv"+divId).html(totalBill);
+		$("#isRaisedDiv"+divId).html(raise);
+		$("#paidAmountDiv"+divId).html(paid);
+		$("#actionDiv"+divId).html(link);
+	}
+	
+}
+
+
+</script>
+
+<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:750px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+	
+	
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			
+			
+			<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-building"></i>
+						<a href="#">Tracking</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					<li>
+						<a href="#">Client Invoice</a>
+					</li>
+				</ul>
+			</div>
+			<h3 class="page-title">Client Invoice</h3>
+			<!-- END PAGE HEADER-->
+			
+			<div class="clearfix">
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="portlet box blue">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-calendar"></i>Filter Parameter
+							</div>
+							
+						</div>
+												
+					<div class="portlet-body">
+						<table class="table table-striped table-hover table-bordered" id="sample_editable_1">
+							<thead>
+								<tr>
+									<th width="5%">#</th>
+									<th width="15%">Client</th>
+									<th width="20%">Billing Cycle</th>									
+									<th width="10%" class="text-right" style="padding-right:20px">Previous Due</th>
+									<th width="10%" class="text-right" style="padding-right:20px">Current Due</th>
+									<th width="10%" class="text-right" style="padding-right:20px">Total Amount</th>
+									<th width="10%" class="text-center">is Raised</th>
+									<th width="15%" class="text-center">Paid Amount</th>
+									<th class="text-center">Action</th>
+								</tr>
+								</thead>
+								<tbody>
+								#set($divId = 1)
+								#foreach ($mapEntry in $clientInvoiceMap.entrySet())								    
+								    <tr>
+								    	<td>$divId</td>
+										<td><a href="#portlet-config-schedule" data-toggle="modal" title="View" onclick="clientInvocieDetail(39,1241);">
+										$mapEntry.key</a></td>
+										<td><select id="selectField$divId" class="form-control select2_job_filter" data-required="1" data-placeholder="Select Cycle" onchange="invDetailsAjax(this.value)"  >
+												<!--<option value="$divId~blank">Current Cycle</option>-->		
+													#foreach ($inv in $mapEntry.value)
+														#set($cid = $!inv.invClientId)	
+													<!--	#set($excelFile = "$!inv.filePath/mastersheet/$!inv.invoiceFileName") -->
+													#set($excelFile ="$!inv.invoiceFileName")
+													#set($pdfFile ="$!inv.masterSheetFileName")
+														#set($otherOpt = "$!inv.invoiceId~$!inv.previousDues~$!inv.totalBillingAmount~$!inv.totalPaidAmount~$!inv.isRaised~$!inv.isPaid~$!inv.curentDues")		
+														<option value="$!divId~$otherOpt~$!excelFile~$cid~$pdfFile">$!inv.billingStartDate -- $!inv.billingEndDate</option>	
+													#end
+											</select>
+										</td>	
+										
+										
+										<td class="text-right" style="padding-right:20px" id="prevDueDiv$divId">--</td>
+										<td class="text-right" style="padding-right:20px" id="curDueDiv$divId">--</td>
+										<td class="text-right" style="padding-right:20px" id="totalDiv$divId">--</td>
+										<td class="text-center" id="isRaisedDiv$divId">--</td>
+										<td class="text-center" id="paidAmountDiv$divId">--</td>
+										<td class="text-center" id="actionDiv$divId">--</td>
+									</tr>	
+									
+									<script>
+										var val = $("#selectField"+$divId).val();
+										
+										invDetailsAjax(val);									
+									</script>
+																		
+								    #set($cid = "")
+								    #set($divId = $divId + 1)
+								#end
+								
+																	
+							</tbody>
+						</table>
+												
+					</div>									
+				</div>
+			</div>	
+			
+		</div>
+			
+	</div>
+	<!-- END CONTENT -->
+
+#parse("pages/common/Footer.vm")
+
+<script src="pages/metronic_js/jobComboSearch.js"></script>
+<script>
+
+
+function changeStatus(divId, invId)
+{
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "changeInvoiceStatus?invId="+invId,
+		    
+	   		success: function(data) {
+	   			jQuery("#isRaisedDiv"+divId).html("<span style='color:green'>Yes</span>");
+									        
+   			}
+	});
+
+	return false;
+
+}
+
+function savePaidInvoice(divId,invId)
+{
+	var inputVal = $("#paid"+divId).val();
+	
+	if(inputVal == 0 || inputVal == "" || isNaN(inputVal) == 1)
+	{	
+		$("#paidAmountDiv"+divId).addClass("alert-danger");
+		return false;
+	}
+	var prevAmount = $("#totalAmountDiv"+divId).text();
+	var totAmount = parseInt(prevAmount) + parseInt(inputVal);
+	
+	var invAmount = parseInt($("#totalDiv"+divId).text());	
+	
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "saveInvoicePaidAmount?invId="+invId+"&paidAmount="+inputVal,
+		    
+	   		success: function(data) {	   			
+	   			$("#totalAmountDiv"+divId).html(totAmount);
+				$("#paidAmountDiv"+divId).removeClass("alert-danger").addClass('alert-success');
+				
+				$("#paid"+divId).val("");
+				if(totAmount >= invAmount) 
+				{
+					$("#paid"+divId).hide();
+					$("#PaidAmntBtn"+divId).hide();
+				}
+   			}
+	});
+
+	return false;
+}
+function raiseInvoiceByclient(clientId)
+{
+	alert(clientId);
+	jQuery.ajax({
+			type: "POST",
+   		url:  "generateInvoiceByClient?invClientId="+clientId,
+	    
+   		success: function(data) {
+   			
+								        
+			}
+});
+
+return false;
+
+
+}
+
+function clientInvocieDetail(clientId,invoiceId)
+{
+	alert(clientId);
+	alert(invoiceId);
+	jQuery("#schedule-modal-body-id").html(" ");
+	jQuery.ajax({
+			type: "POST",
+   		url:  "clientInvocieDetail?invClientId="+clientId+"&invoiceId="+invoiceId,
+	    
+   		success: function(data) {
+   			jQuery("#schedule-modal-body-id").html(" ");
+			jQuery("#schedule-modal-body-id").html(data);
+								        
+			}
+});
+
+return false;
+
+
+}
+
+
+jQuery(document).ready(function() {       
+   		Metronic.init(); // init metronic core components
+		Layout.init(); // init current layout
+   		JobComboSearch.init();
+   		
+   		$('#sample_editable_1').DataTable( {
+			"columnDefs": [ {
+		      		"targets": [2,3,4,5,7 ],
+		      		"orderable": false	} ],
+		    "order": [[ 0, "asc" ]] } );
+	
+});
+
+
+
+</script>
+

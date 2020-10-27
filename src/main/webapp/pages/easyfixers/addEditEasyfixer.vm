@@ -1,0 +1,503 @@
+<div class="portlet box blue">
+	<div class="portlet-title">
+			<div class="caption">
+				<i class="fa fa-reorder"></i>#if($!easyfixerObj.easyfixerId == 0) Add #else Edit #end Easyfixer
+			</div>					
+		<br><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+	</div>		
+	
+		<div class="portlet-body form">
+			<input type="hidden" id="efsArray" value="$!easyfixerObj.easyfixerServiceType" />
+			
+			<form name="easyfixer" action="" method="post" class="form-horizontal" id="easyfixer_formId">
+				<div class="form-body" style="height:400px; overflow-y: scroll; overflow-x: hidden;">
+				<input type="hidden" name="easyfixerId"  id="easyfixerId" value="$!easyfixerObj.easyfixerId" />
+							
+				<div class="form-group" id="efrName-divId">
+			 	<label class="col-md-4 control-label" id="efrName-lableId">Easyfixer Name<span class="required">* </span></label>
+					<div class="col-md-8">
+				  		<input type="text" class="form-control input-large" id="easyfixerName" name="easyfixerName" data-required="1" value="$!easyfixerObj.easyfixerName">
+						<span class="help-block" style="display:none">
+					</span>
+					</div>
+				</div>
+			
+				<div class="form-group" id="efrNo-divId">
+			 	<label class="col-md-4 control-label" id="efrNo-lableId">Contact Number<span class="required">* </span></label>
+					<div class="col-md-8">
+				  		<input maxlength="10" onkeypress="CheckNumeric(event);" type="text" class="form-control input-large" data-required="1" id="easyfixerNo" name="easyfixerNo" value="$!easyfixerObj.easyfixerNo">
+						<span class="help-block" style="display:none">
+					</div>
+				</div>
+			
+				<div class="form-group">
+			 	<label class="col-md-4 control-label">Alternate Contact Number</label>
+					<div class="col-md-8">
+				  		<input maxlength="10" onkeypress="CheckNumeric(event);" type="text" class="form-control input-large" id="easyfixerAlterNo" name="easyfixerAlterNo" value="$!easyfixerObj.easyfixerAlterNo">
+					</div>
+				</div>
+			
+				<div class="form-group" id="efrEmail-divId">
+			 	<label class="col-md-4 control-label" id="efrEmail-labelId">E-mail Address</label>
+					<div class="col-md-8">
+				  		<input type="email" class="form-control input-large" data-required="1" id="easyfixerEmail" name="easyfixerEmail" value="$!easyfixerObj.easyfixerEmail">
+						
+					</div>
+				</div>
+
+				<div class="form-group" id="add-divId">
+			 	<label class="col-md-4 control-label" id="add-lableId">Current Address<span class="required">* </span></label>
+					<div class="col-md-8">
+				  		<textarea type="text" class="form-control input-large" data-required="1" id="address" name="easyfixerAddress" >$!easyfixerObj.easyfixerAddress</textarea>
+						<span class="help-block" style="display:none">
+					</div>
+				</div>
+
+				<div class="form-group" id="city-divId">
+				<label class="control-label col-md-4" id="city-lableId">City<span class="required"> * </span></label>
+					<div class="col-md-8">
+						<select class="form-control select2_category input-large" id="cityId" data-required="1" name="easyfixerCityId" data-placeholder="Select City"  >
+							<option value=""></option>							
+								#foreach($!city in $cityList)
+									<option value="$!city.cityId" #if($!city.cityId == $!easyfixerObj.easyfixerCityId)  selected="selected" #end >$!city.cityName</option>
+								#end
+						</select>
+						<span class="help-block" style="display:none">							
+					</div>
+				</div>
+	
+			<div class="form-group" id="zone-city-divId" >
+				<label id="zone-city-label-id" class="col-md-4 control-label">Select Zone<span class="required">* </span></label>
+				<div class="col-md-6">		
+					<select class="form-control select2_category input-large" id="zoneCityId" name="zoneCityId" >
+						 <option value="">Select Zone</option> 
+						<option value="$!easyfixerObj.cityZoneId" #if($!easyfixerObj.cityZoneId >0)  selected="selected" #end >$!easyfixerObj.cityZoneName</option>
+					</select>
+					<span class="help-block" style="display:none">
+				</div>
+			</div>
+
+				
+				
+				
+				<div class="form-group" id="efrPin-divId">
+			 	<label class="col-md-4 control-label" id="efrPin-lableId">Pincode<span class="required">* </span></label>
+					<div class="col-md-8">
+				  		<input maxlength="6" onkeypress="CheckNumeric(event);" type="text" class="form-control input-large" data-required="1" id="easyfixerPin" name="easyfixerPin" value="$!easyfixerObj.easyfixerPin">
+						<span class="help-block" style="display:none">
+						</span>
+					</div>
+				</div>
+				
+				<div class="form-group" id="efrGeo-divId">
+					 <label class="col-md-4 control-label" id="efrGeo-lableId">GPS Coordinates<span class="required">* </span></label>
+						<div class="col-md-8">
+							<div class="input-group">
+								<input type="text" class="form-control input-large" name="easyfixerBaseGps" id="coord" value="$!easyfixerObj.easyfixerBaseGps" readonly>
+								<span class="input-group-btn">
+								<a id="geoBtnId" class="btn blue btn-sm" data-toggle="modal" onclick="return getGeoLocation();">Get GPS</a>
+								</span>
+							</div>
+							<span class="help-block" style="display:none">
+							
+						</div>
+							
+				</div>
+				<div class="form-group" id="ndmName-divId">
+				 	<label class="col-md-4 control-label" id="ndmName-lableId">NDM Name<span class="required">* </span></label>
+						<div class="col-md-8">
+							<select class="form-control select2_category input-large" id="NDMName" data-required="1" name="NDMName" data-placeholder="Select NDM"  >
+								<option value=""></option>							
+									#foreach($!ndm in $NDMList)
+										<option value="$!ndm.userId" #if($!ndm.userId == $!easyfixerObj.ndmId)  selected="selected" #end >$!ndm.userName</option>
+									#end
+							</select>
+					  		
+							<span class="help-block" style="display:none"></span>
+						</div>
+				</div>
+				<div class="form-group" id="efrEmpType-divId">
+				<label class="control-label col-md-4" id="efrEmpType-lableId">Employee Type <span class="required">	* </span></label>
+					<div class="col-md-8">
+						<div class="radio-list" data-error-container="#form_2_easyfixerType_error">
+							<label class=" md-radio-inline">
+								<div class="md-radio">
+								<input type="radio" id="radio1" class="md-radiobtn" name="easyfixerType" value="Contractor" #if($!easyfixerObj.easyfixerType == "Contractor") checked="checked" #end />
+								<label for="radio1">
+								<span></span>
+								<span class="check"></span>
+								<span class="box"></span>
+								Contractor </label>
+								</div>
+							
+								<div class="md-radio">
+								<input type="radio" id="radio2" class="md-radiobtn" name="easyfixerType" value="Employee" #if($!easyfixerObj.easyfixerType == "Employee") checked="checked" #end />
+								<label for="radio2">
+								<span></span>
+								<span class="check"></span>
+								<span class="box"></span>
+								Employee </label>
+								</div>
+							</label>
+						</div>
+						
+						<span class="help-block" id="addressErrorId" style="display:none">
+					</div>
+				</div>
+				
+				<div class="form-group" id="skillLevel-divId">
+				<label class="control-label col-md-4" id="skillLevel-labelId">Skill Level<span class="required"> * </span></label>
+					<div class="col-md-8">
+						<select class="form-control select2_category input-large" name="skillId" data-required="1" id="skillLevel" data-placeholder="Select Skill Level" >
+							<option value=""></option>
+							#foreach($skill in $skillList)
+								<option value="$!skill.skillId" #if($!skill.skillId == $!easyfixerObj.skillId)  selected="selected" #end >$!skill.skillName</option>
+							#end
+						</select>
+					</div>
+				</div>
+			
+				<div class="form-group" id="efrServiceType-divId">
+				<label class="control-label col-md-4" id="efrServiceType-lableId">Service Type<span class="required"> * </span></label>
+					<div class="col-md-8">
+						<select class="form-control select2_category input-large" id="easyfixerServiceType" data-required="1" name="easyfixerServiceType" data-placeholder="Select Service Type" multiple>
+							#foreach($!serviceType in $serviceTypeList)
+								<option value="$!serviceType.serviceTypeId" >$!serviceType.serviceTypeName</option>
+							#end
+						</select>		
+						<span class="help-block" style="display:none">			
+					</div>
+				</div>
+					<input type="hidden" id="doctypeSize" value="$!documentTypeList.size()" />
+					#set($x = 0)
+				#foreach($doctype in $documentTypeList)
+									
+					<input type="hidden" name="docId[]" id="doctypeId$x" value="$doctype.documentTypeId" />
+					<input type="hidden" name="docMand[]" id="doctypeMand$x" value="$doctype.documentMandatory" />
+					<input type="hidden" name="docPrev[]" id="docPrev$x" value="$!doctype.efrDocument" />
+					<div class="form-group" id="docDiv$x">
+						<label class="control-label col-md-4" id="docLable$x">$!doctype.documentName #if($!doctype.documentMandatory == "Yes" && $!easyfixerObj.easyfixerId == 0)<span class="required"> * </span>#end</label>
+						<div class="col-md-8">
+							<div class="fileinput fileinput-new" data-provides="fileinput">
+								<div class="input-group input-large">
+									<div class="form-control uneditable-input input-fixed input-medium" data-trigger="fileinput">
+										<i class="fa fa-file fileinput-exists"></i>&nbsp; <span class="fileinput-filename">
+										</span>
+									</div>
+									<span class="input-group-addon btn default btn-file">
+									
+									#if($!doctype.efrDocument!="" && $!doctype.efrDocument)
+										<span class="fileinput-new">  Change uploaded file </span>										
+									 #else
+										<span class="fileinput-new"> Select file </span>
+									#end
+									<span class="fileinput-exists">Change </span>
+									<input type="file" name="docName[]" id="docName$x" #if($doctype.documentMandatory == "Yes") data-required="1" #end >
+									</span>
+									
+									<a href="javascript:;" class="input-group-addon btn red fileinput-exists" data-dismiss="fileinput">
+									Remove </a>	
+																
+								</div>			
+								<span class="help-block" style="display:none">	
+							</div>
+								#if($!doctype.efrDocument!="" && $!doctype.efrDocument)
+									<a href="http://core.easyfix.in/easydoc/easyfixer_documents/$!doctype.efrDocument" target="_blank"><i class="fa fa-download" style="float:right; margin-top:10px"></i></a>
+								#end
+						</div>
+					</div>
+					#set($x = $x+1)	
+				#end
+				
+				<div class="form-group">
+						<label class="control-label col-md-4">Is App User</label>
+						<div class="col-md-8">
+							<select class="form-control bs-select input-large" name="isAppUser" id="isAppUser">
+								<option value="1" #if($!easyfixerObj.isAppUser == 1) selected #end>Yes</option>
+								<option value="0" #if($!easyfixerObj.isAppUser == 0) selected #end>No</option>
+							</select>
+						</div>
+					</div>
+				#if($!easyfixerObj.easyfixerId == 0)
+				<input type="hidden" name="isActive" id="activeStatus" value="1" />
+				<input type="hidden" id="efrInactiveReason" value="" />
+				<input type="hidden" id="efrInactiveComments" value="" />
+				#else					
+					<div class="form-group">
+						<label class="control-label col-md-4">Status</label>
+						<div class="col-md-8">
+							<select class="form-control bs-select input-large" name="isActive" id="activeStatus">
+								<option value="1" #if($!easyfixerObj.isActive == 1) selected #end>Active</option>
+								<option value="0" #if($!easyfixerObj.isActive == 0) selected #end>Inactive</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group" id="inactive-divId">
+						<label class="control-label col-md-4" id="inactive-lableId">Inactive Reason</label>
+						<div class="col-md-8">
+							<select class="form-control select2_category input-large" id="efrInactiveReason" data-placeholder="Select Reason">
+							<option value="">Select</option>
+								#foreach($enum in $inactiveReasonList)
+									<option value="$!enum.enumId" #if($!enum.enumId == $!easyfixerObj.efrInactiveReason) selected #end>$!enum.enumDesc</option>
+								#end
+							</select>
+							<span class="help-block" style="display:none">	
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-4">Inactive Comments</label>
+						<div class="col-md-8">
+							<textarea id="efrInactiveComments" class="form-control bs-select input-large">$!easyfixerObj.efrInactiveComments</textarea>
+						</div>
+					</div>
+				#end
+			</div>
+			
+				<div class="form-actions right">
+					<div class="col-md-offset-3 col-md-9" id ="passwordResetBtnDiv">
+						
+							<button type="button" id="passwordResetBtn" class="btn yellow">ResetPassWord</button>
+							<button type="button" id="addEditEasyFixerBtn" class="btn green">Submit</button>
+						<button type="button" data-dismiss="modal" class="btn red">Cancel</button>
+						
+						
+					</div>
+				</div>
+	
+			</form>
+		</div>
+		
+</div>
+
+
+<script language="javascript" type="text/javascript">
+
+// script for select multiple service type 
+
+	var temp = $("#efsArray").val();	
+	var arr = temp.split(',');
+	for(var i=0; i<arr.length; i++)
+	{
+		$('#easyfixerServiceType option[value="'+arr[i].trim()+'"]').attr('selected', 'selected');
+	}
+// End
+
+function cleargps()
+{
+	$("#coord").removeAttr('value');
+}
+$('#passwordResetBtn').click(function () {
+
+/*	var efrId = $("#easyfixerId").val();
+		Metronic.blockUI({
+        target: '#modal-body-id',
+        animate: true,
+        overlayColor: 'grey'
+    });
+*/
+jQuery('#passwordResetBtn').html("<img src='pages/images/input-spinner.gif'>");
+    jQuery.ajax({
+   			type: "POST",
+	   		url:  "resetEfrAppPassword",
+	   		contentType: false,
+		    processData: false,
+		    data:function() {
+		    var data = new FormData();
+		     data.append("easyfixerId",$("#easyfixerId").val());
+		           return data;
+			  }(),
+	   		success: function(data) {
+	   			//	alert(data.trim());
+				//	window.location.href="easyfixer"; 
+			//	$(":passwordResetBtn").attr("disabled", true);
+				jQuery('#passwordResetBtn').prop('disabled', true);
+				 jQuery('#passwordResetBtnDiv').html(data);
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Easyfixer updation failed");
+   			}
+	
+});
+});
+
+$('#addEditEasyFixerBtn').click(function () {
+
+	var efixerType = "";
+	var docList = "";
+	var efrId = $("#easyfixerId").val();
+	var dtsize = $("#doctypeSize").val();	
+		efixerType = $('input:radio[name=easyfixerType]:checked').val();
+	
+
+	if(blankValMetronicLabel("easyfixerName","efrName-divId","efrName-lableId"))
+				return false;
+	if(blankValMetronicLabel("easyfixerNo","efrNo-divId","efrNo-lableId"))
+				return false;
+	if(blankValMetronicLabel("address","add-divId","add-lableId"))
+				return false;
+	if(isComboSelectedMetronicLabel("cityId","city-divId","city-lableId"))
+				return false;
+	if(isComboSelectedMetronicLabel("zoneCityId","zone-city-divId","zone-city-label-id"))
+		return false;
+	if(blankValMetronicLabel("easyfixerPin","efrPin-divId","efrPin-lableId"))
+				return false;
+	if(blankValMetronicLabel("coord","efrGeo-divId","efrGeo-lableId"))
+				return false;
+	if(isComboSelectedMetronicLabel("NDMName","ndmName-divId","ndmName-lableId"))
+				return false;
+	if(blankCheckBoxRadioMetronic("easyfixerType","efrEmpType-divId","addressErrorId","easyfixer type"))
+				return false;
+	if(blankValMetronicLabel("skillLevel","skillLevel-divId","skillLevel-lableId"))
+		return false;
+	if(isComboSelectedMetronicLabel("easyfixerServiceType","efrServiceType-divId","efrServiceType-lableId"))
+				return false;
+	if($("#activeStatus").val() == 0){
+		if(isComboSelectedMetronicLabel("efrInactiveReason","inactive-divId","inactive-lableId"))
+				return false;
+		var inactiveReason = $("#efrInactiveReason").val();
+	}
+	else {
+		var inactiveReason = 0;
+	}
+			
+	for(var i=0; i<dtsize; i++)
+	{
+		var fldMand="";
+			fldMand=$("#doctypeMand"+i).val();
+			
+		if(fldMand == "Yes" && efrId == 0)			
+		{
+			if(blankFileMetronicLabel("docName"+i,"docDiv"+i,"docLable"+i))
+				return false;
+		}
+		
+	}	
+
+
+	Metronic.blockUI({
+        target: '#modal-body-id',
+        animate: true,
+        overlayColor: 'grey'
+    });
+
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "addUpdateEasyFixer",
+	   		contentType: false,
+		    processData: false,
+		    data:function() {
+			        var data = new FormData();
+			        data.append("easyfixerId",$("#easyfixerId").val());
+			        data.append("easyfixerName",$("#easyfixerName").val());
+			        data.append("easyfixerNo",$("#easyfixerNo").val());
+			        data.append("easyfixerAlterNo",$("#easyfixerAlterNo").val());
+			        data.append("easyfixerEmail",$("#easyfixerEmail").val());
+			        data.append("easyfixerAddress",$("#address").val());
+			        data.append("easyfixerCityId",$("#cityId").val());
+			        data.append("cityZoneId",$("#zoneCityId").val());
+			        
+			        data.append("easyfixerPin",$("#easyfixerPin").val());
+			        data.append("easyfixerBaseGps",$("#coord").val());
+			        data.append("easyfixerType",efixerType);
+			        data.append("easyfixerServiceType",$("#easyfixerServiceType").val());
+			        data.append("isActive",$("#activeStatus").val());
+			        data.append("ndmId",$("#NDMName").val());
+			        data.append("efrInactiveReason", inactiveReason);
+			        data.append("efrInactiveComments", $("#efrInactiveComments").val());
+			        data.append("docSize",dtsize);
+			        data.append("isAppUser",$("#isAppUser").val());
+			        data.append("skillId",$("#skillLevel").val());
+			        for(var i=0; i<dtsize; i++)
+					{
+						var attachFile = $("#docName"+i).val();
+						data.append("easyfixerDocId"+i,$("#doctypeId"+i).val());
+						data.append("easyfixerDocumentName"+i,attachFile);
+						data.append("easyfixerPrevDocName"+i,$("#docPrev"+i).val());
+						if(attachFile==null || attachFile=='null' || attachFile.length==0 || attachFile.length==""){
+					           data.append("easyfixerDocFile"+i,"");
+				          }else{
+				        	  data.append("easyfixerDocFile"+i, $("#docName"+i).get(0).files[0]);
+					      }
+					      
+					      attachFile = "";
+					}			        
+			        
+			        return data;
+			  }(),
+	   		success: function(data) {
+					window.location.href="easyfixer"; 
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Easyfixer updation failed");
+   			}
+	});
+
+	return false;
+
+});
+
+   function CheckNumeric(e) {
+ 
+            if (window.event) // IE 
+            {
+                if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8) {
+                    event.returnValue = false;
+                    return false;
+ 
+                }
+            }
+            else { // Fire Fox
+                if ((e.which < 48 || e.which > 57) & e.which != 8) {
+                    e.preventDefault();
+                    return false;
+ 
+                }
+            }
+        }
+
+		$(document).ready(function () {
+			ComponentsDropdowns.init();
+		});
+
+
+function selectAddressAjax(id)
+{
+	//var conf = confirm("Are you sure selected address is correct address?");
+	//if(conf)
+	{
+		var add = $("#add"+id).val();
+		var loc = $("#loc"+id).val();
+		var pin = $("#pin"+id).val();
+		
+		$("#coord").val(loc);
+		$("#easyfixerPin").val(pin);
+		$( "#cancelAddChoseBtn" ).trigger( "click" );
+	}
+}
+
+
+$( "#cityId" ).change(function() {
+	
+	var cityId = $("#cityId").val();
+	
+		if(cityId!="")
+		{	
+			jQuery.ajax({  		
+					type: "POST",
+			   		url: "getZoneListByCity?cityId="+cityId,
+			   		success: function(data) 
+			   		{  	
+			   			$("#zoneCityId").html(data);
+			   			
+			   		}
+				});
+			return false;		
+		}
+		
+	
+	
+});
+
+</script>

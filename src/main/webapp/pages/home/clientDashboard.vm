@@ -1,0 +1,212 @@
+
+#parse("pages/common/Header.vm")
+#parse("pages/common/Navigation.vm")
+##set($clientName = $request.getAttribute("clientName"))
+
+<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+	<div class="modal fade" id="portlet-config" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+		<div class="modal-dialog" style="width:1000px;">
+		    <div class="modal-content">
+				<div class="modal-body" id="modal-body-id">
+					 <center>Please wait...</center>
+				</div>
+			</div>	
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->		
+	</div>
+	
+<!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->	
+
+	<div class="page-content-wrapper">
+		<div class="page-content">
+			
+			
+			<!-- BEGIN PAGE HEADER-->
+			<div class="page-bar">
+				<ul class="page-breadcrumb">
+					<li>
+						<i class="fa fa-paper-plane"></i>
+						<a href="#">Home</a>
+						<i class="fa fa-angle-right"></i>
+					</li>
+					<li>
+						<a href="#">Dashboard</a>
+					</li>
+				</ul>
+			</div>
+			<h3 class="page-title">$!userObj.userName</h3>
+			<!-- END PAGE HEADER-->
+			
+			<div class="clearfix">
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="portlet box blue">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-calendar"></i>Filter Job List
+							</div>
+						</div>
+												
+					<div class="portlet-body">
+						<table class="table">
+							<tbody>
+								<tr>
+									<td width="15%" style="border:0"><b>Refrence Id : </b>
+										<input type="text" id="filterRefId" class="form-control input-small" data-placeholder="Enter Refrence Id" />
+									</td>
+									<td width="30%" style="border:0"><b>Requested Date Range : </b>
+										<div class="input-group" id="defaultrange">
+											<input type="text" class="form-control input-medium" id="dateRange" >
+											<span class="input-group-btn" style="float:left">
+											<button class="btn default date-range-toggle" type="button"><i class="fa fa-calendar"></i></button>
+											</span>	
+											<span class="help-block" style="display:none"></span>											
+										</div>
+									</td>
+									<td width="15%" style="border:0"><b>Status :</b> <br>
+										<select class="form-control select2_job_filter" id="filterStatusId" data-placeholder="-- All --" >
+											<option value=""></option>
+											<option value="100">All</option>
+											<option value="0">New Booked</option>
+											<option value="1">Scheduled</option>
+											<option value="2">Checked-In</option>
+											<option value="3">Checked-Out</option>
+											<option value="5">Completed</option>
+											<option value="6">Canceled</option>
+											<option value="7">Enquiry</option>
+											<option value="-1">For Confirmation</option>	
+													
+										</select>
+									</td>
+									<td width="20%" style="border:0"><b>Service Type : </b>
+										<select class="form-control select2_job_filter" id="filterServiceTypeId" data-placeholder="-- All --" >
+											<option value=""></option>
+											<option value="0">All</option>	
+											#foreach($!servType in $serviceTypeList)
+												<option value="$!servType.serviceTypeId">$!servType.serviceTypeName</option>
+											#end		
+										</select>
+									</td>
+									<td width="15%" style="border:0"><b>City :</b> <br>
+										<select class="form-control select2_job_filter" id="filterCityId" data-placeholder="-- All --" >
+											<option value=""></option>	
+											<option value="0">All</option>
+											#foreach($!city in $cityList)
+												<option value="$!city.cityId">$!city.cityName</option>
+											#end		
+										</select>
+									</td>							
+										
+									<td style="text-align:center; padding-top:32px; border:0"><a href="Javascript:void(0);" onclick="showJobList();"><i class="fa fa-search"></i></a></td>
+								</tr>
+							</tbody>
+						</table>
+						
+						<div id="showJobListDiv"></div>
+						
+					</div>									
+				</div>
+			</div>	
+			
+		</div>
+			
+	</div>
+	<!-- END CONTENT -->
+
+#parse("pages/common/Footer.vm")
+
+<script src="pages/metronic_js/jobComboSearch.js"></script>
+<script src="/lib_easyfix/assets/admin/pages/scripts/components-pickers.js"></script>
+<script>
+
+
+
+function jobDetails(jobId){
+
+	jQuery("#modal-body-id").html("<center>Please wait...</center> ");
+	  jQuery.ajax({
+		type	: "POST",
+		url		: "clientJobDetails?jobId="+jobId, 
+		success	: function(data){
+			jQuery("#modal-body-id").html(" ");
+		    jQuery("#modal-body-id").html(data);
+		}
+	});  
+
+}
+
+
+
+function showJobList() {
+	
+	var refId = $("#filterRefId").val();
+	var status = $("#filterStatusId").val();
+	var city = $("#filterCityId").val();	
+	var servType = $("#filterServiceTypeId").val();
+	
+	var tempRange = $("#dateRange").val();
+	var startDate = "";
+	var endDate = "";
+
+	if(tempRange != "") {			
+		var dateRange = tempRange.split("--");
+		startDate = dateRange[0].trim();
+		endDate = dateRange[1].trim();	
+	}
+	
+	
+	if(status == "")
+		status = 100;
+	if(city == "")
+		city = 0;
+	if(servType == "")
+		servType = 0;
+	
+
+	Metronic.blockUI({
+        target: '#showJobListDiv',
+        animate: true,
+        overlayColor: 'grey'
+    });
+	
+
+	jQuery.ajax({
+   			type: "POST",
+	   		url:  "getClientJobListByFilter",
+	   		contentType: false,
+		    processData: false,
+		    data: function() {
+			        var data = new FormData();
+			         data.append("clientRefId", refId);			
+			         data.append("jobStatus", status);
+			         data.append("fkCityId", city);			         
+			         data.append("fkServiceTypeId", servType);
+			         data.append("startDate", startDate);
+			         data.append("endDate", endDate);
+			        	
+			        return data;
+			  }(),
+	   		success: function(data) {
+	   			jQuery("#showJobListDiv").html(data);
+									        
+   			},
+   			error: function(data) {
+   				bootbox.alert("Fetching data failed");
+   			}
+	});
+
+	return false;
+	
+}
+
+jQuery(document).ready(function() {       
+   		Metronic.init(); // init metronic core components
+		Layout.init(); // init current layout
+   		JobComboSearch.init();
+		ComponentsPickers.init();
+});
+
+</script>
+

@@ -1,0 +1,59 @@
+<div style="border-top:2px solid #60aee4; padding-top:10px;">
+
+	<table class="table table-striped table-hover table-bordered" id="sample_editable_1">
+		<thead>
+			<tr>
+				<th width="5%">Job Id</th>
+				<th>Customer</th>
+				<th width="10%">Ref.Id</th>
+				<th width="15%">Service</th>
+				<th width="10%">Created On</th>
+				<th width="10%">Requested On</th>
+				<!--<th width="10%">Easyfixer</th>-->
+				<th width="10%"> Status</th>
+				<th width="10%" class="text-center">Action</th>
+			</tr>
+			</thead>
+			<tbody>
+			#foreach($jobs in $jobList)
+			<tr>
+				<td>$!jobs.jobId</td>
+				<td>$!jobs.customerObj.customerName [ $!jobs.customerObj.customerMobNo ]</td>
+				<td>$!jobs.clientRefId</td>
+				<td>$!jobs.clientServices</td>
+				<td>$!jobs.createdDateTime</td>
+				<td>$!jobs.requestedDateTime</td>
+				<!--<td>#if($!jobs.easyfixterObj.easyfixerName) $!jobs.easyfixterObj.easyfixerName [ $!jobs.easyfixterObj.easyfixerNo ] #end</td>-->
+				<td>#if($!jobs.jobStatus == 0)
+						Booked
+					#elseif($!jobs.jobStatus == 1)
+						Scheduled
+					#elseif($!jobs.jobStatus == 2)
+						Checked In
+					#elseif($!jobs.jobStatus == 3)
+						Checked Out
+					#elseif($!jobs.jobStatus == 4)
+						Feedback
+					#elseif($!jobs.jobStatus == 5)
+						Completed
+					#elseif ($!jobs.jobStatus == 6)
+						Canceled on $!jobs.cancelDateTime
+					#elseif ($!jobs.jobStatus == 7)
+						Enquiry
+					#end
+					</td>
+				<td class="text-center">
+					<a href="#portlet-config" data-toggle="modal" title="View Details" onclick="jobDetails($!jobs.jobId);">
+					<i class="fa fa-search"></i></a> 											
+				</td>
+			</tr>
+			#end							
+		</tbody>
+	</table>
+</div>
+
+<script>
+jQuery(document).ready(function() { 
+	$('#sample_editable_1').DataTable( { "order": [[ 0, "desc" ]] } );
+});
+</script>

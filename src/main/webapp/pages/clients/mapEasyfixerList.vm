@@ -1,0 +1,5 @@
+#foreach($efr in $easyfixerList)		
+	
+	<option value="$efr.easyfixerId">$efr.easyfixerName [ $efr.easyfixerNo ]</option>
+			
+#end

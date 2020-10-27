@@ -1,0 +1,5 @@
+<option value="">Select Zones</option>
+#foreach($zone in $zones)
+	<option value="$zone.cityZoneId">$zone.zone.zoneName</option>
+#end
+	
